@@ -1,0 +1,3 @@
+services:
+  fcp-find-ai-frontend:
+    command: npm run start:debug

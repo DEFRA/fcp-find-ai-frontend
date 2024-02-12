@@ -1,0 +1,17 @@
+.config/
+.env
+.DS_Store
+.npm/
+.standard-v12-cache/
+.vscode
+app/static/stylesheets/*.css*
+auth
+lcov.info
+node_modules
+npm-debug.log
+test-output
+dist
+*.tgz
+*.lock
+# Generated views
+_layout.njk

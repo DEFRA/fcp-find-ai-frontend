@@ -1,0 +1,4 @@
+{{- include "adp-helm-library.cluster-ip-service" (list . "fcp-find-ai-frontend.cluster-ip-service") -}}
+{{- define "fcp-find-ai-frontend.cluster-ip-service" -}}
+{{- end -}}
+

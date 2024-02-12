@@ -1,0 +1,58 @@
+ {# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
+{% extends '_layout.njk' %}
+
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    items: [
+      {
+        text: "Home",
+        href: "#"
+      }]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-xl">fcp-find-ai-frontend</h1>
+
+      <p class="govuk-body">
+        This is a demo application for the technical investigation of patterns and practices
+        in developing production quality containerised, cloud native, microservice based applications
+        within the fcp-find-ai-frontend.
+      </p>
+ {# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
+      {{ govukWarningText({
+        text: "This is not a real service and is for demonstration and investigation purposes only.",
+        iconFallbackText: "Warning"
+      }) }}
+
+
+      <h2 class="govuk-heading-m">Before you start</h2>
+
+      <p class="govuk-body">This is a proof of concept sample application. </p>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      <aside class="app-related-items" role="complementary">
+        <h2 class="govuk-heading-m" id="subsection-title">
+          Useful links
+        </h2>
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="govuk-list govuk-!-font-size-16">
+            <li>
+              <a class="govuk-link" href="/">
+                Home
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+    </div>
+  </div>
+{% endblock %}

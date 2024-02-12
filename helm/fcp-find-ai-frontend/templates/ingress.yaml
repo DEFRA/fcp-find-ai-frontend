@@ -1,0 +1,3 @@
+{{- include "adp-helm-library.azure-ingress" (list . "fcp-find-ai-frontend.ingress") -}}
+{{- define "fcp-find-ai-frontend.ingress" -}}
+{{- end -}}

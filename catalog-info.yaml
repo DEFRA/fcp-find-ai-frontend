@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fcp-find-ai-frontend
+  
+  description: FIND AI Frontend
+  
+  annotations:
+    github.com/project-slug: defra/fcp-find-ai-frontend
+    dev.azure.com/build-definition: fcp-find-ai-frontend
+    sonarqube.org/project-key: fcp-find-ai-frontend
+    grafana/dashboard-selector: "folderTitle == 'Managed Prometheus'"
+spec:
+  type: frontend
+  lifecycle: alpha
+  owner: "group:default/fcp-find"
+  
+  system: system:default/fcp-demo-service
+  

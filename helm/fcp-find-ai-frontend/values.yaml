@@ -1,0 +1,46 @@
+environment: development
+environmentCode:
+name: fcp-find-ai-frontend
+namespace: fcp-find
+workstream: fcp-find
+image: fcp-find-ai-frontend
+
+labels:
+  component: web
+
+appInsights:
+  connectionString:
+
+deployment: {}
+
+container:
+  requestMemory: 100Mi
+  requestCpu: 100m
+  limitMemory: 100Mi
+  limitCpu: 100m
+  port: 3000
+
+livenessProbe:
+  path: /healthz
+  port: 3000
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 5
+
+readinessProbe:
+  path: /healthy
+  port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 5
+
+service:
+  port: 80
+  type: ClusterIP
+
+ingress:
+  class: nginx
+  endpoint: fcp-find-ai-frontend
+  server: example.com

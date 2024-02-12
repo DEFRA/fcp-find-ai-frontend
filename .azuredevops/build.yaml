@@ -1,0 +1,60 @@
+parameters:
+- name: deployFromFeature
+  displayName: "Deploy from Feature Branch"
+  type: boolean
+  default: false
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - test-output/*
+      - bin/*
+      - obj/*
+  drafts: false
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - "*"
+  paths:
+    exclude:
+      - test-output/*
+      - bin/*
+      - obj/*
+
+resources:
+  repositories:
+    - repository: DEFRA-ADPPipelineCommon
+      name: DEFRA/adp-pipeline-common
+      endpoint: DEFRA
+      type: github
+      ref: refs/heads/main
+
+extends:
+  template: /pipelines/common-app-build.yaml@DEFRA-ADPPipelineCommon
+  parameters:
+    projectName: "fcp-find-ai-frontend"
+    serviceName: "fcp-find-ai-frontend"
+    deployFromFeature: ${{ parameters.deployFromFeature }}
+    appBuildConfig:
+      appFrameworkType: "nodejs"    
+      projectPath: "./package.json"
+      manifestPath: "./package.json"
+      imageRepoName: "fcp-find-ai-frontend"
+    appTestConfig:
+      testFilePath: "./docker-compose.test.yaml"
+    appDeployConfig:
+      filepath: "./appConfig"  
+      filetype: "yaml"
+      
+      # TO BE ADDED IF THERE ARE ANY KEYVAULT REFERENCES IN APP CONFIG
+      # variableGroups: 
+      #   - fcp-find-ai-frontend-snd1
+      #   - fcp-find-ai-frontend-snd2
+      #   - fcp-find-ai-frontend-snd3
+      # variables:
+      #   - fcp-find-ai-frontend-APPINSIGHTS-CONNECTIONSTRING
