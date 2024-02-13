@@ -1,0 +1,23 @@
+.inverse-header-container {
+  background-color: $lightGreen;
+  color: govuk-colour("white");
+
+  .inverse-header {
+    padding: 30px;
+    padding-top: 15px;
+
+    .title-container {
+      margin: 50px 0;
+
+      .title-text {
+        margin-bottom: 5px;
+      }
+
+      .govuk-prose-scope h1,
+      .govuk-heading-xl,
+      .govuk-caption-xl {
+        color: govuk-colour("white");
+      }
+    }
+  }
+}

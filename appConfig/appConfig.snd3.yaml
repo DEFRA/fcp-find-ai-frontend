@@ -1,3 +1,5 @@
 - key: APPINSIGHTS_CONNECTIONSTRING
   value: "{{servicename}}-APPINSIGHTS-CONNECTIONSTRING"
   type: "keyvault"
+- key: FARMING_FUNDING_API_URI
+  value: valuefromappconfigsnd3
