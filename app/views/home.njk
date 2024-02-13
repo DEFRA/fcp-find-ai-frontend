@@ -1,9 +1,10 @@
- {# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
+{# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
 {% extends '_layout.njk' %}
 
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 
 {% block beforeContent %}
   {{ govukBreadcrumbs({
@@ -19,39 +20,48 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h1 class="govuk-heading-xl">fcp-find-ai-frontend</h1>
+      <h1 class="govuk-heading-xl">Farming funding assistant</h1>
 
-      <p class="govuk-body">
-        This is a demo application for the technical investigation of patterns and practices
-        in developing production quality containerised, cloud native, microservice based applications
-        within the fcp-find-ai-frontend.
-      </p>
- {# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
       {{ govukWarningText({
-        text: "This is not a real service and is for demonstration and investigation purposes only.",
+        text: "You must personally check results from this service before passing on any information",
         iconFallbackText: "Warning"
       }) }}
 
+      <p class="govuk-body">
+        Use this tool to help callers with questions about funding from the Farming and Countryside programme
+      </p>
 
-      <h2 class="govuk-heading-m">Before you start</h2>
+      <h2 class="govuk-heading-m">How can I assist you today?</h2>
 
-      <p class="govuk-body">This is a proof of concept sample application. </p>
+      <p class="govuk-body">In your own words enter:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          a keyword
+        </li>
+        <li>
+          the name of a grant
+        </li>
+        <li>
+          any themes or topics that are of interest
+        </li>
+      </ul>
+
+      <p class="govuk-body">For example, I want to find funding options for boundaries and Arable land.</p>
+
+      {{ govukInput({
+        hint: {
+          text: "Prompt 1"
+        },
+        id: "prompt-id",
+        name: "prompt-name"
+      }) }}
+
+      {{ govukButton({
+        text: "Send"
+      }) }}
     </div>
     <div class="govuk-grid-column-one-third">
-      <aside class="app-related-items" role="complementary">
-        <h2 class="govuk-heading-m" id="subsection-title">
-          Useful links
-        </h2>
-        <nav role="navigation" aria-labelledby="subsection-title">
-          <ul class="govuk-list govuk-!-font-size-16">
-            <li>
-              <a class="govuk-link" href="/">
-                Home
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      <aside class="app-related-items" role="complementary"></aside>
 
     </div>
   </div>
