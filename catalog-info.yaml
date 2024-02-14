@@ -2,18 +2,27 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: fcp-find-ai-frontend
-  
   description: FIND AI Frontend
-  
   annotations:
     github.com/project-slug: defra/fcp-find-ai-frontend
+    dev.azure.com/project: DEFRA-FFC
     dev.azure.com/build-definition: fcp-find-ai-frontend
     sonarqube.org/project-key: fcp-find-ai-frontend
     grafana/dashboard-selector: "folderTitle == 'Managed Prometheus'"
+    backstage.io/kubernetes-id: fcp-find-ai-frontend
+  links:
+    - url: https://github.com/DEFRA/fcp-find-ai-frontend
+      title: View repository
+      icon: github
+    - url: https://dev.azure.com/defragovuk/DEFRA-FFC/_build?definitionId=5993&_a=summary
+      title: CI/CD Pipeline
+    - url: https://sonarcloud.io/summary/overall?id=fcp-find-ai-frontend
+      title: SonarCloud Analysis
+    - url: https://snyk.io/test/github/DEFRA/fcp-find-ai-frontend
+      title: Snyk Analysis
 spec:
   type: frontend
   lifecycle: alpha
   owner: "group:default/fcp-find"
-  
-  system: system:default/fcp-demo-service
+  system: "system:default/fcp-find-system"
   
