@@ -18,7 +18,7 @@ metadata:
       title: CI/CD Pipeline
     - url: https://sonarcloud.io/summary/overall?id=fcp-find-ai-frontend
       title: SonarCloud Analysis
-    - url: https://app.snyk.io/org/defra-adp/project/0b30ab1c-fdc7-41b1-a3dd-635a689f21eb/
+    - url: https://snyk.io/test/github/DEFRA/fcp-find-ai-frontend
       title: Snyk Analysis
 spec:
   type: frontend
