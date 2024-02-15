@@ -20,9 +20,15 @@ metadata:
       title: SonarCloud Analysis
     - url: https://snyk.io/test/github/DEFRA/fcp-find-ai-frontend
       title: Snyk Analysis
+  tags:
+    - node
+    - front-end
+    - external
 spec:
   type: frontend
   lifecycle: alpha
   owner: "group:default/fcp-find"
   system: "system:default/fcp-find-system"
+  dependsOn:
+    - ffc-find-ai-discovery
   
