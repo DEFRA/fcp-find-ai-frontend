@@ -30,5 +30,5 @@ spec:
   owner: "group:default/fcp-find"
   system: "system:default/fcp-find-system"
   dependsOn:
-    - ffc-find-ai-discovery
+    - "component:default/ffc-find-ai-discovery"
   
