@@ -52,9 +52,7 @@ extends:
       filetype: "yaml"
       
       # TO BE ADDED IF THERE ARE ANY KEYVAULT REFERENCES IN APP CONFIG
-      # variableGroups: 
-      #   - fcp-find-ai-frontend-snd1
-      #   - fcp-find-ai-frontend-snd2
-      #   - fcp-find-ai-frontend-snd3
-      # variables:
-      #   - fcp-find-ai-frontend-APPINSIGHTS-CONNECTIONSTRING
+      variableGroups: 
+        - fcp-find-ai-frontend-<environment>
+      variables:  # FILTER FOR SECRETS IN THE VARIABLE GROUP
+        - fcp-find-ai-frontend-APPINSIGHTS-CONNECTIONSTRING
