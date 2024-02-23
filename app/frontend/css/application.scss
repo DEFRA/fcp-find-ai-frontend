@@ -25,7 +25,6 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 }
 
 .govuk-prose-scope {
-
   // @extend inheritance
 
   // Contextual heading and paragraph combinations are inherited
@@ -77,5 +76,14 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
     @extend %govuk-section-break;
     @extend %govuk-section-break--visible;
     @extend %govuk-section-break--xl;
+  }
+}
+
+.chat-message {
+  margin-bottom: 40px;
+
+  .chat-accessory {
+    display: flex;
+    justify-content: space-between;
   }
 }

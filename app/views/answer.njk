@@ -5,6 +5,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "components/macro-chat-message.njk" import chatMessage %}
 
 {% block beforeContent %}
   {{ govukBreadcrumbs({
@@ -28,38 +29,13 @@
       }) }}
 
       <p class="govuk-body">
-        Use this tool to help callers with questions about funding from the Farming and Countryside programme
+        {% for message in messages %}
+          {{ chatMessage({
+            answer: message.answer,
+            urls: message.source_urls
+          }) }}
+        {% endfor %}
       </p>
-
-      <h2 class="govuk-heading-m">How can I assist you today?</h2>
-
-      <p class="govuk-body">In your own words enter:</p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>
-          a keyword
-        </li>
-        <li>
-          the name of a grant
-        </li>
-        <li>
-          any themes or topics that are of interest
-        </li>
-      </ul>
-
-      <p class="govuk-body">For example, I want to find funding options for boundaries and Arable land.</p>
-
-      {{ govukInput({
-        hint: {
-          text: "Prompt 1"
-        },
-        id: "prompt-id",
-        name: "prompt-name"
-      }) }}
-
-      {{ govukButton({
-        text: "Send",
-        href: "answer"
-      }) }}
     </div>
     <div class="govuk-grid-column-one-third">
       <aside class="app-related-items" role="complementary"></aside>
