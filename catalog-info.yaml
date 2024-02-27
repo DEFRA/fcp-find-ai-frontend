@@ -20,6 +20,20 @@ metadata:
       title: SonarCloud Analysis
     - url: https://snyk.io/test/github/DEFRA/fcp-find-ai-frontend
       title: Snyk Analysis
+    - url: https://portal.azure.com/defradev.onmicrosoft.com
+      title: Azure Portal - Defra Dev
+      icon: cloud
+    - url: https://portal.azure.com/Defra.onmicrosoft.com
+      title: Azure Portal - Defra
+      icon: cloud
+    - url: https://fcp-find-ai-frontend.snd3.adp.defra.gov.uk/
+      title: SND3
+    - url: https://fcp-find-ai-frontend.dev1.adp.defra.gov.uk/
+      title: DEV1
+    - url: https://fcp-find-ai-frontend.tst1.adp.defra.gov.uk/
+      title: TST1
+    - url: https://fcp-find-ai-frontend.pre1.adp.defra.gov.uk/
+      title: PRE1
   tags:
     - node
     - front-end
