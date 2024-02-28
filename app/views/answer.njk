@@ -7,21 +7,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "components/macro-chat-message.njk" import chatMessage %}
 
-{% block beforeContent %}
-  {{ govukBreadcrumbs({
-    items: [
-      {
-        text: "Home",
-        href: "#"
-      }]
-  }) }}
-{% endblock %}
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
-      <h1 class="govuk-heading-xl">Farming funding assistant</h1>
 
       {{ govukWarningText({
         text: "You must personally check results from this service before passing on any information",

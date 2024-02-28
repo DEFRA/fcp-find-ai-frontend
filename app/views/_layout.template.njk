@@ -1,6 +1,8 @@
  {# Backstage scaffolder to render the file as is and to skip this content to interpret as template #}
 {% extends "govuk/template.njk" %}
 
+{% from "components/macro-inverse-header.njk" import inverseHeader %}
+ 
 {% block head %}
   <!--[if !IE 8]><!-->
   <% htmlWebpackPlugin.files.css.forEach(file => { %>
@@ -10,7 +12,7 @@
 
   {# For Internet Explorer 8, you need to compile specific stylesheet #}
   {# see https://github.com/alphagov/govuk-frontend/blob/master/docs/installation/supporting-internet-explorer-8.md #}
-  <!--[if IE 8]>
+  <!--[if IE 8]>   
     <link href="{{ govukAssetPath }}/govuk-frontend/govuk/all-ie8.css" rel="stylesheet" />
   <![endif]-->
 
@@ -19,26 +21,22 @@
     <script src="/html5-shiv/html5shiv.js"></script>
   <![endif]-->
 {% endblock %}
-
+ 
 {% block header %}
-
   
-  
-  
-
-  
-  {{ govukHeader({
-      homepageUrl: "https://www.gov.uk/",
-      containerClasses: "govuk-width-container",
-      serviceName: "Find: Farming funding assistant",
-      serviceUrl: "/"
-    }) }}
-  
-
-
+  {{ inverseHeader({
+    homepageUrl: "https://www.gov.uk/",
+    containerClasses: "govuk-width-container",
+    heading: "Farming funding assistant",
+    caption: "Use this tool to help callers with questions about funding from the Farming and Countryside programme."
+  }) }}
+     
 {% endblock %}
 
-{% block pageTitle %}
+{% block beforeContent %}
+{% endblock %}
+
+{% block pageTitle %} 
   {{ pageTitle }}
 {% endblock %}
 

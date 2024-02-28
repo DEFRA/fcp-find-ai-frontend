@@ -1,0 +1,17 @@
+<div class="inverse-header-container">
+  <header class="inverse-header {{ params.containerClasses | default('govuk-width-container') }}">
+    <div class="title-container">
+      {% if params.heading %}
+        <h1 class="title-text govuk-heading-xl">
+          {{ params.heading }}
+        </h1>
+      {% endif %}
+
+      {% if params.caption %}
+        <span class="title-context govuk-caption-xl">
+          {{ params.caption }}
+        </span>
+      {% endif %}
+    </div>
+  </header>
+</div>

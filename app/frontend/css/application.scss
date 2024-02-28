@@ -1,6 +1,10 @@
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
 
+$lightGreen: #00a33c;
+
+@import "components/inverse-header";
+
 .nojs-hidden {
   display: none;
 }
