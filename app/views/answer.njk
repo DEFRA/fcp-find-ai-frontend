@@ -5,33 +5,29 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "components/macro-chat-message.njk" import chatMessage %}
 
 {% block content %}
   <div class="govuk-grid-row">
-    {{ govukWarningText({
+    <div class="govuk-grid-column-two-thirds">
+
+      {{ govukWarningText({
         text: "You must personally check results from this service before passing on any information",
         iconFallbackText: "Warning"
-    }) }}
-
-    {% if envTest %}
-      {{ envTest }}
-    {% endif %}
-
-    {{ fundingFarmingApiUri }}
-
-    <form action="answer">
-      {{ govukInput({
-          id: "prompt-id",
-          name: "prompt-name"
       }) }}
 
-      {{ govukButton({
-          text: "Send",
-          type: "submit"
-      }) }}
-    </form>
+      <p class="govuk-body">
+        {% for message in messages %}
+          {{ chatMessage({
+            answer: message.answer,
+            urls: message.source_urls
+          }) }}
+        {% endfor %}
+      </p>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      <aside class="app-related-items" role="complementary"></aside>
 
-    {% include "components/instructions.njk" %}
+    </div>
   </div>
 {% endblock %}

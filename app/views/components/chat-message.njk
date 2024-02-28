@@ -1,0 +1,14 @@
+<div class="chat-message">
+    <div class="chat-accessory">
+        <span class="govuk-caption-m">Farming funding assistant</span>
+        <span class="govuk-caption-m">Time</span>
+    </div>
+    <div class="answer govuk-body">
+        {{ params.answer }}
+    </div>
+    <div class="govuk-body">
+        {% for chatUrl in params.urls %}
+            <a href="{{ chatUrl }}">{{ chatUrl }}</a>
+        {% endfor %}
+    </div>
+</div>

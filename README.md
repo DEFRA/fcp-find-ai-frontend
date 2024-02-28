@@ -1,4 +1,4 @@
-# fcp-find-ai-frontend
+# Farming funding assistant
 
 ## Prerequisites
 
