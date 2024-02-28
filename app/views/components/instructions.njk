@@ -1,0 +1,25 @@
+{% set instructionsHtml %}
+<p class="govuk-body">When you ask a question:</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>
+    be specific - for example, use the name of a scheme or a code
+  </li>
+  <li>
+    give context - for example, say what your caller does and briefly describe their needs and circumstances
+  </li>
+  <li>
+    use correct grammar and punctuation
+  </li>
+  <li>
+    never include sensitive information of personal data
+  </li>
+</ul>
+<p class="govuk-body">
+  If you want the tool to give more detail about something, ask more questions. Be clear and specific.
+</p>
+{% endset %}
+
+{{ govukDetails({
+  summaryText: "How to use the assistant",
+  html: instructionsHtml
+}) }}
