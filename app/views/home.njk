@@ -15,15 +15,23 @@
     }) }}
 
     {% if envTest %}
-      {{ envTest }}
+      <input type="hidden" value="{{ envTest }}"/>
     {% endif %}
 
-    {{ fundingFarmingApiUri }}
+    <input type="hidden" value="{{ fundingFarmingApiUri }}"/> 
+    <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/> 
+    
+    {% if validationError %}
+      {% set errorMessageText %} Please enter your query here {% endset %}
+    {% endif%}
 
-    <form action="answer">
+    <form method="POST" action="answer">
       {{ govukInput({
           id: "prompt-id",
-          name: "prompt-name"
+          name: "input",
+          errorMessage: {
+            text: "Please enter your query here"
+          } if errorMessageText else undefined
       }) }}
 
       {{ govukButton({
