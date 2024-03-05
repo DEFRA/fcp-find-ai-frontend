@@ -48,7 +48,8 @@ module.exports = {
           fundingFarmingApiUri: config.fundingFarmingApiUri,
           appInsightsKey: config.appInsightsKey,
           validationError,
-          messages
+          messages,
+          input
         })
       } catch (error) {
         console.error(error)

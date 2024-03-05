@@ -146,6 +146,10 @@ $lightGreen: #00a33c;
 
   .promptTextArea {
     display: block;
+
+    textarea {
+      min-height: 67px;
+    }
   }
 
   .sendButton {

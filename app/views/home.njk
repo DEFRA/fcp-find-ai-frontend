@@ -15,17 +15,21 @@
       {{ govukWarningText({
         text: "Check results before you pass them on",
         iconFallbackText: "Warning"
-    }) }}
+      }) }}
 
       <div class="govuk-body">
+        {% if input %}
+          <div class="govuk-body govuk-!-font-weight-bold">{{ input }}</div>
+        {% endif %}
+
         {% for message in messages %}
           {{ chatMessage({
-          answer: message.answer | markdown | safe,
-          urls: message.source_urls,
-          items: message.items
-        }) }}
+            answer: message.answer | markdown | safe,
+            urls: message.source_urls,
+            items: message.items
+          }) }}
         {% endfor %}
-      </p>
+      </div>
 
       <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
       <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/>
