@@ -1,5 +1,6 @@
 const path = require('path')
 const nunjucks = require('nunjucks')
+const markdownit = require('markdown-it')
 const pkg = require('../../package.json')
 
 module.exports = {
@@ -15,12 +16,22 @@ module.exports = {
           }
         },
         prepare: (options, next) => {
-          options.compileOptions.environment = nunjucks.configure([
-            path.join(options.relativeTo || process.cwd(), options.path),
-            'node_modules/govuk-frontend/'
-          ], {
-            autoescape: true
-          })
+          options.compileOptions.environment = nunjucks.configure(
+            [path.join(options.relativeTo || process.cwd(), options.path), 'node_modules/govuk-frontend/'],
+            {
+              autoescape: true
+            }
+          )
+
+          if (!options?.testEnv) {
+            const markdown = markdownit()
+
+            options.compileOptions.environment?.addFilter('markdown', function (obj) {
+              const markdownHtml = markdown.render(obj)
+
+              return markdownHtml
+            })
+          }
 
           return next()
         }
@@ -32,8 +43,8 @@ module.exports = {
       appVersion: pkg.version,
       assetPath: '/static',
       govukAssetPath: '/assets',
-      serviceName: 'fcp-find-ai-frontend',
-      pageTitle: 'fcp-find-ai-frontend - GOV.UK'
+      serviceName: 'Farming funding assistant',
+      pageTitle: 'Farming funding assistant - GOV.UK'
     }
   }
 }

@@ -4,4 +4,4 @@
 - key: FARMING_FUNDING_API_URI
   value: https://find-ai-data-gathering.azurewebsites.net/api
 - key: FARMING_FUNDING_API_KEY
-  value: 1It41mEYcNh3dmyD-iEPfp-oPUuoEKXGurG9KxY11SEKAzFujbN5Eg==
+  value: "{{servicename}}-FARMING-FUNDING-API-KEY"

@@ -7,50 +7,64 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "components/macro-chat-message.njk" import chatMessage %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% block content %}
   <div class="govuk-grid-row">
-    {{ govukWarningText({
-        text: "You must personally check results from this service before passing on any information",
+    <div class="govuk-width-container">
+      {{ govukWarningText({
+        text: "Check results before you pass them on",
         iconFallbackText: "Warning"
     }) }}
 
-    <p class="govuk-body">
-      {% for message in messages %}
-        {{ chatMessage({
-          answer: message.answer,
-          urls: message.source_urls
+      <div class="govuk-body">
+        {% for message in messages %}
+          {{ chatMessage({
+          answer: message.answer | markdown | safe,
+          urls: message.source_urls,
+          items: message.items
         }) }}
-      {% endfor %}
-    </p>
+        {% endfor %}
+      </p>
 
-    {% if envTest %}
-      <input type="hidden" value="{{ envTest }}"/>
-    {% endif %}
+      <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
+      <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/>
 
-    <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
-    <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/>
+      {% if validationError %}
+        {% set errorMessageText %} Please enter your query here {% endset %}
+      {% endif %}
 
-    {% if validationError %}
-      {% set errorMessageText %} Please enter your query here {% endset %}
-    {% endif %}
+      <form method="POST" id="sendForm">
+        <div class="promptArea">
+          <div class="promptTextArea">
+            {{ govukTextarea({
+              classes: "textArea",
+              id: "prompt-id", 
+              name: "input",
+              errorMessage: {
+                text: "Please enter your query here"
+              } if errorMessageText else undefined
+            }) }}
+          </div>
 
-    <form method="POST" id="sendForm">
-      {{ govukInput({
-        id: "prompt-id", 
-        name: "input",
-        errorMessage: {
-          text: "Please enter your query here"
-        } if errorMessageText else undefined
-      }) }}
+          <button type="submit" class="sendButton govuk-button" id="sendButton" aria-label="Send">
+            <svg
+              class="gem-c-search__icon"
+              width="27"
+              height="27"
+              viewBox="0 0 27 27"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              focusable="false">
+              <circle cx="12.0161" cy="11.0161" r="8.51613" stroke="currentColor" stroke-width="3"></circle>
+              <line x1="17.8668" y1="17.3587" x2="26.4475" y2="25.9393" stroke="currentColor" stroke-width="3"></line>
+            </svg>
+          </button>
+        </div>
+      </form>
 
-      {{ govukButton({
-        id: "sendButton",
-        text: "Send",
-        type: "submit" 
-      }) }}
-    </form>
-
-    {% include "components/instructions.njk" %}
+      {% include "components/instructions.njk" %}
+    </div>
   </div>
 {% endblock %}

@@ -21,8 +21,13 @@ describe('viewPlugin', () => {
 
     const src = 'test'
     const options = {
+      testEnv: true,
       environment: {},
-      compileOptions: {}
+      compileOptions: {
+        environment: {
+          addFilter: jest.fn()
+        }
+      }
     }
 
     view.options.engines.njk.compile(src, options)
@@ -30,12 +35,13 @@ describe('viewPlugin', () => {
 
     const next = jest.fn()
     view.options.engines.njk.prepare(options, next)
-    expect(nunjucks.configure).toHaveBeenCalledWith([
-      path.join(options.relativeTo || process.cwd(), options.path),
-      'node_modules/govuk-frontend/'
-    ], {
-      autoescape: true
-    })
+
+    expect(nunjucks.configure).toHaveBeenCalledWith(
+      [path.join(options.relativeTo || process.cwd(), options.path), 'node_modules/govuk-frontend/'],
+      {
+        autoescape: true
+      }
+    )
     expect(next).toHaveBeenCalled()
   })
 })

@@ -14,4 +14,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
       sendForm.submit()
     }
   }
+
+  const promptTextArea = document.getElementById('prompt-id')
+
+  if (promptTextArea) {
+    promptTextArea.addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+
+        sendForm.submit()
+      }
+    })
+  }
 })

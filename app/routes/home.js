@@ -1,4 +1,5 @@
 const axios = require('axios')
+
 const config = require('../config')
 
 module.exports = {
@@ -6,18 +7,16 @@ module.exports = {
   path: '/',
   options: {
     handler: async (request, h) => {
-      console.log('Loaded home')
       let validationError = false
-
-      if (request.query?.error === 'validation') {
-        validationError = true
-      }
 
       const input = request.payload?.input
 
-      if (!input) {
+      if (!input || input?.trim() === '') {
+        if (input?.trim() === '') {
+          validationError = true
+        }
+
         return h.view('home', {
-          envTest: config.envTest,
           fundingFarmingApiUri: config.fundingFarmingApiUri,
           appInsightsKey: config.appInsightsKey,
           validationError
@@ -46,7 +45,6 @@ module.exports = {
         const messages = [response.data]
 
         return h.view('home', {
-          envTest: config.envTest,
           fundingFarmingApiUri: config.fundingFarmingApiUri,
           appInsightsKey: config.appInsightsKey,
           validationError,

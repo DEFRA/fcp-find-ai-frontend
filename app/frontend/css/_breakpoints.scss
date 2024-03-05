@@ -1,0 +1,60 @@
+$breakpoints: (
+    "xs": 0px, //targeting <568px devices (e.g. all iPhones <6)
+    "sm": 568px, //targeting >=568px devices (e.g. iPhones >=6)
+    "md": 768px, //targeting >=768px tablets (e.g. portrait iPad)
+    "lg": 1004px //targeting >=1024px tablets (e.g. landscape iPad) and desktops but leaving room for the scroll bar
+);
+ 
+@mixin breakpoint($class) {
+    @if $class==mobile-s {
+        @media (min-width: 320px) {
+            @content;
+        }
+    }
+
+    @else if $class==mobile-l {
+        @media (min-width: 425px) {
+            @content;
+        }
+    }
+
+    @else if $class==tablet {
+        @media (min-width: 768px) {
+            @content;
+        }
+    }
+
+    @else if $class==laptop-s {
+        @media (min-width: 1024px) {
+            @content;
+        }
+    }
+
+    @else if $class==laptop-m {
+        @media (min-width: 1100px) {
+            @content;
+        }
+    }
+
+    @else if $class==laptop-l {
+        @media (min-width: 1440px) {
+            @content;
+        }
+    }
+
+    @else if $class==desktop-s {
+        @media (min-width: 1920px) {
+            @content;
+        }
+    }
+
+    @else if $class==desktop-l {
+        @media (min-width: 1920px) {
+            @content;
+        }
+    }
+
+    @else {
+        @warn "Breakpoint mixin supports: xs, sm, md, lg";
+    }
+}
