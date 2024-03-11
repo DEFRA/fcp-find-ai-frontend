@@ -12,6 +12,7 @@ async function createServer () {
   await server.register(require('./plugins/router'))
   await server.register(require('./plugins/cookies'))
   await server.register(require('./plugins/error-pages'))
+  await server.register(require('./plugins/locals'))
   await server.register({
     plugin: require('./plugins/header'),
     options: {

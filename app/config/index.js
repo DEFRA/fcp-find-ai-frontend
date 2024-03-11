@@ -5,6 +5,8 @@ const config = {
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
+  version: process.env.npm_package_version,
+
   auth: {
     authUser: process.env.AUTH_USER,
     authPassword: process.env.AUTH_PASSWORD,

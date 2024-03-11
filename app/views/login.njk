@@ -4,6 +4,9 @@
 {% endblock %}
 
 {% block content %}
+  <input type="hidden" name="version "value="{{ version }}">
+  <input type="hidden" name="config" value="{{ config }}">
+
   <form action="login" method="POST">
     <div><input required="required" type="text" name="username" placeholder="Username" style="margin-bottom: 20px"/></div>
     <div><input required="required" type="password" name="password" placeholder="Password" style="margin-bottom: 20px"/></div>
