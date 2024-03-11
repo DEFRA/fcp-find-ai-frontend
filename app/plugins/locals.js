@@ -6,8 +6,8 @@ const localVars = [
     value: config.version
   },
   {
-    key: 'config',
-    value: JSON.stringify(config)
+    key: 'auth',
+    value: JSON.stringify({ username: config.auth.authUser, verificationLength: config.auth.authVerification?.length })
   }
 ]
 

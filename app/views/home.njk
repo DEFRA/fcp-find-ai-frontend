@@ -12,8 +12,8 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
+      <input type="hidden" name="auth "value="{{ auth }}">
       <input type="hidden" name="version "value="{{ version }}">
-      <input type="hidden" name="config" value="{{ config }}">
 
       {{ govukWarningText({
         text: "Check results before you pass them on",
