@@ -4,5 +4,3 @@
   value: "3000"
 - key: APPINSIGHTS_CLOUDROLE
   value: "{{serviceName}}"
-- key: FARMING_FUNDING_API_URI
-  value: valuefromappconfigmain

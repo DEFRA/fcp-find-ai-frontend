@@ -1,5 +1,6 @@
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
+@import "breakpoints";
 
 $lightGreen: #00a33c;
 
@@ -89,5 +90,83 @@ $lightGreen: #00a33c;
   .chat-accessory {
     display: flex;
     justify-content: space-between;
+  }
+
+  .cards {
+    list-style-type: none;
+    padding: 0;
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: 1fr;
+    grid-template-columns: 1fr;
+
+    .card-item {
+      border-top: 1px solid #b1b4b6;
+      position: relative;
+      padding: 15px 0 0;
+
+      h3 {
+        a {
+          &::before {
+            border-right: 3px solid #1d70b8;
+            border-top: 3px solid #1d70b8;
+            content: "";
+            height: 7px;
+            position: absolute;
+            right: 5px;
+            top: 23px;
+            transform: translateY(0) rotate(45deg) scale(1);
+            width: 7px;
+          }
+
+          &::after {
+            bottom: 0;
+            content: "";
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+          }
+        }
+      }
+    }
+
+    @include breakpoint("tablet") {
+      grid-template-columns: 1fr 1fr;
+
+      .card-item {
+        margin: 15px;
+      }
+    }
+  }
+}
+
+.promptArea {
+  position: relative;
+
+  .promptTextArea {
+    display: block;
+
+    textarea {
+      min-height: 67px;
+    }
+  }
+
+  .sendButton {
+    position: absolute;
+    bottom: 10px;
+    right: 16px;
+    margin: 0;
+    border-radius: 35px;
+
+    background-color: #00a33b;
+
+    &::active {
+      top: initial !important;
+    }
+
+    &.govuk-button:active {
+      top: initial !important;
+    }
   }
 }

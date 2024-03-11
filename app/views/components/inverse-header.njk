@@ -8,8 +8,14 @@
       {% endif %}
 
       {% if params.caption %}
-        <span class="title-context govuk-caption-xl">
+        <span class="title-context govuk-heading-l">
           {{ params.caption }}
+        </span>
+      {% endif %}
+
+      {% if params.subCaption %}
+        <span class="subcaption govuk-heading-m">
+          {{ params.subCaption }}
         </span>
       {% endif %}
     </div>

@@ -11,12 +11,20 @@
 
       .title-text {
         margin-bottom: 5px;
+
+        @include breakpoint("tablet") {
+          font-size: 64px;
+        }
       }
 
       .govuk-prose-scope h1,
       .govuk-heading-xl,
-      .govuk-caption-xl {
+      .govuk-heading-l,
+      .govuk-caption-xl,
+      .govuk-heading-m {
         color: govuk-colour("white");
+        font-weight: bold;
+        margin-bottom: 10px;
       }
     }
   }

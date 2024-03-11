@@ -56,3 +56,4 @@ extends:
         - fcp-find-ai-frontend-<environment>
       variables:  # FILTER FOR SECRETS IN THE VARIABLE GROUP
         - fcp-find-ai-frontend-APPINSIGHTS-CONNECTIONSTRING
+        - fcp-find-ai-frontend-FARMING-FUNDING-API-KEY
