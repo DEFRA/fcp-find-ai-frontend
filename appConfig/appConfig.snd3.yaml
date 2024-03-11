@@ -5,3 +5,11 @@
   value: https://find-ai-data-gathering.azurewebsites.net/api
 - key: FARMING_FUNDING_API_KEY
   value: "{{servicename}}-FARMING-FUNDING-API-KEY"
+- key: COOKIE_PASSWORD
+  value: "{{servicename}}-COOKIE-PASSWORD"
+- key: AUTH_USER
+  value: "{{servicename}}-AUTH-USER"
+- key: AUTH_PASSWORD
+  value: "{{servicename}}-AUTH-PASSWORD"
+- key: AUTH_VERIFICATION
+  value: "{{servicename}}-AUTH-VERIFICATION"

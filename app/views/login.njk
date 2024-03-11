@@ -1,0 +1,17 @@
+{% extends '_layout.njk' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+  <form action="login" method="POST">
+    <div><input required="required" type="text" name="username" placeholder="Username" style="margin-bottom: 20px"/></div>
+    <div><input required="required" type="password" name="password" placeholder="Password" style="margin-bottom: 20px"/></div>
+
+    <input type="submit" value="Login" style="margin-bottom: 20px"/>
+  </form>
+
+  {% if error %}
+  <span style="color: red">{{ error }}</span>
+  {% endif %}
+{% endblock %}

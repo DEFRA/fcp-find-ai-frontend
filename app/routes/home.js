@@ -1,60 +1,63 @@
 const axios = require('axios')
+const { isAuthenticated } = require('../cookie-manager')
 
 const config = require('../config')
 
 module.exports = {
   method: ['GET', 'POST'],
   path: '/',
-  options: {
-    handler: async (request, h) => {
-      let validationError = false
+  handler: async (request, h) => {
+    if (!isAuthenticated(request, h)) {
+      return h.redirect('/login')
+    }
 
-      const input = request.payload?.input
+    let validationError = false
 
-      if (!input || input?.trim() === '') {
-        if (input?.trim() === '') {
-          validationError = true
-        }
+    const input = request.payload?.input
 
-        return h.view('home', {
-          fundingFarmingApiUri: config.fundingFarmingApiUri,
-          appInsightsKey: config.appInsightsKey,
-          validationError
-        })
+    if (!input || input?.trim() === '') {
+      if (input?.trim() === '') {
+        validationError = true
       }
 
-      try {
-        const url = `${config.fundingFarmingApiUri}/answer_query`
+      return h.view('home', {
+        fundingFarmingApiUri: config.fundingFarmingApiUri,
+        appInsightsKey: config.appInsightsKey,
+        validationError
+      })
+    }
 
-        console.log(`Performing POST request: ${url}`)
-        const axiosConfig = {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-functions-key': config.fundingFarmingApiKey
-          }
+    try {
+      const url = `${config.fundingFarmingApiUri}/answer_query`
+
+      console.log(`Performing POST request: ${url}`)
+      const axiosConfig = {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-functions-key': config.fundingFarmingApiKey
         }
+      }
 
-        const response = await axios.post(
-          url,
-          {
-            input
-          },
-          axiosConfig
-        )
-
-        const messages = [response.data]
-
-        return h.view('home', {
-          fundingFarmingApiUri: config.fundingFarmingApiUri,
-          appInsightsKey: config.appInsightsKey,
-          validationError,
-          messages,
+      const response = await axios.post(
+        url,
+        {
           input
-        })
-      } catch (error) {
-        console.error(error)
-        throw error
-      }
+        },
+        axiosConfig
+      )
+
+      const messages = [response.data]
+
+      return h.view('home', {
+        fundingFarmingApiUri: config.fundingFarmingApiUri,
+        appInsightsKey: config.appInsightsKey,
+        validationError,
+        messages,
+        input
+      })
+    } catch (error) {
+      console.error(error)
+      throw error
     }
   }
 }
