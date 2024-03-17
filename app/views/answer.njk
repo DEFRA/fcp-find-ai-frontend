@@ -1,0 +1,46 @@
+{# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
+{% extends '_layout.njk' %}
+
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "components/macro-chat-message.njk" import chatMessage %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "components/macro-defra-header.njk" import defraHeader %}
+
+{% block header %}
+  {{ defraHeader({
+    homepageUrl: "https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs",
+    serviceName: serviceName
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <input type="hidden" name="version" value="{{ version }}">
+        <div class="govuk-body">
+          {% if input %}
+            <div class="govuk-heading-l govuk-!-font-weight-bold">{{ input }}</div>
+          {% endif %}
+
+          {% for message in messages %}
+            {{ chatMessage({
+              answer: message.answer | markdown | safe,
+              urls: message.source_urls,
+              items: message.items
+            }) }}
+          {% endfor %}
+        </div>
+
+        <div class="sticky govuk-!-display-none-print">
+          <div class="govuk-width-container">
+            <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
+            <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/> {% include "components/chat-input-box.njk" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endblock %}

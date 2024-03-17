@@ -1,0 +1,63 @@
+.defra-header {
+  background: #01ae43;
+  color: #fff;
+
+  .govuk-header__container {
+    border-bottom: 0px solid #fff;
+    margin-bottom: 15px;
+
+    .govuk-header__logo {
+      margin-bottom: 0px;
+
+      @include breakpoint("tablet") {
+        margin-bottom: 0px;
+      }
+
+      .govuk-header__link--homepage {
+        display: flex;
+      }
+
+      .govuk-header__logotype {
+        display: flex;
+        border-left: 2px solid white;
+        align-items: center;
+
+        .logoContainer {
+          margin-left: 10px;
+        }
+      }
+    }
+
+    .govuk-header__logotype-text {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+      color: #fff;
+      font-weight: normal;
+      font-size: 15px;
+
+      @include breakpoint("tablet") {
+        font-size: 18px;
+      }
+
+      span {
+        text-wrap: nowrap;
+      }
+    }
+
+    .govuk-header__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 48px;
+
+      @include breakpoint("tablet") {
+        justify-content: flex-end;
+      }
+
+      .govuk-header__service-name {
+        margin-bottom: 0px;
+      }
+    }
+  }
+}

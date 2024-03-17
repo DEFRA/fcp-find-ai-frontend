@@ -1,6 +1,19 @@
-<div class="chat-message">
+<div class="chat-message" id="chatMessage">
   <div class="chat-accessory">
-    <span class="govuk-caption-m">Farming funding assistant</span>
+    <div class="govuk-grid-column-three-quarters">
+      <span class="message-owner govuk-body-l govuk-!-font-weight-bold">
+        <span class="message-icon">{% include "components/message-icon.njk" %}</span>
+        Farming funding assistant
+      </span>
+    </div>
+    <div class="chat-actions govuk-grid-column-one-quarter govuk-!-display-none-print">
+      <button type="button" class="defraButton govuk-button" id="copyButton" aria-label="Copy">
+        {% include "components/icon-copy.njk" %}
+      </button>
+      <button type="button" class="defraButton govuk-button" id="printButton" aria-label="Print">
+        {% include "components/icon-printer.njk" %}
+      </button>
+    </div>
   </div>
   <div class="answer govuk-body">
     {{ params.answer }}

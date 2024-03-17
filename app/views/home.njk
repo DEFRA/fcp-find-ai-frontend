@@ -1,76 +1,19 @@
 {# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
 {% extends '_layout.njk' %}
 
-{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/details/macro.njk" import govukDetails %}
-{% from "components/macro-chat-message.njk" import chatMessage %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
       <input type="hidden" name="version" value="{{ version }}">
 
-      {{ govukWarningText({
-        text: "Check results before you pass them on",
-        iconFallbackText: "Warning"
-      }) }}
+        {# <div class="sticky"> #}
+          <div class="govuk-width-container">
+            <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
+            <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/>
 
-      <div class="govuk-body">
-        {% if input %}
-          <div class="govuk-body govuk-!-font-weight-bold">{{ input }}</div>
-        {% endif %}
-
-        {% for message in messages %}
-          {{ chatMessage({
-            answer: message.answer | markdown | safe,
-            urls: message.source_urls,
-            items: message.items
-          }) }}
-        {% endfor %}
-      </div>
-
-      <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
-      <input type="hidden" name="appInsightsKey" value="{{ appInsightsKey }}"/>
-
-      {% if validationError %}
-        {% set errorMessageText %} Please enter your query here {% endset %}
-      {% endif %}
-
-      <form method="POST" id="sendForm">
-        <div class="promptArea">
-          <div class="promptTextArea">
-            {{ govukTextarea({
-              classes: "textArea",
-              id: "prompt-id", 
-              name: "input",
-              errorMessage: {
-                text: "Please enter your query here"
-              } if errorMessageText else undefined
-            }) }}
+            {% include "components/chat-input-box.njk" %}
           </div>
-
-          <button type="submit" class="sendButton govuk-button" id="sendButton" aria-label="Send">
-            <svg
-              class="gem-c-search__icon"
-              width="27"
-              height="27"
-              viewBox="0 0 27 27"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-              focusable="false">
-              <circle cx="12.0161" cy="11.0161" r="8.51613" stroke="currentColor" stroke-width="3"></circle>
-              <line x1="17.8668" y1="17.3587" x2="26.4475" y2="25.9393" stroke="currentColor" stroke-width="3"></line>
-            </svg>
-          </button>
-        </div>
-      </form>
-
-      {% include "components/instructions.njk" %}
+        {# </div> #}
+      </div>
     </div>
-  </div>
-{% endblock %}
+  {% endblock %}
