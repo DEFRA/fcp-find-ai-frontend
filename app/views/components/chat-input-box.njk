@@ -44,10 +44,23 @@
       </svg>
     </button>
   </div>
-</form>
 
 <span class="hintText govuk-body-s">
   You cannot advise callers on which funding to apply for - you can only direct them to GOV.UK information.
 </span>
+
+<div class="pills">
+  <div class="schemePill">
+    <label class="schemeLabel" for="schemeCS">countryside stewardship</label>
+    <input class="schemeCheckbox" type="checkbox" id="schemeCS" name="scheme" value="CS">
+  </div>
+
+  <div class="schemePill">
+    <label class="schemeLabel" for="schemeFETF">Farming equipment & technology fund</label>
+    <input class="schemeCheckbox" type="checkbox" id="schemeFETF" name="scheme" value="FETF">
+  </div>
+</div>
+
+</form>
 
 {% include "components/instructions.njk" %}

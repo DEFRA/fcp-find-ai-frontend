@@ -29,6 +29,8 @@ module.exports = {
 
     try {
       const url = `${config.fundingFarmingApiUri}/answer_query`
+      console.log(request.payload)
+      const selectedSchemes = [].concat(request.payload.scheme || [])
 
       console.log(`Performing POST request: ${url}`)
       const axiosConfig = {
@@ -41,7 +43,8 @@ module.exports = {
       const response = await axios.post(
         url,
         {
-          input
+          input,
+          'selected_schemes': selectedSchemes,
         },
         axiosConfig
       )
