@@ -22,7 +22,6 @@ module.exports = {
 
       return h.view('home', {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
-        appInsightsKey: config.appInsightsKey,
         validationError,
         commandText: 'Start search...'
       })
@@ -51,7 +50,6 @@ module.exports = {
 
       return h.view('answer', {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
-        appInsightsKey: config.appInsightsKey,
         validationError,
         messages,
         input,
