@@ -1,17 +1,44 @@
+const config = require('../../../app/config')
 const home = require('../../../app/routes/home')
 
 describe('/home', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
-  test('should return success', async () => {
-    const mockRequest = {}
+  test('unauthenticated users are redirected to login page', async () => {
+    const mockRequest = {
+      state: {
+        ffa_cookie_policy: {
+          auth: 'placeholder'
+        }
+      }
+    }
     const mockH = {
-      view: jest.fn()
+      view: jest.fn(),
+      redirect: jest.fn()
     }
 
-    await home.options.handler(mockRequest, mockH)
+    await home.handler(mockRequest, mockH)
 
-    expect(mockH.view).toHaveBeenCalled()
+    expect(mockH.redirect).toHaveBeenCalled()
+  })
+
+  test('render the homepage', async () => {
+    config.auth.authVerification = 'placeholder'
+    const mockRequest = {
+      state: {
+        ffa_cookie_policy: {
+          auth: 'placeholder'
+        }
+      }
+    }
+    const mockH = {
+      view: jest.fn(),
+      redirect: jest.fn()
+    }
+
+    await home.handler(mockRequest, mockH)
+
+    expect(mockH.view).toHaveBeenCalledWith('home', expect.objectContaining({}))
   })
 })

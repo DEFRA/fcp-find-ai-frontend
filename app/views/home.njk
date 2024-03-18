@@ -12,6 +12,8 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
+      <input type="hidden" name="version" value="{{ version }}">
+
       {{ govukWarningText({
         text: "Check results before you pass them on",
         iconFallbackText: "Warning"
