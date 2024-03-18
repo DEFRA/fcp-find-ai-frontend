@@ -1,6 +1,6 @@
 {
   "name": "fcp-find-ai-frontend",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "",
   "homepage": "github.com?owner=defra&repo=fcp-find-ai-frontend&organization=defra",
   "main": "app/index.js",

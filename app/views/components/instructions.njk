@@ -1,22 +1,24 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
 {% set instructionsHtml %}
-<p class="govuk-body">When you ask a question:</p>
+<p class="govuk-body">When you search:</p>
 <ul class="govuk-list govuk-list--bullet">
   <li>
-    be specific - for example, use the name of a scheme or a grant code 
+    use keywords or sentences
   </li>
   <li>
-    give context - for example, enter land type, its size, current and planned use
+    ask follow-on questions to get more detail about something
   </li>
   <li>
-    ask more questions if you need more detail
+    be specific - for example, use the name of a scheme or a grant code
   </li>
   <li>
-    never include sensitive information or personal data
+    never include sensitive or personal information
   </li>
 </ul>
 {% endset %}
 
 {{ govukDetails({
-  summaryText: "Tips on using the assistant",
+  summaryText: "Tips on how to search",
   html: instructionsHtml
 }) }}

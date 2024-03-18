@@ -14,9 +14,19 @@
       {% endif %}
 
       {% if params.subCaption %}
-        <span class="subcaption govuk-heading-m">
-          {{ params.subCaption }}
-        </span>
+        <div>
+          <span class="subcaption govuk-heading-m">
+            {{ params.subCaption }}
+          </span>
+        </div>
+      {% endif %}
+
+      {% if params.subCaptionTwo %}
+        <div>
+          <span class="subcaption govuk-heading-m">
+            {{ params.subCaptionTwo }}
+          </span>
+        </div>
       {% endif %}
     </div>
   </header>

@@ -22,8 +22,8 @@ module.exports = {
 
       return h.view('home', {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
-        appInsightsKey: config.appInsightsKey,
-        validationError
+        validationError,
+        commandText: 'Start search...'
       })
     }
 
@@ -48,12 +48,12 @@ module.exports = {
 
       const messages = [response.data]
 
-      return h.view('home', {
+      return h.view('answer', {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
-        appInsightsKey: config.appInsightsKey,
         validationError,
         messages,
-        input
+        input,
+        commandText: 'Follow-on search...'
       })
     } catch (error) {
       console.error(error)

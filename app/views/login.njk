@@ -3,32 +3,41 @@
 {% block header %}{% endblock %}
 
 {% block content %}
-  <input type="hidden" name="version" value="{{ version }}">
-
-  <form action="login" method="POST">
+<div class="govuk-width-container">
+  <div class="govuk-grid-row govuk-!-margin-bottom-4">
+  <div class="govuk-grid-column-three-quarters">
     <div>
-      <input
-        required="required"
-        class="govuk-input"
-        type="text"
-        name="username"
-        placeholder="Username"
-        style="margin-bottom: 20px"/>
-    </div>
-    <div>
-      <input
-        class="govuk-input"
-        required="required"
-        type="password"
-        name="password"
-        placeholder="Password"
-        style="margin-bottom: 20px"/>
-    </div>
+    <input type="hidden" name="version" value="{{ version }}">
 
-    <input class="govuk-button" type="submit" value="Login" style="margin-bottom: 20px"/>
-  </form>
+    <form action="login" method="POST">
+      <div class="govuk-body">
+        <input
+          required="required"
+          class="govuk-input"
+          type="text"
+          name="username"
+          placeholder="Username"
+          style="margin-bottom: 20px"/>
+      </div>
+      <div>
+        <input
+          class="govuk-input"
+          required="required"
+          type="password"
+          name="password"
+          placeholder="Password"
+          style="margin-bottom: 20px"/>
+      </div>
 
-  {% if error %}
-    <span class="" style="color: red">{{ error }}</span>
-  {% endif %}
+      <input class="govuk-button" type="submit" value="Login" style="margin-bottom: 20px"/>
+    </form>
+
+    {% if error %}
+      <span class="" style="color: red">{{ error }}</span>
+    {% endif %}
+    </div>
+  </div>
+  <div class="govuk-grid-column-one-quarter"></div>
+  </div>
+</div>
 {% endblock %}
