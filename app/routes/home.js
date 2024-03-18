@@ -29,7 +29,6 @@ module.exports = {
 
     try {
       const url = `${config.fundingFarmingApiUri}/answer_query`
-      console.log(request.payload)
       const selectedSchemes = [].concat(request.payload.scheme || [])
 
       console.log(`Performing POST request: ${url}`)
@@ -44,7 +43,7 @@ module.exports = {
         url,
         {
           input,
-          'selected_schemes': selectedSchemes,
+          selected_schemes: selectedSchemes
         },
         axiosConfig
       )
@@ -56,7 +55,11 @@ module.exports = {
         validationError,
         messages,
         input,
-        commandText: 'Follow-on search...'
+        commandText: 'Follow-on search...',
+        csSelected: selectedSchemes.includes('CS'),
+        fetfSelected: selectedSchemes.includes('FETF'),
+        sigSelected: selectedSchemes.includes('SIG'),
+        sfiSelected: selectedSchemes.includes('SFI')
       })
     } catch (error) {
       console.error(error)
