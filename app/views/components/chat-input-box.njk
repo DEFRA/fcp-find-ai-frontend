@@ -44,10 +44,53 @@
       </svg>
     </button>
   </div>
-</form>
 
-<span class="hintText govuk-body-s">
-  You cannot advise callers on which funding to apply for - you can only direct them to GOV.UK information.
-</span>
+  <span class="hintText govuk-body-s">
+    You cannot advise callers on which funding to apply for - you can only direct them to GOV.UK information.
+  </span>
 
-{% include "components/instructions.njk" %}
+  <div class="pills">
+    <div class="schemePill">
+      <label class="schemeLabel" for="schemeAll">
+        all
+        <input class="schemeCheckbox" type="checkbox" id="schemeAll" name="schemeAll" value="ALL">
+        <span class="checkmark"></span>
+      </label>
+    </div>
+
+    <div class="schemePill">
+      <label class="schemeLabel" for="schemeCS">
+        countryside stewardship
+        <input class="schemeCheckbox" type="checkbox" id="schemeCS" name="scheme" value="CS" {% if csSelected %} checked {% endif %}>
+        <span class="checkmark"></span>
+      </label>
+    </div>
+
+      <div class="schemePill">
+        <label class="schemeLabel" for="schemeFETF">
+          Farming equipment & technology fund
+          <input class="schemeCheckbox" type="checkbox" id="schemeFETF" name="scheme" value="FETF" {% if fetfSelected %} checked {% endif %}>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+
+        <div class="schemePill">
+          <label class="schemeLabel" for="schemeSIG">
+            Slurry infrastructure grant
+            <input class="schemeCheckbox" type="checkbox" id="schemeSIG" name="scheme" value="SIG" {% if sigSelected %} checked {% endif %}>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+
+          <div class="schemePill">
+            <label class="schemeLabel" for="schemeSFI">
+              sustainable farming incentive
+              <input class="schemeCheckbox" type="checkbox" id="schemeSFI" name="scheme" value="SFI" {% if sfiSelected %} checked {% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+
+          </div>
+        </form>
+
+        {% include "components/instructions.njk" %}
