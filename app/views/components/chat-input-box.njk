@@ -1,18 +1,22 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% if validationError %}
   {% set errorMessageText %} Please enter your query here {% endset %}
 {% endif %}
 
-<form method="POST" id="sendForm">
+<div class="commandPanel">
   <span class="commandText govuk-body">{{ commandText }}</span>
+</div>
 
+<form method="POST" id="sendForm" action="#latestChatMessage">
   <div class="promptArea">
     <div class="promptTextArea">
       {{ govukTextarea({
         classes: "textArea",
         id: "prompt-id", 
         name: "input",
+        rows: "2",
         errorMessage: {
           text: "Please enter your query here"
         } if errorMessageText else undefined
@@ -24,35 +28,20 @@
     </div>
 
     <button type="submit" class="sendButton govuk-button" id="sendButton" aria-label="Send">
-      <svg
-        class="sendIcon"
-        fill="#fff"
-        height="20"
-        width="20"
-        version="1.1"
-        id="Layer_1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 330 330"
-        xml:space="preserve">
-        <path
-          id="XMLID_222_"
-          d="M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001
-            c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213
-            C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606
-            C255,161.018,253.42,157.202,250.606,154.389z"/>
-      </svg>
+      <img src="/static/images/Expand_right.svg"/>
     </button>
   </div>
 
-  <span class="hintText govuk-body-s">
-    You cannot advise callers on which funding to apply for - you can only direct them to GOV.UK information.
-  </span>
+  {% if showHintText %}
+    <span class="hintText govuk-body-s govuk-!-margin-bottom-0">
+      Results from this AI-enabled tool may not always be 100% accurate – always check against the GOV.UK  content provided.
+    </span>
+  {% endif %}
 
-  <div class="pills">
+  <div class="pills govuk-!-margin-top-2">
     <div class="schemePill">
       <label class="schemeLabel" for="schemeAll">
-        all
+        <span class="labelValue">all</span>
         <input class="schemeCheckbox" type="checkbox" id="schemeAll" name="schemeAll" value="ALL">
         <span class="checkmark"></span>
       </label>
@@ -60,37 +49,37 @@
 
     <div class="schemePill">
       <label class="schemeLabel" for="schemeCS">
-        countryside stewardship
+        <span class="labelValue">countryside stewardship</span>
         <input class="schemeCheckbox" type="checkbox" id="schemeCS" name="scheme" value="CS" {% if csSelected %} checked {% endif %}>
         <span class="checkmark"></span>
       </label>
     </div>
 
-      <div class="schemePill">
-        <label class="schemeLabel" for="schemeFETF">
-          Farming equipment & technology fund
-          <input class="schemeCheckbox" type="checkbox" id="schemeFETF" name="scheme" value="FETF" {% if fetfSelected %} checked {% endif %}>
-            <span class="checkmark"></span>
-          </label>
-        </div>
+    <div class="schemePill">
+      <label class="schemeLabel" for="schemeFETF">
+        <span class="labelValue">Farming equipment & technology fund</span>
+        <input class="schemeCheckbox" type="checkbox" id="schemeFETF" name="scheme" value="FETF" {% if fetfSelected %} checked {% endif %}>
+        <span class="checkmark"></span>
+      </label>
+    </div>
 
-        <div class="schemePill">
-          <label class="schemeLabel" for="schemeSIG">
-            Slurry infrastructure grant
-            <input class="schemeCheckbox" type="checkbox" id="schemeSIG" name="scheme" value="SIG" {% if sigSelected %} checked {% endif %}>
-              <span class="checkmark"></span>
-            </label>
-          </div>
+    <div class="schemePill">
+      <label class="schemeLabel" for="schemeSIG">
+        <span class="labelValue">Slurry infrastructure grant</span>
+        <input class="schemeCheckbox" type="checkbox" id="schemeSIG" name="scheme" value="SIG" {% if sigSelected %} checked {% endif %}>
+        <span class="checkmark"></span>
+      </label>
+    </div>
 
-          <div class="schemePill">
-            <label class="schemeLabel" for="schemeSFI">
-              sustainable farming incentive
-              <input class="schemeCheckbox" type="checkbox" id="schemeSFI" name="scheme" value="SFI" {% if sfiSelected %} checked {% endif %}>
-                <span class="checkmark"></span>
-              </label>
-            </div>
+    <div class="schemePill">
+      <label class="schemeLabel" for="schemeSFI">
+        <span class="labelValue">sustainable farming incentive</span>
+        <input class="schemeCheckbox" type="checkbox" id="schemeSFI" name="scheme" value="SFI" {% if sfiSelected %} checked {% endif %}>
+        <span class="checkmark"></span>
+      </label>
+    </div>
 
-          </div>
-        </form>
+  </div>
+</form>
 
-        {% include "components/instructions.njk" %}
+{% include "components/instructions.njk" %}

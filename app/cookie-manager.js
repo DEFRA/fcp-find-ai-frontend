@@ -21,7 +21,7 @@ function getCurrentPolicy (request, h) {
 }
 
 function createDefaultPolicy (h) {
-  const cookiesPolicy = { confirmed: false, essential: true, analytics: false, auth: '' }
+  const cookiesPolicy = { confirmed: false, essential: true, analytics: false, auth: '', messages: [] }
   h.state(cookieNameCookiePolicy, cookiesPolicy, cookieOptions)
 
   return cookiesPolicy
@@ -38,6 +38,34 @@ function updatePolicy (request, h, analytics) {
   if (!analytics) {
     removeAnalytics(request, h)
   }
+}
+
+function getMessages (request, h) {
+  const cookiesPolicy = getCurrentPolicy(request, h)
+
+  const currentMessages = cookiesPolicy?.messages || []
+
+  return currentMessages
+}
+
+function addMessage (request, h, message) {
+  const cookiesPolicy = getCurrentPolicy(request, h)
+
+  const currentMessages = cookiesPolicy?.messages || []
+
+  currentMessages.push(message)
+
+  cookiesPolicy.messages = currentMessages
+
+  h.state(cookieNameCookiePolicy, cookiesPolicy, cookieOptions)
+}
+
+function resetMessages (request, h) {
+  const cookiesPolicy = getCurrentPolicy(request, h)
+
+  cookiesPolicy.messages = []
+
+  h.state(cookieNameCookiePolicy, cookiesPolicy, cookieOptions)
 }
 
 function updateAuth (request, h, authenticated) {
@@ -71,5 +99,8 @@ module.exports = {
   getCurrentPolicy,
   updatePolicy,
   updateAuth,
-  isAuthenticated
+  isAuthenticated,
+  addMessage,
+  resetMessages,
+  getMessages
 }

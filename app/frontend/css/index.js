@@ -63,10 +63,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     copyButton.onclick = (event) => {
       event.preventDefault()
 
-      const chatMessage = document.getElementById('chatMessage')
+      const bodyContent = document.getElementById('bodyContent')
 
-      if (chatMessage) {
-        const text = chatMessage.innerText
+      if (bodyContent) {
+        const text = bodyContent.innerText
 
         navigator.clipboard.writeText(text).then(
           () => {},
