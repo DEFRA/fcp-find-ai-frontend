@@ -47,7 +47,7 @@
             {{ govukButton({
               html: newQuestionHtml,
               type: "submit",
-              classes: "govuk-button--secondary"
+              classes: "govuk-button--secondary govuk-!-display-none-print"
             }) }}
           </form>
 
@@ -68,7 +68,7 @@
               urls: message.source_urls,
               items: message.items,
               is_latest: message.is_latest
-            }) }}
+          }) }}
         {% endfor %}
       </div>
 

@@ -38,47 +38,41 @@
     </span>
   {% endif %}
 
-  <div class="pills govuk-!-margin-top-2">
-    <div class="schemePill">
-      <label class="schemeLabel" for="schemeAll">
-        <span class="labelValue">all</span>
-        <input class="schemeCheckbox" type="checkbox" id="schemeAll" name="schemeAll" value="ALL">
-        <span class="checkmark"></span>
-      </label>
+  <div class="filter-pills govuk-!-margin-top-2">
+    <div class="filter-pill">
+      <div class="filterGroup">
+        <input id="schemeAll" name="schemeAll" class="schemeCheckbox" type="checkbox"/>
+        <label for="schemeAll">all</label>
+      </div>
     </div>
 
-    <div class="schemePill">
-      <label class="schemeLabel" for="schemeCS">
-        <span class="labelValue">countryside stewardship</span>
-        <input class="schemeCheckbox" type="checkbox" id="schemeCS" name="scheme" value="CS" {% if csSelected %} checked {% endif %}>
-        <span class="checkmark"></span>
-      </label>
+    <div class="filter-pill">
+      <div class="filterGroup">
+        <input id="schemeCS" name="schemeCS" class="schemeCheckbox" type="checkbox" {% if csSelected %} checked {% endif %}/>
+        <label for="schemeCS">countryside stewardship</label>
+      </div>
     </div>
 
-    <div class="schemePill">
-      <label class="schemeLabel" for="schemeFETF">
-        <span class="labelValue">Farming equipment & technology fund</span>
-        <input class="schemeCheckbox" type="checkbox" id="schemeFETF" name="scheme" value="FETF" {% if fetfSelected %} checked {% endif %}>
-        <span class="checkmark"></span>
-      </label>
+    <div class="filter-pill">
+      <div class="filterGroup">
+        <input id="schemeFETF" name="schemeFETF" class="schemeCheckbox" type="checkbox" {% if fetfSelected %} checked {% endif %}/>
+        <label for="schemeFETF">Farming equipment & technology fund</label>
+      </div>
     </div>
 
-    <div class="schemePill">
-      <label class="schemeLabel" for="schemeSIG">
-        <span class="labelValue">Slurry infrastructure grant</span>
-        <input class="schemeCheckbox" type="checkbox" id="schemeSIG" name="scheme" value="SIG" {% if sigSelected %} checked {% endif %}>
-        <span class="checkmark"></span>
-      </label>
+    <div class="filter-pill">
+      <div class="filterGroup">
+        <input id="schemeSIG" name="schemeSIG" class="schemeCheckbox" type="checkbox" {% if sigSelected %} checked {% endif %}/>
+        <label for="schemeSIG">Slurry infrastructure grant</label>
+      </div>
     </div>
 
-    <div class="schemePill">
-      <label class="schemeLabel" for="schemeSFI">
-        <span class="labelValue">sustainable farming incentive</span>
-        <input class="schemeCheckbox" type="checkbox" id="schemeSFI" name="scheme" value="SFI" {% if sfiSelected %} checked {% endif %}>
-        <span class="checkmark"></span>
-      </label>
+    <div class="filter-pill">
+      <div class="filterGroup">
+        <input id="schemeSFI" name="schemeSFI" class="schemeCheckbox" type="checkbox" {% if sfiSelected %} checked {% endif %}/>
+        <label for="schemeSFI">sustainable farming incentive</label>
+      </div>
     </div>
-
   </div>
 </form>
 
