@@ -27,6 +27,13 @@ const config = {
     isSameSite: 'Lax',
     isSecure: process.env.NODE_ENV === 'production',
     password: process.env.COOKIE_PASSWORD
+  },
+
+  ai: {
+    openAIUrl: process.env.OPEN_AI_URL,
+    openAIKey: process.env.OPEN_AI_KEY,
+    azureUrl: process.env.AZURE_AI_URL,
+    aiSearchKey: process.env.AZURE_SEARCH_KEY
   }
 }
 
