@@ -4,7 +4,7 @@ const {
 const cookies = require('../../app/cookie-manager')
 let request
 let h
-const defaultCookie = { confirmed: false, essential: true, analytics: false, auth: '' }
+const defaultCookie = { confirmed: false, essential: true, analytics: false, auth: '', messages: [] }
 
 const cookieOptions = {
   isSecure: true,
@@ -68,7 +68,8 @@ describe('cookie-manager', () => {
         confirmed: true,
         essential: true,
         analytics: true,
-        auth: ''
+        auth: '',
+        messages: []
       },
       cookieOptions
     )

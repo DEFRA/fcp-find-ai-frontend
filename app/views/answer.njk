@@ -9,6 +9,19 @@
 {% from "components/macro-chat-message.njk" import chatMessage %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "components/macro-defra-header.njk" import defraHeader %}
+{% from "govuk/components/skip-link/macro.njk" import govukSkipLink %}
+
+{% block skipLink %}
+  {{ govukSkipLink({
+    text: "Skip to main content",
+    href: "#main-content"
+  }) }}
+
+  {{ govukSkipLink({
+    text: "Skip to input box",
+    href: "#prompt-id"
+  }) }}
+{% endblock %}
 
 {% block header %}
   {{ defraHeader({
@@ -21,36 +34,56 @@
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
       <input type="hidden" name="version" value="{{ version }}">
-        <div class="govuk-body">
-          {% if input %}
-            <div class="govuk-heading-l govuk-!-font-weight-bold">{{ input }}</div>
-          {% endif %}
+      <div class="govuk-body" id="bodyContent">
+        <div class="topbar">
+          <form action="reset" method="POST">
+            {% set newQuestionHtml %}
+              <div style="display: flex; justify-content: center; align-items: center">
+                <span>Ask new question</span>
+                <img src="/static/images/Chat_plus.svg" style="margin-left: 5px;"/>
+              </div>
+            {% endset %}
 
-          {% for message in messages %}
-            {{ chatMessage({
-              answer: message.answer | markdown | safe,
-              urls: message.source_urls,
-              items: message.items
+            {{ govukButton({
+              html: newQuestionHtml,
+              type: "submit",
+              classes: "govuk-button--secondary govuk-!-display-none-print"
             }) }}
-          {% endfor %}
+          </form>
+
+          <div class="chat-actions govuk-!-display-none-print govuk-!-margin-bottom-5">
+            <button type="button" class="defraButton govuk-button" id="printButton" aria-label="Print">
+              {% include "components/icon-printer.njk" %}
+            </button>
+            <button type="button" class="defraButton govuk-button" id="copyButton" aria-label="Copy">
+              {% include "components/icon-copy.njk" %}
+            </button>
+          </div>
         </div>
 
-        <div class="sticky govuk-!-display-none-print">
-          <div class="govuk-width-container">
-            <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
-            {% include "components/chat-input-box.njk" %}
-          </div>
+        {% for message in messages %}
+          {{ chatMessage({
+              role: message.role,
+              answer: message.answer | markdown | safe,
+              urls: message.source_urls,
+              items: message.items,
+              is_latest: message.is_latest
+          }) }}
+        {% endfor %}
+      </div>
+
+      <div class="sticky govuk-!-display-none-print">
+        <div class="govuk-width-container">
+          <input type="hidden" value="{{ fundingFarmingApiUri }}"/>
+          {% include "components/chat-input-box.njk" %}
         </div>
       </div>
     </div>
-  {% endblock %}
+  </div>
+{% endblock %}
 
 {% block footer %}
 
-
-  <div class="footerContainer govuk-!-display-none-print">
-    {{ govukFooter() }}
-  </div>
-
+  <div class="footerContainer govuk-!-display-none-print"></div>
 
 {% endblock %}

@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { isAuthenticated } = require('../cookie-manager')
+const { isAuthenticated, addMessage, getMessages } = require('../cookie-manager')
 
 const config = require('../config')
 
@@ -23,7 +23,8 @@ module.exports = {
       return h.view('home', {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
         validationError,
-        commandText: 'Start search...'
+        commandText: 'Ask a question...',
+        showHintText: true
       })
     }
 
@@ -48,14 +49,40 @@ module.exports = {
         axiosConfig
       )
 
-      const messages = [response.data]
+      const messages = []
+
+      const previousMessages = getMessages(request, h)
+
+      const historyMessages = previousMessages.map((previousMessage) => ({
+        role: previousMessage.role,
+        answer: previousMessage.content
+      }))
+
+      messages.push(...historyMessages)
+
+      messages.push({
+        role: 'user',
+        answer: input,
+        is_latest: historyMessages?.length > 0
+      })
+      messages.push(response.data)
+
+      addMessage(request, h, {
+        role: 'user',
+        content: input
+      })
+      addMessage(request, h, {
+        role: 'system',
+        content: response.data.answer
+      })
 
       return h.view('answer', {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
         validationError,
         messages,
         input,
-        commandText: 'Follow-on search...',
+        commandText: 'Ask follow-on question...',
+        showHintText: true,
         csSelected: selectedSchemes.includes('CS'),
         fetfSelected: selectedSchemes.includes('FETF'),
         sigSelected: selectedSchemes.includes('SIG'),

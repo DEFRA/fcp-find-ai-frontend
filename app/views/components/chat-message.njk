@@ -1,23 +1,22 @@
-<div class="chat-message" id="chatMessage">
-  <div class="chat-accessory">
-    <div class="govuk-grid-column-three-quarters">
-      <span class="message-owner govuk-body-l govuk-!-font-weight-bold">
-        <span class="message-icon">{% include "components/message-icon.njk" %}</span>
-        Farming funding assistant
-      </span>
-    </div>
-    <div class="chat-actions govuk-grid-column-one-quarter govuk-!-display-none-print">
-      <button type="button" class="defraButton govuk-button" id="copyButton" aria-label="Copy">
-        {% include "components/icon-copy.njk" %}
-      </button>
-      <button type="button" class="defraButton govuk-button" id="printButton" aria-label="Print">
-        {% include "components/icon-printer.njk" %}
-      </button>
-    </div>
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+<div class="chat-message" id="{{ 'latestChatMessage' if params.is_latest else 'chatMessage' }}">
+  <div class="chat-accessory {{ 'userMessage' if params.role === 'user' }}">
+    <span class="message-owner govuk-body-l govuk-!-font-weight-bold">
+      {% if params.role === 'user' %}
+        <span class="message-icon"><img class="flippedImg" src="/static/images/comment.svg"/></span>
+            You
+          {% else %}
+        <span class="message-icon"><img src="/static/images/comment.svg"/></span>
+            Farming funding assistant
+          {% endif %}
+    </span>
   </div>
-  <div class="answer govuk-body">
+
+  <div class="answer govuk-body govuk-!-margin-bottom-0 {{ 'userMessage' if params.role === 'user' }}">
     {{ params.answer }}
   </div>
+
   <div class="govuk-body">
 
     <ul class="cards">
@@ -27,8 +26,18 @@
             <a href="{{ item.url }}" class="govuk-link">{{ item.title }}</a>
           </h3>
           <p>{{ item.summary }}</p>
+
+          {% if item.scheme %}
+            <span>
+              {{ govukTag({
+                text: item.scheme,
+                classes: "govuk-tag--grey schemePill"
+              }) }}
+            </span>
+          {% endif %}
         </li>
       {% endfor %}
     </ul>
   </div>
+
 </div>

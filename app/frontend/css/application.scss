@@ -2,16 +2,17 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
 @import "breakpoints";
 
-@import url('https://fonts.googleapis.com/css2?family=Abel&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
 
-$lightGreen: #00a33c;
+$lightGreen: #00a33b;
 $defraGreen: #00a33b;
-$pillGreen: #CCE2D8;
-$pillTextGreen: #005A30;
+$pillGreen: #cce2d8;
+$pillTextGreen: #005a30;
 
 @import "components/inverse-header";
 @import "components/defra-header";
 @import "components/chat-input-box";
+@import "components/filter-pill";
 
 .nojs-hidden {
   display: none;
@@ -91,13 +92,30 @@ $pillTextGreen: #005A30;
   }
 }
 
+.govuk-main-wrapper {
+  padding-top: 10px !important;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-actions {
+  text-align: end;
+}
+
 .chat-message {
-  margin-bottom: 40px;
+  margin-bottom: 10px;
 
   .chat-accessory {
     display: flex;
     justify-content: space-between;
-    
+
+    &.userMessage {
+      justify-content: flex-end;
+    }
+
     .message-owner {
       display: flex;
       margin-bottom: 0;
@@ -108,8 +126,17 @@ $pillTextGreen: #005A30;
         margin-right: 8px;
       }
     }
+  }
 
-    .chat-actions {
+  .answer {
+    margin-top: 5px;
+
+    p {
+      margin-block-start: 0 !important;
+      margin-block-end: 0 !important;
+    }
+
+    &.userMessage {
       text-align: end;
     }
   }
@@ -151,6 +178,12 @@ $pillTextGreen: #005A30;
           }
         }
       }
+
+      /** Scheme Pill */
+      .schemePill {
+        font-family: "Abel", sans-serif;
+        font-weight: normal;
+      }
     }
 
     @include breakpoint("tablet") {
@@ -159,6 +192,14 @@ $pillTextGreen: #005A30;
       .card-item {
         margin: 5px;
         padding: 15px 5px;
+
+        h3 {
+          a {
+            text-wrap: wrap;
+            display: inline-block;
+            max-width: 275px;
+          }
+        }
       }
     }
 
@@ -168,12 +209,15 @@ $pillTextGreen: #005A30;
   }
 }
 
-
-
-
 /** Chat Message Icons */
 .defraButton {
   border-radius: 45px;
   background-color: #00a33b;
   margin-bottom: 0 !important;
+  box-shadow: none;
+}
+
+.flippedImg {
+  transform: scale(-1, 1);
+  transform-origin: center;
 }
