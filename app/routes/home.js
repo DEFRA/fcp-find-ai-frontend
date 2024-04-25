@@ -8,6 +8,8 @@ module.exports = {
   path: '/',
   handler: async (request, h) => {
     if (!isAuthenticated(request, h)) {
+      request.logger.debug('Redirecting user to auth page')
+
       return h.redirect('/login')
     }
 
@@ -36,7 +38,7 @@ module.exports = {
     try {
       const url = `${config.fundingFarmingApiUri}/answer_query`
 
-      console.log(`Performing POST request: ${url}`)
+      request.logger.info(`Performing POST request: ${url}`)
       const axiosConfig = {
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +95,7 @@ module.exports = {
         sfiSelected: selectedSchemes.includes('SFI')
       })
     } catch (error) {
-      console.error(error)
+      request.logger.error(error)
       throw error
     }
   }

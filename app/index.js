@@ -1,3 +1,4 @@
+require('./insights').setup()
 const createServer = require('./server')
 
 const init = async () => {
@@ -6,9 +7,7 @@ const init = async () => {
   console.log('Server running on %s', server.info.uri)
 }
 
-process.on('unhandledRejection', (err) => {
+init().catch((err) => {
   console.error(err)
   process.exit(1)
 })
-
-init()

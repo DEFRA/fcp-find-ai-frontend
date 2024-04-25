@@ -7,6 +7,9 @@ describe('/home', () => {
   })
   test('unauthenticated users are redirected to login page', async () => {
     const mockRequest = {
+      logger: {
+        debug: jest.fn()
+      },
       state: {
         ffa_cookie_policy: {
           auth: 'placeholder'
