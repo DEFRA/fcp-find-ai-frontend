@@ -41,35 +41,35 @@
   <div class="filter-pills govuk-!-margin-top-2">
     <div class="filter-pill">
       <div class="filterGroup">
-        <input id="schemeAll" name="schemeAll" class="schemeCheckbox" type="checkbox"/>
+        <input id="schemeAll" name="schemeAll" class="schemeCheckbox" type="checkbox" value="ALL" />
         <label for="schemeAll">all</label>
       </div>
     </div>
 
     <div class="filter-pill">
       <div class="filterGroup">
-        <input id="schemeCS" name="schemeCS" class="schemeCheckbox" type="checkbox" {% if csSelected %} checked {% endif %}/>
+        <input id="schemeCS" name="scheme" class="schemeCheckbox" type="checkbox" value="CS" {% if csSelected %} checked {% endif %}/>
         <label for="schemeCS">countryside stewardship</label>
       </div>
     </div>
 
     <div class="filter-pill">
       <div class="filterGroup">
-        <input id="schemeFETF" name="schemeFETF" class="schemeCheckbox" type="checkbox" {% if fetfSelected %} checked {% endif %}/>
+        <input id="schemeFETF" name="scheme" class="schemeCheckbox" type="checkbox" value="FETF" {% if fetfSelected %} checked {% endif %}/>
         <label for="schemeFETF">Farming equipment & technology fund</label>
       </div>
     </div>
 
     <div class="filter-pill">
       <div class="filterGroup">
-        <input id="schemeSIG" name="schemeSIG" class="schemeCheckbox" type="checkbox" {% if sigSelected %} checked {% endif %}/>
+        <input id="schemeSIG" name="scheme" class="schemeCheckbox" type="checkbox" value="SIG" {% if sigSelected %} checked {% endif %}/>
         <label for="schemeSIG">Slurry infrastructure grant</label>
       </div>
     </div>
 
     <div class="filter-pill">
       <div class="filterGroup">
-        <input id="schemeSFI" name="schemeSFI" class="schemeCheckbox" type="checkbox" {% if sfiSelected %} checked {% endif %}/>
+        <input id="schemeSFI" name="scheme" class="schemeCheckbox" type="checkbox" value="SFI" {% if sfiSelected %} checked {% endif %}/>
         <label for="schemeSFI">sustainable farming incentive</label>
       </div>
     </div>

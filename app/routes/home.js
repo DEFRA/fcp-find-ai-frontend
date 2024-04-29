@@ -14,6 +14,7 @@ module.exports = {
     let validationError = false
 
     const input = request.payload?.input
+    const selectedSchemes = [].concat(request.payload?.scheme || [])
 
     if (!input || input?.trim() === '') {
       if (input?.trim() === '') {
@@ -24,13 +25,16 @@ module.exports = {
         fundingFarmingApiUri: config.fundingFarmingApiUri,
         validationError,
         commandText: 'Ask a question...',
-        showHintText: true
+        showHintText: true,
+        csSelected: selectedSchemes.includes('CS'),
+        fetfSelected: selectedSchemes.includes('FETF'),
+        sigSelected: selectedSchemes.includes('SIG'),
+        sfiSelected: selectedSchemes.includes('SFI')
       })
     }
 
     try {
       const url = `${config.fundingFarmingApiUri}/answer_query`
-      const selectedSchemes = [].concat(request.payload.scheme || [])
 
       console.log(`Performing POST request: ${url}`)
       const axiosConfig = {

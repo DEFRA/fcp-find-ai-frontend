@@ -12,7 +12,7 @@ module.exports = {
             return h.view('errors/4xx', { payload }).code(payload.statusCode)
           }
 
-          request.log('error', {
+          console.error('error', {
             statusCode: payload.statusCode,
             message: payload.message,
             stack: response.data ? response.data.stack : response.stack
