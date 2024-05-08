@@ -1,6 +1,6 @@
 {
   "name": "fcp-find-ai-frontend",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "",
   "homepage": "github.com?owner=defra&repo=fcp-find-ai-frontend&organization=defra",
   "main": "app/index.js",
@@ -22,6 +22,7 @@
   "contributors": [],
   "license": "OGL-UK-3.0",
   "dependencies": {
+    "@azure/logger": "^1.1.2",
     "@hapi/boom": "^9.1.4",
     "@hapi/cookie": "^11.0.2",
     "@hapi/crumb": "^8.0.1",
@@ -33,10 +34,13 @@
     "axios": "^1.6.7",
     "dotenv": "^16.0.3",
     "govuk-frontend": "4.7.0",
-    "hapi-pino": "^9.1.2",
+    "hapi-pino": "^9.4.0",
     "joi": "17.11.0",
     "markdown-it": "^14.0.0",
-    "nunjucks": "3.2.4"
+    "nunjucks": "3.2.4",
+    "pino": "^7.11.0",
+    "pino-abstract-transport": "^1.2.0",
+    "pino-applicationinsights": "^2.1.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

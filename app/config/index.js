@@ -1,11 +1,13 @@
 require('dotenv').config()
 
 const config = {
+  env: process.env.NODE_ENV,
+
   fundingFarmingApiUri: process.env.FARMING_FUNDING_API_URI,
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
-  version: '0.1.19',
+  version: '0.1.22',
 
   auth: {
     authUser: process.env.AUTH_USER,
