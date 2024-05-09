@@ -39,6 +39,7 @@ extends:
   parameters:
     projectName: "fcp-find-ai-frontend"
     serviceName: "fcp-find-ai-frontend"
+    teamName: "fcp-find"
     deployFromFeature: ${{ parameters.deployFromFeature }}
     appBuildConfig:
       appFrameworkType: "nodejs"    
