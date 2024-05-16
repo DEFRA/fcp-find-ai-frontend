@@ -36,12 +36,14 @@
       <input type="hidden" name="version" value="{{ version }}">
       <div class="govuk-body" id="bodyContent">
         <div class="topbar">
-          <form action="reset" method="POST">
+          <form action="/reset/{{ conversationId }}" method="POST">
+            <input type="hidden" name="crumb" value="{{ crumb }}"/>
+
             {% set newQuestionHtml %}
-              <div style="display: flex; justify-content: center; align-items: center">
-                <span>Ask new question</span>
-                <img src="/static/images/Chat_plus.svg" style="margin-left: 5px;"/>
-              </div>
+            <div style="display: flex; justify-content: center; align-items: center">
+              <span>Ask new question</span>
+              <img src="/static/images/Chat_plus.svg" style="margin-left: 5px;"/>
+            </div>
             {% endset %}
 
             {{ govukButton({

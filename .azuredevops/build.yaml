@@ -37,8 +37,10 @@ resources:
 extends:
   template: /pipelines/common-app-build.yaml@DEFRA-ADPPipelineCommon
   parameters:
+    programmeName: "fcp"
     projectName: "fcp-find-ai-frontend"
     serviceName: "fcp-find-ai-frontend"
+    teamName: "fcp-find"
     deployFromFeature: ${{ parameters.deployFromFeature }}
     appBuildConfig:
       appFrameworkType: "nodejs"    
@@ -61,3 +63,6 @@ extends:
         - fcp-find-ai-frontend-AUTH-USER
         - fcp-find-ai-frontend-AUTH-PASSWORD
         - fcp-find-ai-frontend-AUTH-VERIFICATION
+        - fcp-find-ai-frontend-REDIS-HOST
+        - fcp-find-ai-frontend-REDIS-PASSWORD
+        - fcp-find-ai-frontend-REDIS-PORT

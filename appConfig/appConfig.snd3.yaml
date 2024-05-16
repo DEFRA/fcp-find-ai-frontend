@@ -18,3 +18,12 @@
 - key: AUTH_VERIFICATION
   value: "{{servicename}}-AUTH-VERIFICATION"
   type: "keyvault"
+- key: REDIS_HOST
+  value: "{{servicename}}-REDIS-HOST"
+  type: "keyvault"
+- key: REDIS_PASSWORD
+  value: "{{servicename}}-REDIS-PASSWORD"
+  type: "keyvault"
+- key: REDIS_PORT
+  value: "{{servicename}}-REDIS-PORT"
+  type: "keyvault"

@@ -1,10 +1,10 @@
 const routes = [].concat(
   require('../routes/home'),
+  require('../routes/conversation'),
   require('../routes/login'),
   require('../routes/reset'),
   require('../routes/healthy'),
   require('../routes/healthz'),
-  require('../routes/error'),
   require('../routes/static')
 )
 

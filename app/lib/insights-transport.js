@@ -1,8 +1,9 @@
 const createAbstractTransport = require('pino-abstract-transport')
-const appInsights = require('../insights')
 const { pinoLevelToSeverityLevel } = require('./log-levels')
 
 module.exports = () => {
+  const appInsights = require('../insights')
+
   return createAbstractTransport(async (source) => {
     for await (const data of source) {
       if (!data) {
