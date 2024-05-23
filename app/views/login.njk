@@ -10,6 +10,8 @@
     <input type="hidden" name="version" value="{{ version }}">
 
     <form action="login" method="POST">
+      <input type="hidden" name="crumb" value="{{ crumb }}"/>
+
       <div class="govuk-body">
         <input
           required="required"

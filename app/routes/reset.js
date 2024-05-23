@@ -1,10 +1,11 @@
-const { resetMessages } = require('../cookie-manager')
+const { setMessages } = require('../session/messages')
 
 module.exports = {
   method: ['POST'],
-  path: '/reset',
+  path: '/reset/{conversationId}',
   handler: async (request, h) => {
-    resetMessages(request, h)
+    const conversationId = request.params.conversationId
+    setMessages(request, conversationId, [])
 
     return h.redirect('/')
   }
