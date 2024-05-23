@@ -9,7 +9,7 @@ const config = {
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
-  version: '0.1.24',
+  version: '0.1.25',
 
   logLevel: process.env.LOG_LEVEL || 'error',
 
@@ -43,6 +43,20 @@ const config = {
     password: process.env.REDIS_PASSWORD || '',
     port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : '',
     tls: process.env.NODE_ENV === 'production' ? {} : undefined
+  },
+
+  azureOpenAI: {
+    searchUrl: process.env.AZURE_AISEARCH_ENDPOINT,
+    searchApiKey: process.env.AZURE_AISEARCH_KEY,
+    indexName: process.env.AZURE_SEARCH_INDEX_NAME,
+
+    openAiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
+    openAiEndpoint: process.env.AZURE_OPENAI_API_ENDPOINT,
+    openAiKey: process.env.AZURE_OPENAI_API_KEY,
+    openAiDeploymentName: process.env.AZURE_OPENAI_API_EMBEDDING_DEPLOYMENT_NAME,
+    openAiModelName: process.env.AZURE_OPENAI_API_MODEL_NAME,
+
+    tokenBudget: 16384 - 1024
   }
 }
 

@@ -99,7 +99,7 @@ describe('/conversation', () => {
     })
 
     test('send user input and load response', async () => {
-      fetchAnswer.mockResolvedValue(({
+      fetchAnswer.mockResolvedValue(JSON.stringify({
         answer: 'responseMsg',
         items: [],
         source_urls: []

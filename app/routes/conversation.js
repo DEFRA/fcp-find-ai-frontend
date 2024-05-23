@@ -3,6 +3,7 @@ const { getMessages, setMessages } = require('../session/messages')
 const { fetchAnswer } = require('../services/query-service')
 const config = require('../config')
 const { schemes } = require('../domain/schemes')
+const { getChatHistory } = require('../utils/langchain-utils')
 
 module.exports = [
   {
@@ -59,6 +60,7 @@ module.exports = [
       })
 
       const messages = getMessages(request, conversationId)
+      const chatHistory = getChatHistory(messages)
 
       if (!input) {
         return h.view('answer', {
@@ -77,11 +79,12 @@ module.exports = [
         answer: input
       })
 
-      const responseMessage = await fetchAnswer(request, input, selectedSchemes)
+      const response = await fetchAnswer(request, input, chatHistory)
+      const langchainData = JSON.parse(response)
 
       messages.push({
         role: 'system',
-        ...responseMessage
+        ...langchainData
       })
 
       setMessages(request, conversationId, messages)
