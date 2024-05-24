@@ -52,4 +52,5 @@
     <% htmlWebpackPlugin.files.js.forEach(file => { %>
       <script src="<%= file.replace('../dist/', '/static/') %>"></script>
     <% }) %>
+    {% include 'components/gtag-manager.njk' %}
   {% endblock %}

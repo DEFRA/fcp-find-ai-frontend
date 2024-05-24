@@ -4,6 +4,10 @@ const localVars = [
   {
     key: 'version',
     value: config.version
+  },
+  {
+    key: 'googleTagManagerKey',
+    value: config.googleAnalytics.key
   }
 ]
 

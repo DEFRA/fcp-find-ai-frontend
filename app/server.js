@@ -4,6 +4,18 @@ const crumb = require('@hapi/crumb')
 const Uuid = require('uuid')
 const { getCatbox } = require('./lib/catbox')
 
+const getSecurityPolicy = () =>
+  "default-src 'self';" +
+  "object-src 'none';" +
+  "script-src 'self' www.google-analytics.com *.googletagmanager.com ajax.googleapis.com *.googletagmanager.com/gtm.js 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes';" +
+  "form-action 'self' *.gov.uk;" +
+  "base-uri 'self';" +
+  "connect-src 'self' *.google-analytics.com *.analytics.google.com *.googletagmanager.com" +
+  "style-src 'self' 'unsafe-inline' tagmanager.google.com *.googleapis.com;" +
+  "img-src 'self' *.google-analytics.com *.googletagmanager.com;" +
+  "font-src 'self' fonts.gstatic.com;" +
+  "style-src 'self' fonts.googleapis.com"
+
 async function createServer () {
   const catbox = getCatbox()
 
@@ -80,11 +92,11 @@ async function createServer () {
         { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
         { key: 'Strict-Transport-Security', value: 'max-age=31536000;' },
         { key: 'Cache-Control', value: 'private' },
-        { key: 'Referrer-Policy', value: 'no-referrer' }
-        // {
-        //   key: 'Content-Security-Policy',
-        //   value: getSecurityPolicy()
-        // }
+        { key: 'Referrer-Policy', value: 'no-referrer' },
+        {
+          key: 'Content-Security-Policy',
+          value: getSecurityPolicy()
+        }
       ]
     }
   })

@@ -51,3 +51,5 @@
 - key: AZURE_OPENAI_API_MODEL_NAME
   value: "{{servicename}}-AZURE-OPENAI-API-MODEL-NAME"
   type: "keyvault"
+- key: GOOGLE_TAG_MANAGER_KEY
+  value: "G-NF25VDMQQX"

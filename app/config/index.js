@@ -9,7 +9,7 @@ const config = {
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
-  version: '0.1.25',
+  version: '0.1.252',
 
   logLevel: process.env.LOG_LEVEL || 'error',
 
@@ -57,6 +57,10 @@ const config = {
     openAiModelName: process.env.AZURE_OPENAI_API_MODEL_NAME,
 
     tokenBudget: 16384 - 1024
+  },
+
+  googleAnalytics: {
+    key: process.env.GOOGLE_TAG_MANAGER_KEY || ''
   }
 }
 
