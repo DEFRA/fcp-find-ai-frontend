@@ -16,6 +16,19 @@ const getChatHistory = (messages) => {
   return history
 }
 
+const parseMessage = (req, message) => {
+  try {
+    return JSON.parse(message)
+  } catch (error) {
+    req.logger.error('Failed to parse response message', {
+      message
+    })
+
+    throw error
+  }
+}
+
 module.exports = {
-  getChatHistory
+  getChatHistory,
+  parseMessage
 }

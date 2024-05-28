@@ -17,6 +17,9 @@ const getLogger = () => {
   })
 }
 
+const logger = getLogger()
+
 module.exports = {
-  getLogger
+  getLogger,
+  logger
 }

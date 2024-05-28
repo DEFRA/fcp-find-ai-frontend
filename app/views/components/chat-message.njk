@@ -1,6 +1,6 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-<div class="chat-message" id="{{ 'latestChatMessage' if params.is_latest else 'chatMessage' }}">
+<div class="chat-message" id="{{ 'latestChatMessage' if params.scrollToMessage else 'chatMessage' }}">
   <div class="chat-accessory {{ 'userMessage' if params.role === 'user' }}">
     <span class="message-owner govuk-body-l govuk-!-font-weight-bold">
       {% if params.role === 'user' %}

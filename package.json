@@ -35,6 +35,7 @@
     "@hapi/yar": "^10.1.1",
     "@langchain/azure-openai": "^0.0.10",
     "@langchain/community": "^0.2.1",
+    "@langchain/openai": "^0.0.34",
     "applicationinsights": "2.8.0",
     "axios": "^1.6.7",
     "dotenv": "^16.0.3",

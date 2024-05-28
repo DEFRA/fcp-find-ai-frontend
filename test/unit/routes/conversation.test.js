@@ -136,7 +136,8 @@ describe('/conversation', () => {
         },
         {
           answer: 'grants for deer fencing',
-          role: 'user'
+          role: 'user',
+          scrollToMessage: true
         },
         {
           answer: 'responseMsg',
