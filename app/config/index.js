@@ -9,7 +9,7 @@ const config = {
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
-  version: '0.1.252',
+  version: '0.1.27',
 
   logLevel: process.env.LOG_LEVEL || 'error',
 
