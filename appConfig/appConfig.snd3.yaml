@@ -27,3 +27,29 @@
 - key: REDIS_PORT
   value: "{{servicename}}-REDIS-PORT"
   type: "keyvault"
+- key: AZURE_AISEARCH_ENDPOINT
+  value: "{{servicename}}-AZURE-AISEARCH-ENDPOINT"
+  type: "keyvault"
+- key: AZURE_AISEARCH_KEY
+  value: "{{servicename}}-AZURE-AISEARCH-KEY"
+  type: "keyvault"
+- key: AZURE_SEARCH_INDEX_NAME
+  value: "{{servicename}}-AZURE-SEARCH-INDEX-NAME"
+  type: "keyvault"
+- key: AZURE_OPENAI_API_INSTANCE_NAME
+  value: "{{servicename}}-AZURE-OPENAI-API-INSTANCE-NAME"
+  type: "keyvault"
+- key: AZURE_OPENAI_API_ENDPOINT
+  value: "{{servicename}}-AZURE-OPENAI-API-ENDPOINT"
+  type: "keyvault"
+- key: AZURE_OPENAI_API_KEY
+  value: "{{servicename}}-AZURE-OPENAI-API-KEY"
+  type: "keyvault"
+- key: AZURE_OPENAI_API_EMBEDDING_DEPLOYMENT_NAME
+  value: "{{servicename}}-AZURE-OPENAI-API-EMBEDDING-DEPLOYMENT-NAME"
+  type: "keyvault"
+- key: AZURE_OPENAI_API_MODEL_NAME
+  value: "{{servicename}}-AZURE-OPENAI-API-MODEL-NAME"
+  type: "keyvault"
+- key: GOOGLE_TAG_MANAGER_KEY
+  value: "G-NF25VDMQQX"

@@ -9,7 +9,7 @@
   <span class="commandText govuk-body">{{ commandText }}</span>
 </div>
 
-<form method="POST" id="sendForm" action="/conversation/{{ conversationId }}">
+<form method="POST" id="sendForm" action="/conversation/{{ conversationId }}#latestChatMessage">
   <input type="hidden" name="crumb" value="{{ crumb }}"/>
 
   <div class="promptArea">

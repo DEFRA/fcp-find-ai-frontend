@@ -66,3 +66,11 @@ extends:
         - fcp-find-ai-frontend-REDIS-HOST
         - fcp-find-ai-frontend-REDIS-PASSWORD
         - fcp-find-ai-frontend-REDIS-PORT
+        - fcp-find-ai-frontend-AZURE-AISEARCH-ENDPOINT
+        - fcp-find-ai-frontend-AZURE-AISEARCH-KEY
+        - fcp-find-ai-frontend-AZURE-SEARCH-INDEX-NAME
+        - fcp-find-ai-frontend-AZURE-OPENAI-API-INSTANCE-NAME
+        - fcp-find-ai-frontend-AZURE-OPENAI-API-ENDPOINT
+        - fcp-find-ai-frontend-AZURE-OPENAI-API-KEY
+        - fcp-find-ai-frontend-AZURE-OPENAI-API-EMBEDDING-DEPLOYMENT-NAME
+        - fcp-find-ai-frontend-AZURE-OPENAI-API-MODEL-NAME
