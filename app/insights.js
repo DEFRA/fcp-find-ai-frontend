@@ -10,6 +10,16 @@ const setup = () => {
     const appName = process.env.APPINSIGHTS_CLOUDROLE
     appInsights.defaultClient.context.tags[cloudRoleTag] = appName
 
+    appInsights.defaultClient.addTelemetryProcessor((envelope, contextObject) => {
+      if (envelope?.data?.baseType === 'RequestData' &&
+        (envelope?.data?.baseData?.name === 'GET /healthy' || envelope?.data?.baseData?.name === 'GET /healthz') &&
+        envelope?.data?.baseData?.responseCode === '200') {
+        return false
+      }
+      console.log(envelope)
+      return true
+    })
+
     return appInsights
   } else {
     console.log('App Insights not running')
@@ -18,7 +28,7 @@ const setup = () => {
 
 process.on('unhandledRejection', (err) => {
   console.error(err)
-  appInsights.logException(err, null)
+  logException(err, null)
   process.exit(1)
 })
 
@@ -60,4 +70,16 @@ const logTrace = ({ message, severity }, request) => {
   }
 }
 
-module.exports = { setup, logTrace, logException }
+const logEvent = (eventName, props) => {
+  try {
+    const client = appInsights.defaultClient
+
+    if (client) {
+      client.trackEvent({ name: eventName, properties: props })
+    }
+  } catch (error) {
+    console.error(error, 'App Insights logEvent failed')
+  }
+}
+
+module.exports = { setup, logTrace, logException, logEvent, getCorrelationContext: appInsights.getCorrelationContext }
