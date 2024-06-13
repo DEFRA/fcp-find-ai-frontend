@@ -23,7 +23,7 @@ const config = {
     cookieNameCookiePolicy: 'ffa_cookie_policy',
     cookieNameAuth: 'ffa_auth',
     cookieNameSession: 'ffa_session',
-    useRedis: false,
+    useRedis: process.env.USE_REDIS === 'false' || true,
     isSameSite: 'Strict',
     isSecure: process.env.NODE_ENV === 'production',
     password: process.env.COOKIE_PASSWORD,
