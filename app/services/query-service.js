@@ -1,7 +1,8 @@
 const { OpenAIEmbeddings, ChatOpenAI } = require('@langchain/openai')
-const { ChatPromptTemplate } = require('@langchain/core/prompts')
+const { ChatPromptTemplate, MessagesPlaceholder } = require('@langchain/core/prompts')
 const { createStuffDocumentsChain } = require('langchain/chains/combine_documents')
 const { createRetrievalChain } = require('langchain/chains/retrieval')
+const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_retriever')
 const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
@@ -67,7 +68,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
     Question: {input}`
   const prompt = ChatPromptTemplate.fromMessages([
     ['system', promptText],
-    // new MessagesPlaceholder('chat_history'),
+    new MessagesPlaceholder('chat_history'),
     ['user', '{input}']
   ])
 
@@ -87,13 +88,28 @@ const fetchAnswer = async (req, query, chatHistory) => {
 
   const retriever = vectorStore.asRetriever(20, { includeEmbeddings: true })
 
+  const historyRetrieverPrompt = ChatPromptTemplate.fromMessages([
+    new MessagesPlaceholder('chat_history'),
+    ['user', '{input}'],
+    [
+      'user',
+      'Given the above conversation, generate a search query to look up in order to get information relevant to the conversation'
+    ]
+  ])
+
+  const historyAwareRetriever = await createHistoryAwareRetriever({
+    llm: model,
+    retriever,
+    rephrasePrompt: historyRetrieverPrompt
+  })
+
   const retrievalChain = await createRetrievalChain({
     combineDocsChain: documentChain,
-    retriever
+    retriever: historyAwareRetriever
   })
 
   const response = await retrievalChain.invoke({
-    // chat_history: chatHistory,
+    chat_history: chatHistory,
     input: query
   })
 

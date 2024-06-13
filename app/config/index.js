@@ -9,7 +9,7 @@ const config = {
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
-  version: '0.1.32-message-events-convs',
+  version: '0.1.33-message-events-convs',
 
   logLevel: process.env.LOG_LEVEL || 'error',
 
@@ -23,7 +23,7 @@ const config = {
     cookieNameCookiePolicy: 'ffa_cookie_policy',
     cookieNameAuth: 'ffa_auth',
     cookieNameSession: 'ffa_session',
-    useRedis: process.env.USE_REDIS === 'false' || true,
+    useRedis: process.env.USE_REDIS !== 'false',
     isSameSite: 'Strict',
     isSecure: process.env.NODE_ENV === 'production',
     password: process.env.COOKIE_PASSWORD,
