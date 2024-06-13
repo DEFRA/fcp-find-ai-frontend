@@ -89,6 +89,8 @@ module.exports = [
         answer: input
       })
 
+      console.log('ChatHistory', chatHistory)
+
       const response = await fetchAnswer(request, input, chatHistory)
       const endTime = new Date()
 

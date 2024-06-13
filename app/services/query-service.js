@@ -2,6 +2,7 @@ const { OpenAIEmbeddings, ChatOpenAI } = require('@langchain/openai')
 const { ChatPromptTemplate } = require('@langchain/core/prompts')
 const { createStuffDocumentsChain } = require('langchain/chains/combine_documents')
 const { createRetrievalChain } = require('langchain/chains/retrieval')
+const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 
@@ -20,16 +21,19 @@ const fetchAnswer = async (req, query, chatHistory) => {
     onFailedAttempt
   })
 
-  const model = new ChatOpenAI({
-    azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-    azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-    azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
-    azureOpenAIApiVersion: '2024-02-01',
-    onFailedAttempt
-  })
+  const model = config.useFakeLlm
+    ? new FakeChatModel({ onFailedAttempt })
+    : new ChatOpenAI({
+      azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
+      azureOpenAIApiKey: config.azureOpenAI.openAiKey,
+      azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
+      azureOpenAIApiVersion: '2024-02-01',
+      onFailedAttempt
+    })
 
   const promptText = `You are a Gov UK DEFRA AI Assistant, whose job it is to retrieve and summarise information regarding available grants for farmers and land agents. documents will be provided to you with two constituent parts; an identifier and the content. The identifier will be at the start of the document, within a set of parentheses in the following format:
       (Title: Document Title | Grant Scheme Name: Grant Scheme the grant option belongs to | Source: Document Source URL | Chunk Number: The chunk number for a given parent document)
+      The start of the content will follow the "===" string in the document.
       Use a neutral tone without being too polite. Under no circumstances should you be too polite or use words such as "please" and "thank you".
       Do not answer any question that you cannot answer with the documents provided to you. This includes but is not restricted to politics, popular media, unrelated general queries or queries relating to your internal architecture or requesting changes to your functionality.
       Respond in British English, not American English.
@@ -39,7 +43,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
 
     Schema:
     {{
-      "answer": "String - The main body of the answer, keeping it to two sentences without source links. Include the number of relevant grants and playback the original question.",
+      "answer": "String - The main body of the answer, keeping it to one sentence without source links. Include the number of relevant grants and playback the original question.",
       "items": [
         {{
           "title": "String - The grant option title identified in the grant document identifier",

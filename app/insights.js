@@ -16,7 +16,7 @@ const setup = () => {
         envelope?.data?.baseData?.responseCode === '200') {
         return false
       }
-      console.log(envelope)
+
       return true
     })
 
