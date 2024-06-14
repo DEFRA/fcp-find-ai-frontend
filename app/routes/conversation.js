@@ -4,6 +4,7 @@ const { fetchAnswer } = require('../services/query-service')
 const config = require('../config')
 const { schemes } = require('../domain/schemes')
 const { getChatHistory, parseMessage } = require('../utils/langchain-utils')
+const { trackMessage, trackSystemMessage, trackConversationPageView } = require('../lib/events')
 
 module.exports = [
   {
@@ -17,6 +18,9 @@ module.exports = [
       }
 
       const conversationId = request.params.conversationId
+
+      trackConversationPageView(conversationId)
+
       const selectedSchemes = [].concat(request.payload?.scheme || [])
       const schemesList = [...schemes].map((scheme) => {
         return {
@@ -49,6 +53,9 @@ module.exports = [
       }
 
       const conversationId = request.params.conversationId
+
+      trackConversationPageView(conversationId)
+
       const input = request.payload?.input
       const validationError = !input
       const selectedSchemes = [].concat(request.payload?.scheme || [])
@@ -57,12 +64,6 @@ module.exports = [
           ...scheme,
           isSelected: selectedSchemes.includes(scheme.key)
         }
-      })
-
-      request.logger.info(`User input: ${input}`, {
-        input,
-        schemesList,
-        conversationId
       })
 
       const messages = getMessages(request, conversationId)
@@ -80,15 +81,23 @@ module.exports = [
         })
       }
 
+      const startTime = new Date()
+      trackMessage({ message: input, conversationId, schemesList, characterCount: input.length, time: startTime, conversationPosition: chatHistory.length + 1 })
+
       messages.push({
         role: 'user',
         answer: input
       })
 
+      console.log('ChatHistory', chatHistory)
+
       const response = await fetchAnswer(request, input, chatHistory)
+      const endTime = new Date()
+
       request.logger.info(`Generated response: ${response}`, {
         conversationId
       })
+
       try {
         const langchainData = parseMessage(request, response)
 
@@ -101,6 +110,9 @@ module.exports = [
           role: 'system',
           answer: response
         })
+      } finally {
+        const responseDuration = (endTime.getTime() - startTime.getTime() / 1000)
+        trackSystemMessage({ message: response, conversationId, time: endTime, characterCount: response.length, responseDuration, conversationPosition: chatHistory.length + 2 })
       }
 
       setMessages(request, conversationId, messages)

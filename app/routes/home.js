@@ -2,6 +2,7 @@ const { isAuthenticated } = require('../cookie-manager')
 const Uuid = require('uuid')
 const { schemes } = require('../domain/schemes')
 const config = require('../config')
+const { trackLandingPageView } = require('../lib/events')
 
 module.exports = {
   method: ['GET', 'POST'],
@@ -16,6 +17,8 @@ module.exports = {
     let validationError = false
 
     const conversationId = Uuid.v4()
+
+    trackLandingPageView(conversationId)
 
     const input = request.payload?.input
     const selectedSchemes = [].concat(request.payload?.scheme || [])

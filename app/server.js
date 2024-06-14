@@ -25,7 +25,7 @@ async function createServer () {
       name: 'session',
       provider: {
         constructor: catbox,
-        options: config.NODE_ENV === 'test'
+        options: config.cookie.useRedis === false || config.NODE_ENV === 'test'
           ? {}
           : {
               host: config.redis.host,
@@ -43,7 +43,7 @@ async function createServer () {
     {
       plugin: require('@hapi/yar'),
       options: {
-        maxCookieSize: config.env === 'production' ? 0 : 1024,
+        maxCookieSize: config.useRedis ? 0 : 1024,
         storeBlank: true,
         cache: {
           cache: 'session',

@@ -1,6 +1,6 @@
 {
   "name": "fcp-find-ai-frontend",
-  "version": "0.1.28",
+  "version": "0.1.33",
   "description": "",
   "homepage": "github.com?owner=defra&repo=fcp-find-ai-frontend&organization=defra",
   "main": "app/index.js",
@@ -36,7 +36,7 @@
     "@langchain/azure-openai": "^0.0.10",
     "@langchain/community": "^0.2.1",
     "@langchain/openai": "^0.0.34",
-    "applicationinsights": "2.8.0",
+    "applicationinsights": "2.9.5",
     "axios": "^1.6.7",
     "dotenv": "^16.0.3",
     "govuk-frontend": "4.7.0",

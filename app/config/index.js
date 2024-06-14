@@ -9,7 +9,7 @@ const config = {
   fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
 
-  version: '0.1.27',
+  version: '0.1.33-message-events-convs',
 
   logLevel: process.env.LOG_LEVEL || 'error',
 
@@ -23,7 +23,7 @@ const config = {
     cookieNameCookiePolicy: 'ffa_cookie_policy',
     cookieNameAuth: 'ffa_auth',
     cookieNameSession: 'ffa_session',
-    useRedis: process.env.NODE_ENV === 'production',
+    useRedis: process.env.USE_REDIS !== 'false',
     isSameSite: 'Strict',
     isSecure: process.env.NODE_ENV === 'production',
     password: process.env.COOKIE_PASSWORD,
@@ -44,6 +44,8 @@ const config = {
     port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : '',
     tls: process.env.NODE_ENV === 'production' ? {} : undefined
   },
+
+  useFakeLlm: process.env.LLM === 'FAKE',
 
   azureOpenAI: {
     searchUrl: process.env.AZURE_AISEARCH_ENDPOINT,

@@ -4,7 +4,8 @@ const mockDefaultClient = {
       cloudRole: ''
     },
     tags: {}
-  }
+  },
+  addTelemetryProcessor: jest.fn()
 }
 
 const mockStart = jest.fn()

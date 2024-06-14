@@ -11,7 +11,8 @@ const getLogger = () => {
     transport: {
       target: 'pino-pretty',
       options: {
-        colorize: true
+        colorize: true,
+        ignore: 'pid,req,res'
       }
     }
   })

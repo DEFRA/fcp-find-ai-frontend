@@ -7,6 +7,7 @@ jest.mock('@langchain/openai')
 jest.mock('@langchain/core/prompts')
 jest.mock('langchain/chains/combine_documents')
 jest.mock('langchain/chains/retrieval')
+jest.mock('langchain/chains/history_aware_retriever')
 jest.mock('../../../app/lib/azure-vector-store')
 
 describe('query-service', () => {
