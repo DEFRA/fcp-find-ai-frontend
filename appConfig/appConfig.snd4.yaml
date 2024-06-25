@@ -1,11 +1,6 @@
 - key: APPINSIGHTS_CONNECTIONSTRING
   value: "{{servicename}}-APPINSIGHTS-CONNECTIONSTRING"
   type: "keyvault"
-- key: FARMING_FUNDING_API_URI
-  value: https://find-ai-data-gathering.azurewebsites.net/api
-- key: FARMING_FUNDING_API_KEY
-  value: "{{servicename}}-FARMING-FUNDING-API-KEY"
-  type: "keyvault"
 - key: COOKIE_PASSWORD
   value: "{{servicename}}-COOKIE-PASSWORD"
   type: "keyvault"

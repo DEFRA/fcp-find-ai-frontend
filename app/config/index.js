@@ -1,16 +1,75 @@
+const Joi = require('joi')
+
 if (process.env.NODE_ENV !== 'test') {
   require('dotenv').config()
 }
 
+const schema = Joi.object({
+  env: Joi.string().valid('development', 'test', 'production').required(),
+  appInsightsKey: Joi.string().optional(),
+
+  version: Joi.string().required(),
+  logLevel: Joi.string().default('error'),
+
+  auth: Joi.object({
+    authUser: Joi.string().required(),
+    authPassword: Joi.string().required(),
+    authVerification: Joi.string().required()
+  }).required(),
+
+  cookie: Joi.object({
+    cookieNameCookiePolicy: Joi.string().default('ffa_cookie_policy'),
+    cookieNameAuth: Joi.string().default('ffa_auth'),
+    cookieNameSession: Joi.string().default('ffa_session'),
+    useRedis: Joi.boolean().default(true),
+    isSameSite: Joi.string().valid('Strict', 'Lax', 'None').default('Strict'),
+    isSecure: Joi.boolean().default(process.env.NODE_ENV === 'production'),
+    password: Joi.string().required(),
+    ttl: Joi.number().integer().default(8640000)
+  }).required(),
+
+  cookiePolicy: Joi.object({
+    clearInvalid: Joi.boolean().default(false),
+    encoding: Joi.string().valid('base64json', 'none').default('base64json'),
+    isSameSite: Joi.string().valid('Strict', 'Lax', 'None').default('Strict'),
+    isSecure: Joi.boolean().default(process.env.NODE_ENV === 'production'),
+    password: Joi.string().required()
+  }).required(),
+
+  redis: Joi.object({
+    host: Joi.string().default(''),
+    password: Joi.string().default(''),
+    port: Joi.number().integer().default(''),
+    tls: Joi.any()
+  }).required(),
+
+  useFakeLlm: Joi.boolean().default(false),
+
+  azureOpenAI: Joi.object({
+    searchUrl: Joi.string().uri().required(),
+    searchApiKey: Joi.string().required(),
+    indexName: Joi.string().required(),
+
+    openAiInstanceName: Joi.string().required(),
+    openAiEndpoint: Joi.string().uri().required(),
+    openAiKey: Joi.string().required(),
+    openAiDeploymentName: Joi.string().required(),
+    openAiModelName: Joi.string().required(),
+
+    tokenBudget: Joi.number()
+      .integer()
+      .default(16384 - 1024)
+  }).required(),
+
+  googleAnalytics: Joi.object({
+    key: Joi.string().default('')
+  }).required()
+})
+
 const config = {
   env: process.env.NODE_ENV,
-
-  fundingFarmingApiUri: process.env.FARMING_FUNDING_API_URI,
-  fundingFarmingApiKey: process.env.FARMING_FUNDING_API_KEY,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
-
-  version: '0.1.33-message-events-convs',
-
+  version: '0.1.34-message-events-convs',
   logLevel: process.env.LOG_LEVEL || 'error',
 
   auth: {
@@ -64,6 +123,14 @@ const config = {
   googleAnalytics: {
     key: process.env.GOOGLE_TAG_MANAGER_KEY || ''
   }
+}
+
+const result = schema.validate(config, {
+  abortEarly: false
+})
+
+if (result.error) {
+  throw new Error(`The app config is invalid. ${result.error.message}`)
 }
 
 module.exports = config

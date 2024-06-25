@@ -59,7 +59,6 @@ describe('/conversation', () => {
       expect(mockH.view).toHaveBeenCalledWith('answer', {
         commandText: 'Ask follow-on question...',
         conversationId: 'testConversationId',
-        fundingFarmingApiUri: undefined,
         messages: [{
           answer: 'test message',
           role: 'user'
@@ -161,7 +160,6 @@ describe('/conversation', () => {
       expect(mockH.view).toHaveBeenCalledWith('answer', {
         commandText: 'Ask follow-on question...',
         conversationId: 'testConversationId',
-        fundingFarmingApiUri: undefined,
         messages: expectedMessages,
         schemesList: [
           { isSelected: false, key: 'CS', name: 'countryside stewardship' },
@@ -214,7 +212,6 @@ describe('/conversation', () => {
       expect(mockH.view).toHaveBeenCalledWith('answer', {
         commandText: 'Ask follow-on question...',
         conversationId: 'testConversationId',
-        fundingFarmingApiUri: undefined,
         messages: expectedMessages,
         schemesList: [
           { isSelected: false, key: 'CS', name: 'countryside stewardship' },
