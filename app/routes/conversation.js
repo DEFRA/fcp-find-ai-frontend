@@ -1,7 +1,6 @@
 const { isAuthenticated } = require('../cookie-manager')
 const { getMessages, setMessages } = require('../session/messages')
 const { fetchAnswer } = require('../services/query-service')
-const config = require('../config')
 const { schemes } = require('../domain/schemes')
 const { getChatHistory, parseMessage } = require('../utils/langchain-utils')
 const { trackMessage, trackSystemMessage, trackConversationPageView } = require('../lib/events')
@@ -32,7 +31,6 @@ module.exports = [
       const messages = getMessages(request, conversationId)
 
       return h.view('answer', {
-        fundingFarmingApiUri: config.fundingFarmingApiUri,
         validationError: false,
         messages,
         commandText: 'Ask follow-on question...',
@@ -71,7 +69,6 @@ module.exports = [
 
       if (!input) {
         return h.view('answer', {
-          fundingFarmingApiUri: config.fundingFarmingApiUri,
           validationError: true,
           messages,
           commandText: 'Ask follow-on question...',
@@ -124,7 +121,6 @@ module.exports = [
       }
 
       return h.view('answer', {
-        fundingFarmingApiUri: config.fundingFarmingApiUri,
         validationError,
         messages: formattedMessages,
         commandText: 'Ask follow-on question...',

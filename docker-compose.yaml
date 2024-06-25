@@ -7,4 +7,3 @@ services:
     container_name: fcp-find-ai-frontend
     environment:
       APPINSIGHTS_CLOUDROLE: fcp-find-ai-frontend-local
-      APPINSIGHTS_CONNECTIONSTRING: ${APPINSIGHTS_CONNECTIONSTRING}

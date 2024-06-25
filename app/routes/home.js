@@ -1,7 +1,6 @@
 const { isAuthenticated } = require('../cookie-manager')
 const Uuid = require('uuid')
 const { schemes } = require('../domain/schemes')
-const config = require('../config')
 const { trackLandingPageView } = require('../lib/events')
 
 module.exports = {
@@ -35,7 +34,6 @@ module.exports = {
       }
 
       return h.view('home', {
-        fundingFarmingApiUri: config.fundingFarmingApiUri,
         validationError,
         commandText: 'Ask a question...',
         showHintText: true,
