@@ -25,12 +25,12 @@ const fetchAnswer = async (req, query, chatHistory) => {
   const model = config.useFakeLlm
     ? new FakeChatModel({ onFailedAttempt })
     : new ChatOpenAI({
-      azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-      azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-      azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
-      azureOpenAIApiVersion: '2024-02-01',
-      onFailedAttempt
-    })
+        azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
+        azureOpenAIApiKey: config.azureOpenAI.openAiKey,
+        azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
+        azureOpenAIApiVersion: '2024-02-01',
+        onFailedAttempt
+      })
 
   const promptText = `You are a Gov UK DEFRA AI Assistant, whose job it is to retrieve and summarise information regarding available grants for farmers and land agents. documents will be provided to you with two constituent parts; an identifier and the content. The identifier will be at the start of the document, within a set of parentheses in the following format:
       (Title: Document Title | Grant Scheme Name: Grant Scheme the grant option belongs to | Source: Document Source URL | Chunk Number: The chunk number for a given parent document)
@@ -113,53 +113,61 @@ const fetchAnswer = async (req, query, chatHistory) => {
     input: query
   })
 
-  const extractLinks = (jsonObj) => {
-    const entries = []
-    const links = []
-    try {
-      const traverse = (obj) => {
-        if (typeof obj === 'object' && obj !== null) {
-          for (const key in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, key)) {
-              traverse(obj[key])
-            }
-          }
-        } else if (typeof obj === 'string') {
-          if (obj.includes('http')) {
-            entries.push(obj)
-          }
-        }
-      }
-
-      traverse(jsonObj)
-    } catch (err) {
-      console.log('Error at extractLinks.')
-    }
-
-    const urlRegex = /https?:\/\/[^\s|)]+/g
-
-    entries.forEach((entry) => {
-      const matches = entry.match(urlRegex)
-      if (matches) {
-        links.push(...matches)
-      }
-    })
-
-    return links.filter((value, index, self) => self.indexOf(value) === index)
-  }
-
   const validateResponseLinks = (response) => {
     if (!response) {
       return false
     }
 
+    const extractLinks = (jsonObj) => {
+      const entries = []
+
+      try {
+        const traverse = (obj, parent) => {
+          if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                traverse(obj[key], parent || obj)
+              }
+            }
+          } else if (typeof obj === 'string') {
+            if (obj.includes('http')) {
+              entries.push({ entry: parent, link: obj })
+            }
+          }
+        }
+
+        traverse(jsonObj, null)
+      } catch (err) {
+        console.log('Error at extractLinks.')
+      }
+
+      const urlRegex = /https?:\/\/[^\s|)]+/g
+
+      const entriesAndLinks = entries.map((entryObj) => {
+        const matches = entryObj.link.match(urlRegex).filter((value, index, self) => self.indexOf(value) === index)
+        return {
+          matches,
+          entry: entryObj.entry
+        }
+      })
+
+      return entriesAndLinks
+    }
+
     try {
       const jsonResp = JSON.parse(response.answer)
-      const uniqueLinks = extractLinks(jsonResp)
-      const trueLinks = extractLinks(response.context)
+      const responseEntriesAndLinks = extractLinks(jsonResp)
+      const trueEntriesAndLinks = extractLinks(response.context)
 
-      const invalidLinks = uniqueLinks.filter((link) => !trueLinks.includes(link))
+      const invalidLinks = responseEntriesAndLinks.filter((entry) =>
+        entry.matches.some((link) => !trueEntriesAndLinks.some((trueEntry) => trueEntry.matches.includes(link)))
+      )
+
       if (invalidLinks.length > 0) {
+        console.log(
+          'Invalid links:',
+          invalidLinks.map((invalidEntry) => invalidEntry.entry)
+        )
         return false
       }
     } catch (e) {
