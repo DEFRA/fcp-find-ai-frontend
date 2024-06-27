@@ -6,6 +6,7 @@ const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_
 const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
+const { logEvent } = require('../insights')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -155,8 +156,8 @@ const fetchAnswer = async (req, query, chatHistory) => {
     }
 
     try {
-      const jsonResp = JSON.parse(response.answer)
-      const responseEntriesAndLinks = extractLinks(jsonResp)
+      // get all links from the response and the context. Use the context as the source of true links.
+      const responseEntriesAndLinks = extractLinks(JSON.parse(response.answer))
       const trueEntriesAndLinks = extractLinks(response.context)
 
       const invalidLinks = responseEntriesAndLinks.filter((entry) =>
@@ -164,10 +165,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
       )
 
       if (invalidLinks.length > 0) {
-        console.log(
-          'Invalid links:',
-          invalidLinks.map((invalidEntry) => invalidEntry.entry)
-        )
+        logEvent('Invalid links detected in response objects', invalidLinks)
         return false
       }
     } catch (e) {
@@ -177,8 +175,8 @@ const fetchAnswer = async (req, query, chatHistory) => {
     return true
   }
 
-  const areResponseLinksValid = validateResponseLinks(response)
-  console.log('areResponseLinksValid', areResponseLinksValid)
+  // run the validation, don't throw an error if it fails
+  validateResponseLinks(response)
 
   return response?.answer
 }
