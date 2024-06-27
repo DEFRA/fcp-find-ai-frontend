@@ -26,12 +26,12 @@ const fetchAnswer = async (req, query, chatHistory) => {
   const model = config.useFakeLlm
     ? new FakeChatModel({ onFailedAttempt })
     : new ChatOpenAI({
-        azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-        azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-        azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
-        azureOpenAIApiVersion: '2024-02-01',
-        onFailedAttempt
-      })
+      azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
+      azureOpenAIApiKey: config.azureOpenAI.openAiKey,
+      azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
+      azureOpenAIApiVersion: '2024-02-01',
+      onFailedAttempt
+    })
 
   const promptText = `You are a Gov UK DEFRA AI Assistant, whose job it is to retrieve and summarise information regarding available grants for farmers and land agents. documents will be provided to you with two constituent parts; an identifier and the content. The identifier will be at the start of the document, within a set of parentheses in the following format:
       (Title: Document Title | Grant Scheme Name: Grant Scheme the grant option belongs to | Source: Document Source URL | Chunk Number: The chunk number for a given parent document)
@@ -138,9 +138,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
         }
 
         traverse(jsonObj, null)
-      } catch (err) {
-        console.log('Error at extractLinks.')
-      }
+      } catch {}
 
       const urlRegex = /https?:\/\/[^\s|)]+/g
 
@@ -166,9 +164,10 @@ const fetchAnswer = async (req, query, chatHistory) => {
 
       if (invalidLinks.length > 0) {
         logEvent('Invalid links detected in response objects', invalidLinks)
+
         return false
       }
-    } catch (e) {
+    } catch {
       return false
     }
 
