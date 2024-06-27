@@ -113,6 +113,65 @@ const fetchAnswer = async (req, query, chatHistory) => {
     input: query
   })
 
+  const extractLinks = (jsonObj) => {
+    const entries = []
+    const links = []
+    try {
+      const traverse = (obj) => {
+        if (typeof obj === 'object' && obj !== null) {
+          for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+              traverse(obj[key])
+            }
+          }
+        } else if (typeof obj === 'string') {
+          if (obj.includes('http')) {
+            entries.push(obj)
+          }
+        }
+      }
+
+      traverse(jsonObj)
+    } catch (err) {
+      console.log('Error at extractLinks.')
+    }
+
+    const urlRegex = /https?:\/\/[^\s|)]+/g
+
+    entries.forEach((entry) => {
+      const matches = entry.match(urlRegex)
+      if (matches) {
+        links.push(...matches)
+      }
+    })
+
+    return links.filter((value, index, self) => self.indexOf(value) === index)
+  }
+
+  const validateResponseLinks = (response) => {
+    if (!response) {
+      return false
+    }
+
+    try {
+      const jsonResp = JSON.parse(response.answer)
+      const uniqueLinks = extractLinks(jsonResp)
+      const trueLinks = extractLinks(response.context)
+
+      const invalidLinks = uniqueLinks.filter((link) => !trueLinks.includes(link))
+      if (invalidLinks.length > 0) {
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+
+    return true
+  }
+
+  const areResponseLinksValid = validateResponseLinks(response)
+  console.log('areResponseLinksValid', areResponseLinksValid)
+
   return response?.answer
 }
 
