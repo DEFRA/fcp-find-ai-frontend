@@ -14,6 +14,77 @@ const onFailedAttempt = async (error) => {
   }
 }
 
+const validateResponseLinks = (response) => {
+  let errorMessage = 'validateResponseLinks failed because no response object provided'
+  if (!response) {
+    logEvent(errorMessage)
+
+    return errorMessage
+  }
+
+  const extractLinks = (jsonObj) => {
+    const entries = []
+
+    try {
+      const traverse = (obj, parent) => {
+        if (typeof obj === 'object' && obj !== null) {
+          for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+              traverse(obj[key], parent || obj)
+            }
+          }
+        } else if (typeof obj === 'string') {
+          if (obj.includes('http')) {
+            entries.push({ entry: parent, link: obj })
+          }
+        }
+      }
+
+      traverse(jsonObj, null)
+    } catch {}
+
+    const urlRegex = /https?:\/\/[^\s|)]+/g
+
+    const entriesAndLinks = entries.map((entryObj) => {
+      const matches = entryObj.link.match(urlRegex).filter((value, index, self) => self.indexOf(value) === index)
+      return {
+        matches,
+        entry: entryObj.entry
+      }
+    })
+
+    return entriesAndLinks
+  }
+
+  try {
+    // get all links from the response and the context. Use the context as the source of true links.
+    if (!response.answer || !response.context) {
+      errorMessage = 'validateResponseLinks failed because response object does not contain answer or context fields'
+      logEvent(errorMessage)
+
+      return errorMessage
+    }
+
+    const responseEntriesAndLinks = extractLinks(JSON.parse(response.answer))
+    const trueEntriesAndLinks = extractLinks(response.context)
+
+    const invalidLinks = responseEntriesAndLinks.filter((entry) =>
+      entry.matches.some((link) => !trueEntriesAndLinks.some((trueEntry) => trueEntry.matches.includes(link)))
+    )
+
+    if (invalidLinks.length > 0) {
+      errorMessage = 'validateResponseLinks failed because invalid links detected in response objects'
+      logEvent(errorMessage, invalidLinks)
+
+      return errorMessage
+    }
+  } catch {
+    return 'Error while validating response links'
+  }
+
+  return true
+}
+
 const fetchAnswer = async (req, query, chatHistory) => {
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
@@ -114,66 +185,6 @@ const fetchAnswer = async (req, query, chatHistory) => {
     input: query
   })
 
-  const validateResponseLinks = (response) => {
-    if (!response) {
-      return false
-    }
-
-    const extractLinks = (jsonObj) => {
-      const entries = []
-
-      try {
-        const traverse = (obj, parent) => {
-          if (typeof obj === 'object' && obj !== null) {
-            for (const key in obj) {
-              if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                traverse(obj[key], parent || obj)
-              }
-            }
-          } else if (typeof obj === 'string') {
-            if (obj.includes('http')) {
-              entries.push({ entry: parent, link: obj })
-            }
-          }
-        }
-
-        traverse(jsonObj, null)
-      } catch {}
-
-      const urlRegex = /https?:\/\/[^\s|)]+/g
-
-      const entriesAndLinks = entries.map((entryObj) => {
-        const matches = entryObj.link.match(urlRegex).filter((value, index, self) => self.indexOf(value) === index)
-        return {
-          matches,
-          entry: entryObj.entry
-        }
-      })
-
-      return entriesAndLinks
-    }
-
-    try {
-      // get all links from the response and the context. Use the context as the source of true links.
-      const responseEntriesAndLinks = extractLinks(JSON.parse(response.answer))
-      const trueEntriesAndLinks = extractLinks(response.context)
-
-      const invalidLinks = responseEntriesAndLinks.filter((entry) =>
-        entry.matches.some((link) => !trueEntriesAndLinks.some((trueEntry) => trueEntry.matches.includes(link)))
-      )
-
-      if (invalidLinks.length > 0) {
-        logEvent('Invalid links detected in response objects', invalidLinks)
-
-        return false
-      }
-    } catch {
-      return false
-    }
-
-    return true
-  }
-
   // run the validation, don't throw an error if it fails
   validateResponseLinks(response)
 
@@ -181,5 +192,6 @@ const fetchAnswer = async (req, query, chatHistory) => {
 }
 
 module.exports = {
-  fetchAnswer
+  fetchAnswer,
+  validateResponseLinks
 }
