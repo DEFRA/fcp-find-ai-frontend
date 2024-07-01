@@ -6,6 +6,7 @@ const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_
 const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
+const { redact } = require('../utils/redact-utils')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -108,9 +109,11 @@ const fetchAnswer = async (req, query, chatHistory) => {
     retriever: historyAwareRetriever
   })
 
+  const redactedQuery = await redact(query)
+
   const response = await retrievalChain.invoke({
     chat_history: chatHistory,
-    input: query
+    input: redactedQuery
   })
 
   return response?.answer
