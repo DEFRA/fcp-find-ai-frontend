@@ -13,11 +13,11 @@ jest.mock('../../../app/lib/azure-vector-store')
 describe('query-service', () => {
   describe('fetchAnswer', () => {
     test('perform langchain call', async () => {
-      createRetrievalChain.mockResolvedValue(({
+      createRetrievalChain.mockResolvedValue({
         invoke: jest.fn().mockResolvedValue({
           answer: JSON.stringify({ answer: 'generated response', items: [] })
         })
-      }))
+      })
 
       const prompt = jest.fn()
       const input = 'deer fencing'
@@ -29,8 +29,8 @@ describe('query-service', () => {
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(expect.objectContaining({ prompt }))
     })
 
-    test('validateResponseLinks to correctly evaluate a response', async () => {
-      const mockResponseTrue = {
+    test('validateResponseLinks to validate a correctly structured response without hallucinated links', async () => {
+      const mockResponseValid = {
         answer: JSON.stringify({
           answer: 'generated response',
           items: [
@@ -52,6 +52,12 @@ describe('query-service', () => {
         ]
       }
 
+      const validatedResponseTrue = validateResponseLinks(mockResponseValid, 'deer fencing')
+
+      expect(validatedResponseTrue).toStrictEqual(true)
+    })
+
+    test('validateResponseLinks to invalidate a response that is either incorrectly structred or has hallucinated links', async () => {
       const mockResponseInvalid = {
         answer: JSON.stringify({
           answer: 'generated response',
@@ -105,15 +111,13 @@ describe('query-service', () => {
         ]
       }
 
-      const validatedResponseTrue = validateResponseLinks(mockResponseTrue)
-      const validatedResponseInvalid = validateResponseLinks(mockResponseInvalid)
-      const validatedResponseNoContext = validateResponseLinks(mockResponseNoContext)
-      const validatedResponseNoAnswer = validateResponseLinks(mockResponseNoAnswer)
+      const validatedResponseInvalid = validateResponseLinks(mockResponseInvalid, 'deer fencing')
+      const validatedResponseNoContext = validateResponseLinks(mockResponseNoContext, 'deer fencing')
+      const validatedResponseNoAnswer = validateResponseLinks(mockResponseNoAnswer, 'deer fencing')
 
-      expect(validatedResponseTrue).toStrictEqual(true)
-      expect(validatedResponseInvalid).toStrictEqual('validateResponseLinks failed because invalid links detected in response objects')
-      expect(validatedResponseNoContext).toStrictEqual('validateResponseLinks failed because response object does not contain answer or context fields')
-      expect(validatedResponseNoAnswer).toStrictEqual('validateResponseLinks failed because response object does not contain answer or context fields')
+      expect(validatedResponseInvalid).toStrictEqual(false)
+      expect(validatedResponseNoContext).toStrictEqual(false)
+      expect(validatedResponseNoAnswer).toStrictEqual(false)
     })
   })
 })

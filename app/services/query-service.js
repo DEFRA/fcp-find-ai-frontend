@@ -6,7 +6,8 @@ const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_
 const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
-const { logEvent } = require('../insights')
+const { trackHallucinatedLinkInResponse } = require('../lib/events')
+const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -14,72 +15,37 @@ const onFailedAttempt = async (error) => {
   }
 }
 
-const validateResponseLinks = (response) => {
-  let errorMessage = 'validateResponseLinks failed because no response object provided'
-  if (!response) {
-    logEvent(errorMessage)
-
-    return errorMessage
-  }
-
-  const extractLinks = (jsonObj) => {
-    const entries = []
-
-    try {
-      const traverse = (obj, parent) => {
-        if (typeof obj === 'object' && obj !== null) {
-          for (const key in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, key)) {
-              traverse(obj[key], parent || obj)
-            }
-          }
-        } else if (typeof obj === 'string') {
-          if (obj.includes('http')) {
-            entries.push({ entry: parent, link: obj })
-          }
-        }
-      }
-
-      traverse(jsonObj, null)
-    } catch {}
-
-    const urlRegex = /https?:\/\/[^\s|)]+/g
-
-    const entriesAndLinks = entries.map((entryObj) => {
-      const matches = entryObj.link.match(urlRegex).filter((value, index, self) => self.indexOf(value) === index)
-      return {
-        matches,
-        entry: entryObj.entry
-      }
+const validateResponseLinks = (response, query) => {
+  const trackIssueAndBreak = (errorMessage) => {
+    trackHallucinatedLinkInResponse({
+      errorMessage,
+      failedObject: response,
+      requestQuery: query
     })
-
-    return entriesAndLinks
+    return false
   }
 
   try {
-    // get all links from the response and the context. Use the context as the source of true links.
     if (!response.answer || !response.context) {
-      errorMessage = 'validateResponseLinks failed because response object does not contain answer or context fields'
-      logEvent(errorMessage)
-
-      return errorMessage
+      return trackIssueAndBreak('validateResponseLinks failed because response object does not contain answer or context fields')
     }
 
-    const responseEntriesAndLinks = extractLinks(JSON.parse(response.answer))
-    const trueEntriesAndLinks = extractLinks(response.context)
+    const responseEntriesAndLinks = extractLinksForValidatingResponse(JSON.parse(response.answer))
+    const trueEntriesAndLinks = extractLinksForValidatingResponse(response.context)
+
+    if (responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks.length === 0) {
+      return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
+    }
 
     const invalidLinks = responseEntriesAndLinks.filter((entry) =>
       entry.matches.some((link) => !trueEntriesAndLinks.some((trueEntry) => trueEntry.matches.includes(link)))
     )
 
     if (invalidLinks.length > 0) {
-      errorMessage = 'validateResponseLinks failed because invalid links detected in response objects'
-      logEvent(errorMessage, invalidLinks)
-
-      return errorMessage
+      return trackIssueAndBreak('validateResponseLinks failed because invalid links detected in response objects')
     }
   } catch {
-    return 'Error while validating response links'
+    return trackIssueAndBreak('validateResponseLinks failed because of an error')
   }
 
   return true
@@ -186,7 +152,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
   })
 
   // run the validation, don't throw an error if it fails
-  validateResponseLinks(response)
+  validateResponseLinks(response, query)
 
   return response?.answer
 }
