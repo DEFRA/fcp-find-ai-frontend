@@ -1,5 +1,5 @@
 const nlp = require('compromise/three')
-const { AsyncRedactor } = require('redact-pii')
+const { AsyncRedactor } = require('cognosys-redact-pii')
 
 const redactor = new AsyncRedactor({
   customRedactors: {
