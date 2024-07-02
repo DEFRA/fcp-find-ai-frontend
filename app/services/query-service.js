@@ -6,12 +6,50 @@ const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_
 const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
+const { trackHallucinatedLinkInResponse } = require('../lib/events')
+const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
     throw new Error(`Failed to get embeddings: ${error}`)
   }
+}
+
+const validateResponseLinks = (response, query) => {
+  const trackIssueAndBreak = (errorMessage) => {
+    trackHallucinatedLinkInResponse({
+      errorMessage,
+      failedObject: response,
+      requestQuery: query
+    })
+    return false
+  }
+
+  try {
+    if (!response.answer || !response.context) {
+      return trackIssueAndBreak('validateResponseLinks failed because response object does not contain answer or context fields')
+    }
+
+    const responseEntriesAndLinks = extractLinksForValidatingResponse(JSON.parse(response.answer))
+    const trueEntriesAndLinks = extractLinksForValidatingResponse(response.context)
+
+    if (responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks.length === 0) {
+      return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
+    }
+
+    const invalidLinks = responseEntriesAndLinks.filter((entry) =>
+      entry.matches.some((link) => !trueEntriesAndLinks.some((trueEntry) => trueEntry.matches.includes(link)))
+    )
+
+    if (invalidLinks.length > 0) {
+      return trackIssueAndBreak('validateResponseLinks failed because invalid links detected in response objects')
+    }
+  } catch {
+    return trackIssueAndBreak('validateResponseLinks failed because of an error')
+  }
+
+  return true
 }
 
 const fetchAnswer = async (req, query, chatHistory) => {
@@ -116,9 +154,13 @@ const fetchAnswer = async (req, query, chatHistory) => {
     input: redactedQuery
   })
 
+  // run the validation, don't throw an error if it fails
+  validateResponseLinks(response, query)
+
   return response?.answer
 }
 
 module.exports = {
-  fetchAnswer
+  fetchAnswer,
+  validateResponseLinks
 }

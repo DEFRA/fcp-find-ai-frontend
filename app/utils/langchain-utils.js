@@ -28,7 +28,43 @@ const parseMessage = (req, message) => {
   }
 }
 
+const extractLinksForValidatingResponse = (jsonObj) => {
+  const entries = []
+
+  try {
+    // Function to check URLs and gather entries with valid URLs
+    const checkUrls = (obj, parent) => {
+      if (typeof obj === 'object' && obj !== null) {
+        for (const key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            checkUrls(obj[key], parent || obj)
+          }
+        }
+      } else if (typeof obj === 'string' && obj.includes('http')) {
+        entries.push({ entry: parent, link: obj })
+      }
+    }
+
+    checkUrls(jsonObj, null)
+  } catch {
+    return []
+  }
+
+  const urlRegex = /https?:\/\/[^\s|)]+/g
+
+  const entriesAndLinks = entries.map((entryObj) => {
+    const matches = entryObj.link.match(urlRegex).filter((value, index, self) => self.indexOf(value) === index)
+    return {
+      matches,
+      entry: entryObj.entry
+    }
+  })
+
+  return entriesAndLinks
+}
+
 module.exports = {
   getChatHistory,
-  parseMessage
+  parseMessage,
+  extractLinksForValidatingResponse
 }
