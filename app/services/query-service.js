@@ -8,6 +8,7 @@ const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse } = require('../lib/events')
 const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
+const { redact } = require('../utils/redact-utils')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -146,9 +147,11 @@ const fetchAnswer = async (req, query, chatHistory) => {
     retriever: historyAwareRetriever
   })
 
+  const redactedQuery = await redact(query)
+
   const response = await retrievalChain.invoke({
     chat_history: chatHistory,
-    input: query
+    input: redactedQuery
   })
 
   // run the validation, don't throw an error if it fails

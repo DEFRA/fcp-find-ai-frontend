@@ -38,6 +38,8 @@
     "@langchain/openai": "^0.0.34",
     "applicationinsights": "2.9.5",
     "axios": "^1.6.7",
+    "cognosys-redact-pii": "^3.4.0",
+    "compromise": "^14.13.0",
     "dotenv": "^16.0.3",
     "govuk-frontend": "4.7.0",
     "hapi-pino": "^9.4.0",
