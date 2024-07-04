@@ -9,10 +9,6 @@ const setMessages = (req, conversationId, messages) => {
 const getMessages = (req, conversationId) => {
   const value = get(req, messagesKey, conversationId)
 
-  if (!value) {
-    return []
-  }
-
   return value
 }
 

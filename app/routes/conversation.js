@@ -4,6 +4,7 @@ const { fetchAnswer } = require('../services/query-service')
 const { schemes } = require('../domain/schemes')
 const { getChatHistory, parseMessage } = require('../utils/langchain-utils')
 const { trackMessage, trackSystemMessage, trackConversationPageView } = require('../lib/events')
+const boom = require('@hapi/boom')
 
 module.exports = [
   {
@@ -29,6 +30,10 @@ module.exports = [
       })
 
       const messages = getMessages(request, conversationId)
+
+      if (!messages) {
+        return boom.notFound()
+      }
 
       return h.view('answer', {
         validationError: false,
@@ -64,7 +69,7 @@ module.exports = [
         }
       })
 
-      const messages = getMessages(request, conversationId)
+      const messages = getMessages(request, conversationId) || []
       const chatHistory = getChatHistory(messages)
 
       if (!input) {
@@ -86,8 +91,6 @@ module.exports = [
         answer: input
       })
 
-      console.log('ChatHistory', chatHistory)
-
       const response = await fetchAnswer(request, input, chatHistory)
       const endTime = new Date()
 
@@ -108,7 +111,7 @@ module.exports = [
           answer: response
         })
       } finally {
-        const responseDuration = (endTime.getTime() - startTime.getTime() / 1000)
+        const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
         trackSystemMessage({ message: response, conversationId, time: endTime, characterCount: response.length, responseDuration, conversationPosition: chatHistory.length + 2 })
       }
 
