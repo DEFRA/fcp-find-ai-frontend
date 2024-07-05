@@ -8,6 +8,7 @@ $lightGreen: #00a33b;
 $defraGreen: #00a33b;
 $pillGreen: #cce2d8;
 $pillTextGreen: #005a30;
+$defraDarkGreen: #008531;
 
 @import "components/inverse-header";
 @import "components/defra-header";
@@ -212,9 +213,15 @@ $pillTextGreen: #005a30;
 /** Chat Message Icons */
 .defraButton {
   border-radius: 45px;
-  background-color: #00a33b;
+  background-color: $defraDarkGreen;
   margin-bottom: 0 !important;
   box-shadow: none;
+
+  &:focus {
+    svg {
+      filter: invert(100%);
+    }
+  }
 }
 
 .flippedImg {

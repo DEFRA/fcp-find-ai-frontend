@@ -1,5 +1,5 @@
 {% set menuButtonText = params.menuButtonText if params.menuButtonText else 
-    'Menu' %}
+  'Menu' %}
 
 <header class="govuk-header defra-header {{ params.classes if params.classes }}" role="banner" data-module="govuk-header" {%- for attribute, value in params.attributes %} {{ attribute }}="{{ value }}" {% endfor %}>
   <div class="govuk-header__container {{ params.containerClasses | default('govuk-width-container') }}">
@@ -19,7 +19,8 @@
                     The SVG needs `focusable="false"` so that Internet Explorer does not
                     treat it as an interactive element - without this it will be
                     'focusable' when using the keyboard to navigate. #}
-            <div class="logoContainer"> {% include './defra-logo.njk' %}
+          <div class="logoContainer">
+            {% include './defra-logo.njk' %}
           </div>
           <!--<![endif]-->
           <!-- [if IE 8]>
