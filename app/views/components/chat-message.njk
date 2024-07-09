@@ -4,10 +4,10 @@
   <div class="chat-accessory {{ 'userMessage' if params.role === 'user' }}">
     <span class="message-owner govuk-body-l govuk-!-font-weight-bold">
       {% if params.role === 'user' %}
-        <span class="message-icon"><img class="flippedImg" src="/static/images/comment.svg"/></span>
+        <span class="message-icon"><img class="flippedImg" src="/static/images/comment.svg" alt=""/></span>
             You
           {% else %}
-        <span class="message-icon"><img src="/static/images/comment.svg"/></span>
+        <span class="message-icon"><img src="/static/images/comment.svg" alt=""/></span>
             Farming funding assistant
           {% endif %}
     </span>

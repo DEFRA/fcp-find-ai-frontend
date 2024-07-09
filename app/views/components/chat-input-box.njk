@@ -6,7 +6,7 @@
 {% endif %}
 
 <div class="commandPanel">
-  <span class="commandText govuk-body">{{ commandText }}</span>
+  <label for="prompt-id" class="commandText govuk-body">{{ commandText }}</label>
 </div>
 
 <form method="POST" id="sendForm" action="/conversation/{{ conversationId }}#latestChatMessage">
@@ -30,7 +30,7 @@
     </div>
 
     <button type="submit" class="sendButton govuk-button" id="sendButton" aria-label="Send">
-      <img src="/static/images/Expand_right.svg"/>
+      <img src="/static/images/Expand_right.svg" alt="Send" />
     </button>
   </div>
 

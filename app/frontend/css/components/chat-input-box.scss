@@ -38,11 +38,16 @@
     width: 40px;
     padding: 4px 0;
     box-shadow: none;
-
-    background-color: #00a33b;
+    background-color: $defraDarkGreen;
 
     &:hover {
-      filter: brightness(90%);
+      background-color: #005a30;
+    }
+
+    &:focus {
+      img {
+        filter: invert(100%);
+      }
     }
 
     &::active {

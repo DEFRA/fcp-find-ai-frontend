@@ -1,5 +1,5 @@
 .defra-header {
-  background: #01ae43;
+  background: $defraDarkGreen;
   color: #fff;
 
   .govuk-header__container {
@@ -17,13 +17,27 @@
         display: flex;
       }
 
-      .govuk-header__logotype {
-        display: flex;
-        border-left: 2px solid white;
-        align-items: center;
+      .govuk-header__link {
+        &:focus {
+          .logoContainer {
+            svg {
+              filter: invert(100%);
+            }
+          }
 
-        .logoContainer {
-          margin-left: 10px;
+          .govuk-header__logotype-text {
+            color: black;
+          }
+        }
+
+        .govuk-header__logotype {
+          display: flex;
+          border-left: 2px solid white;
+          align-items: center;
+
+          .logoContainer {
+            margin-left: 10px;
+          }
         }
       }
     }
