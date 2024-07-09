@@ -14,10 +14,7 @@ appInsights:
 deployment: {}
 
 container:
-  requestMemory: 100Mi
-  requestCpu: 100m
-  limitMemory: 100Mi
-  limitCpu: 100m
+  memCpuTier: XXL
   port: 3000
 
 livenessProbe:
