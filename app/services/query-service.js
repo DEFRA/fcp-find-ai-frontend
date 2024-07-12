@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse } = require('../lib/events')
-const { extractLinksForValidatingResponse, choosePromptForFetchAnswerBasedOnSummaries } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
 
@@ -148,7 +148,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, model, embeddings, summariesFound: [] })
+  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesFound: [] })
 
   validateResponseLinks(response, query)
 
