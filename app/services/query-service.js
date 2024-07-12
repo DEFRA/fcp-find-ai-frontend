@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse } = require('../lib/events')
-const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse, choosePromptForFetchAnswerBasedOnSummaries } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
 
