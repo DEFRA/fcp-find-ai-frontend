@@ -148,7 +148,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, model, embeddings, summariesFound: [] })
+  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesFound: [] })
 
   validateResponseLinks(response, query)
 
