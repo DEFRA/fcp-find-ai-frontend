@@ -53,6 +53,82 @@ const validateResponseLinks = (response, query) => {
   return true
 }
 
+const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, summariesFound }) => {
+  try {
+    const vectorStoreKey = summariesMode ? 'summaryIndexName' : 'indexName'
+    const itemsToCheck = summariesMode ? 40 : 20
+    const promptText = getPrompt(summariesMode, summariesFound)
+
+    const prompt = ChatPromptTemplate.fromMessages([
+      ['system', promptText],
+      new MessagesPlaceholder('chat_history'),
+      ['user', '{input}']
+    ])
+
+    const documentChain = await createStuffDocumentsChain({
+      llm: model,
+      prompt
+    })
+
+    const vectorStore = new AzureAISearchVectorStore(embeddings, {
+      endpoint: config.azureOpenAI.searchUrl,
+      indexName: config.azureOpenAI[vectorStoreKey],
+      key: config.azureOpenAI.searchApiKey,
+      search: {
+        type: 'similarity'
+      }
+    })
+
+    const retriever = vectorStore.asRetriever(itemsToCheck, { includeEmbeddings: true })
+
+    const historyRetrieverPrompt = ChatPromptTemplate.fromMessages([
+      new MessagesPlaceholder('chat_history'),
+      ['user', '{input}'],
+      [
+        'user',
+        'Given the above conversation, generate a search query to look up in order to get information relevant to the conversation'
+      ]
+    ])
+
+    const historyAwareRetriever = await createHistoryAwareRetriever({
+      llm: model,
+      retriever,
+      rephrasePrompt: historyRetrieverPrompt
+    })
+
+    const retrievalChain = await createRetrievalChain({
+      combineDocsChain: documentChain,
+      retriever: historyAwareRetriever
+    })
+
+    const redactedQuery = await redact(query)
+
+    const response = await retrievalChain.invoke({
+      chat_history: chatHistory,
+      input: redactedQuery
+    })
+
+    if (!summariesMode) {
+      return response
+    }
+
+    const summaries = JSON.parse(response.answer).items
+
+    if (!summaries || summaries.length === 0) {
+      const result = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesFound: [] })
+
+      return result
+    }
+
+    // run the runFetchAnswerQuery again with the summaries
+    const result = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesFound: summaries })
+
+    return result
+  } catch (error) {
+    return { answer: 'I am sorry, I could not find an answer to your question' }
+  }
+}
+
 const fetchAnswer = async (req, query, chatHistory) => {
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
@@ -72,60 +148,11 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const promptText = getPrompt()
-  const prompt = ChatPromptTemplate.fromMessages([
-    ['system', promptText],
-    new MessagesPlaceholder('chat_history'),
-    ['user', '{input}']
-  ])
+  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, model, embeddings, summariesFound: [] })
 
-  const documentChain = await createStuffDocumentsChain({
-    llm: model,
-    prompt
-  })
-
-  const vectorStore = new AzureAISearchVectorStore(embeddings, {
-    endpoint: config.azureOpenAI.searchUrl,
-    indexName: config.azureOpenAI.indexName,
-    key: config.azureOpenAI.searchApiKey,
-    search: {
-      type: 'similarity'
-    }
-  })
-
-  const retriever = vectorStore.asRetriever(20, { includeEmbeddings: true })
-
-  const historyRetrieverPrompt = ChatPromptTemplate.fromMessages([
-    new MessagesPlaceholder('chat_history'),
-    ['user', '{input}'],
-    [
-      'user',
-      'Given the above conversation, generate a search query to look up in order to get information relevant to the conversation'
-    ]
-  ])
-
-  const historyAwareRetriever = await createHistoryAwareRetriever({
-    llm: model,
-    retriever,
-    rephrasePrompt: historyRetrieverPrompt
-  })
-
-  const retrievalChain = await createRetrievalChain({
-    combineDocsChain: documentChain,
-    retriever: historyAwareRetriever
-  })
-
-  const redactedQuery = await redact(query)
-
-  const response = await retrievalChain.invoke({
-    chat_history: chatHistory,
-    input: redactedQuery
-  })
-
-  // run the validation, don't throw an error if it fails
   validateResponseLinks(response, query)
 
-  return response?.answer
+  return response.answer
 }
 
 module.exports = {
