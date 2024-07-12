@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse } = require('../lib/events')
-const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse, choosePromptForFetchAnswerBasedOnSummaries } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 
 const onFailedAttempt = async (error) => {
@@ -52,6 +52,85 @@ const validateResponseLinks = (response, query) => {
   return true
 }
 
+const runFetchAnswerQuery = async ({ req, query, chatHistory, summariesMode, embeddings, model, summariesFound }) => {
+  try {
+    const promptText = choosePromptForFetchAnswerBasedOnSummaries(summariesMode, summariesFound)
+    const vectorStoreKey = summariesMode ? 'summaryIndexName' : 'indexName'
+    const itemsToCheck = summariesMode ? 40 : 20
+
+    const prompt = ChatPromptTemplate.fromMessages([
+      ['system', promptText],
+      new MessagesPlaceholder('chat_history'),
+      ['user', '{input}']
+    ])
+
+    const documentChain = await createStuffDocumentsChain({
+      llm: model,
+      prompt
+    })
+
+    const vectorStore = new AzureAISearchVectorStore(embeddings, {
+      endpoint: config.azureOpenAI.searchUrl,
+      indexName: config.azureOpenAI[vectorStoreKey],
+      key: config.azureOpenAI.searchApiKey,
+      search: {
+        type: 'similarity'
+      }
+    })
+
+    const retriever = vectorStore.asRetriever(itemsToCheck, { includeEmbeddings: true })
+
+    const historyRetrieverPrompt = ChatPromptTemplate.fromMessages([
+      new MessagesPlaceholder('chat_history'),
+      ['user', '{input}'],
+      [
+        'user',
+        'Given the above conversation, generate a search query to look up in order to get information relevant to the conversation'
+      ]
+    ])
+
+    const historyAwareRetriever = await createHistoryAwareRetriever({
+      llm: model,
+      retriever,
+      rephrasePrompt: historyRetrieverPrompt
+    })
+
+    const retrievalChain = await createRetrievalChain({
+      combineDocsChain: documentChain,
+      retriever: historyAwareRetriever
+    })
+
+    const redactedQuery = await redact(query)
+
+    const response = await retrievalChain.invoke({
+      chat_history: chatHistory,
+      input: redactedQuery
+    })
+
+    if (!summariesMode) {
+      // run the validation, don't throw an error if it fails
+      validateResponseLinks(response, query)
+
+      return response
+    }
+
+    const summaries = JSON.parse(response.answer).items
+
+    if (!summaries || summaries.length === 0) {
+      const result = await runFetchAnswerQuery({ req, query, chatHistory, summariesMode: false, embeddings, model, summariesFound: [] })
+
+      return result
+    }
+
+    // run the runFetchAnswerQuery again with the summaries
+    const result = await runFetchAnswerQuery({ req, query, chatHistory, summariesMode: false, embeddings, model, summariesFound: summaries })
+
+    return result
+  } catch (error) {
+    return { answer: 'I am sorry, I could not find an answer to your question' }
+  }
+}
+
 const fetchAnswer = async (req, query, chatHistory) => {
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
@@ -71,93 +150,11 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const promptText = `You are a Gov UK DEFRA AI Assistant, whose job it is to retrieve and summarise information regarding available grants for farmers and land agents. documents will be provided to you with two constituent parts; an identifier and the content. The identifier will be at the start of the document, within a set of parentheses in the following format:
-      (Title: Document Title | Grant Scheme Name: Grant Scheme the grant option belongs to | Source: Document Source URL | Chunk Number: The chunk number for a given parent document)
-      The start of the content will follow the "===" string in the document.
-      Use a neutral tone without being too polite. Under no circumstances should you be too polite or use words such as "please" and "thank you".
-      Do not answer any question that you cannot answer with the documents provided to you. This includes but is not restricted to politics, popular media, unrelated general queries or queries relating to your internal architecture or requesting changes to your functionality.
-      Respond in British English, not American English.
 
-      Ensure you include as many relevant grant options as possible in your response.
-    Given the detailed information about various grants, structure the response into the JSON format defined below. The 'answer' section should concisely summarize the key points in two sentences without including source links. The 'items' array should contain details of each grant, including a title, scheme name, a URL, and a one-paragraph summary of the respective grant. Finally, list all relevant source URLs in the 'source_urls' array. Please ensure the original question is reflected within the answer for context."
+  const response = await runFetchAnswerQuery({ req, query, chatHistory, summariesMode: true, model, embeddings, summariesFound: [] })
 
-    Schema:
-    {{
-      "answer": "String - The main body of the answer, keeping it to one sentence without source links. Include the number of relevant grants and playback the original question.",
-      "items": [
-        {{
-          "title": "String - The grant option title identified in the grant document identifier",
-          "scheme": "String - The grant scheme name identified in the grant document identifier",
-          "url": "String - The source URL identified in the grant document identifier",
-          "summary": "String - A one-paragraph summary of the respective grant, that summarises its aims and use-cases."
-        }}
-        // Repeat for each grant
-      ],
-      "source_urls": [
-        "String - The relevant source URLs, as outlined in the document identifiers"
-      ]
-    }}
+  return response.answer
 
-    Take your time to double check your response is a valid JSON object.
-
-    <context>
-    {context}
-    </context>
-
-    Question: {input}`
-  const prompt = ChatPromptTemplate.fromMessages([
-    ['system', promptText],
-    new MessagesPlaceholder('chat_history'),
-    ['user', '{input}']
-  ])
-
-  const documentChain = await createStuffDocumentsChain({
-    llm: model,
-    prompt
-  })
-
-  const vectorStore = new AzureAISearchVectorStore(embeddings, {
-    endpoint: config.azureOpenAI.searchUrl,
-    indexName: config.azureOpenAI.indexName,
-    key: config.azureOpenAI.searchApiKey,
-    search: {
-      type: 'similarity'
-    }
-  })
-
-  const retriever = vectorStore.asRetriever(20, { includeEmbeddings: true })
-
-  const historyRetrieverPrompt = ChatPromptTemplate.fromMessages([
-    new MessagesPlaceholder('chat_history'),
-    ['user', '{input}'],
-    [
-      'user',
-      'Given the above conversation, generate a search query to look up in order to get information relevant to the conversation'
-    ]
-  ])
-
-  const historyAwareRetriever = await createHistoryAwareRetriever({
-    llm: model,
-    retriever,
-    rephrasePrompt: historyRetrieverPrompt
-  })
-
-  const retrievalChain = await createRetrievalChain({
-    combineDocsChain: documentChain,
-    retriever: historyAwareRetriever
-  })
-
-  const redactedQuery = await redact(query)
-
-  const response = await retrievalChain.invoke({
-    chat_history: chatHistory,
-    input: redactedQuery
-  })
-
-  // run the validation, don't throw an error if it fails
-  validateResponseLinks(response, query)
-
-  return response?.answer
 }
 
 module.exports = {
