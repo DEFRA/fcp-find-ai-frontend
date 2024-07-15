@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse } = require('../lib/events')
-const { extractLinksForValidatingResponse, processsResponseSummaries } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse, processResponseSummaries } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
 
@@ -53,11 +53,11 @@ const validateResponseLinks = (response, query) => {
   return true
 }
 
-const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, summariesFound }) => {
+const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, summariesString }) => {
   try {
     const vectorStoreKey = summariesMode ? 'summaryIndexName' : 'indexName'
     const itemsToCheck = summariesMode ? 40 : 20
-    const promptText = getPrompt(summariesMode, summariesFound)
+    const promptText = getPrompt(summariesMode, summariesString)
 
     const prompt = ChatPromptTemplate.fromMessages([
       ['system', promptText],
@@ -108,22 +108,7 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
       input: redactedQuery
     })
 
-    if (!summariesMode) {
-      return response
-    }
-
-    const summaries = processsResponseSummaries(response)
-
-    if (summaries.length === 0) {
-      const result = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesFound: [] })
-
-      return result
-    }
-
-    // run the runFetchAnswerQuery again with the summaries
-    const result = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesFound: summaries })
-
-    return result
+    return response
   } catch (error) {
     return { answer: 'I am sorry, I could not find an answer to your question' }
   }
@@ -148,11 +133,18 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesFound: [] })
+  let response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesFound: [] })
+  const summaries = processResponseSummaries(response)
+
+  if (summaries.length === 0) {
+    response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: '' })
+  } else {
+    response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, embeddings, model, summariesString: summaries })
+  }
 
   validateResponseLinks(response, query)
 
-  return response.answer
+  return response?.answer
 }
 
 module.exports = {
