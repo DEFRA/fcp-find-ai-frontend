@@ -72,18 +72,18 @@ const processsResponseSummaries = (response) => {
     }
 
     // check if summaries are formatted as such: { title: string, scheme: string }
-    let error = false;
+    let error = false
     summaries.forEach((summary) => {
       if (!summary.title || !summary.scheme) {
-        error = true;
+        error = true
       }
-    });
+    })
 
-    return error ? [] : summaries;
+    return error ? [] : summaries
   } catch (error) {
-      return []
-    }
+    return []
   }
+}
 
 module.exports = {
   getChatHistory,

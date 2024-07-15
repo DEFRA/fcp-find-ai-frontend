@@ -31,7 +31,7 @@ const getPrompt = (summariesMode, summariesFound) => {
       {context}
       </context>
 
-      Question: {input}`;
+      Question: {input}`
   } else if (!summariesMode && summariesFound.length > 0) {
     const summariesString = summariesFound.map((summary) => `Title: ${summary.title} | Scheme: ${summary.scheme}`).join(', ')
 
