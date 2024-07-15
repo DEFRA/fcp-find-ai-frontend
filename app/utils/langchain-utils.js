@@ -23,6 +23,11 @@ const parseMessage = (req, message) => {
     req.logger.error('Failed to parse response message', {
       message
     })
+    if (typeof message === 'string') {
+      return {
+        answer: message
+      }
+    }
 
     throw error
   }
