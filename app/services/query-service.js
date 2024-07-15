@@ -137,7 +137,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  let response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesFound: [] })
+  let response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, model, embeddings, summariesString: '' })
   const summaries = processResponseSummaries(response)
 
   if (summaries.length === 0) {
