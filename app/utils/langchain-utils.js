@@ -72,7 +72,7 @@ const processResponseSummaries = (response) => {
     }
 
     const invalidSummary = summaries.some(summary => !summary.title || !summary.scheme)
-    
+
     if (invalidSummary) {
       return ''
     }
