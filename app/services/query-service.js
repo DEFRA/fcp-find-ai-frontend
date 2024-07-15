@@ -143,7 +143,7 @@ const fetchAnswer = async (req, query, chatHistory) => {
   if (summaries.length === 0) {
     response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: '' })
   } else {
-    response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, embeddings, model, summariesString: summaries })
+    response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: summaries })
   }
 
   validateResponseLinks(response, query)
