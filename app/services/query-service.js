@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse } = require('../lib/events')
-const { extractLinksForValidatingResponse } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse, processsResponseSummaries } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
 
@@ -112,9 +112,9 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
       return response
     }
 
-    const summaries = JSON.parse(response.answer).items
+    const summaries = processsResponseSummaries(response)
 
-    if (!summaries || summaries.length === 0) {
+    if (summaries.length === 0) {
       const result = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesFound: [] })
 
       return result

@@ -63,8 +63,31 @@ const extractLinksForValidatingResponse = (jsonObj) => {
   return entriesAndLinks
 }
 
+const processsResponseSummaries = (response) => {
+  try {
+    const summaries = JSON.parse(response.answer).items
+
+    if (!summaries || summaries.length === 0) {
+      return []
+    }
+
+    // check if summaries are formatted as such: { title: string, scheme: string }
+    let error = false;
+    summaries.forEach((summary) => {
+      if (!summary.title || !summary.scheme) {
+        error = true;
+      }
+    });
+
+    return error ? [] : summaries;
+  } catch (error) {
+      return []
+    }
+  }
+
 module.exports = {
   getChatHistory,
   parseMessage,
-  extractLinksForValidatingResponse
+  extractLinksForValidatingResponse,
+  processsResponseSummaries
 }
