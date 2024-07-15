@@ -77,7 +77,7 @@ const processResponseSummaries = (response) => {
       return ''
     }
 
-    return summaries.map(summary => `Title: ${summary.title} | Scheme: ${summary.scheme}`).join(', ')
+    return summaries.map((summary, index) => `Grant: ${index + 1} Title: ${summary.title} | Scheme: ${summary.scheme}`).join(' ||| ')
   } catch {
     return ''
   }

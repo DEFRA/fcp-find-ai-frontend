@@ -29,7 +29,7 @@ const getPrompt = (summariesMode, summariesString) => {
 
       Question: {input}`
   } else if (!summariesMode && summariesString.length > 0) {
-    return `You are a Gov UK DEFRA AI Assistant, whose job it is to retrieve and summarise information regarding available grants for farmers and land agents. The titles and grant schemes of relevant grants are ${summariesString}. Use this information to scan and retrieve detailed summaries of these specific grants. ocuments will be provided to you with two constituent parts; an identifier and the content. The identifier will be at the start of the document, within a set of parentheses in the following format:
+    return `You are a Gov UK DEFRA AI Assistant, whose job it is to retrieve and summarise information regarding available grants for farmers and land agents. The titles and grant schemes of relevant grants are ${summariesString}. These grants listed above are ennumerated and separated by the "|||" notation. Extract the grant titles and schemes and use this information to scan and retrieve detailed summaries of these specific grants. Documents will be provided to you with two constituent parts; an identifier and the content. The identifier will be at the start of the document, within a set of parentheses in the following format:
       (Title: Document Title | Grant Scheme Name: Grant Scheme the grant option belongs to | Source: Document Source URL | Chunk Number: The chunk number for a given parent document)
       The start of the content will follow the "===" string in the document.
 
