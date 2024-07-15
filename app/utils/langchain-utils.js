@@ -20,7 +20,7 @@ const parseMessage = (req, message) => {
   try {
     return JSON.parse(message)
   } catch (error) {
-    req.logger.error('Failed to parse response message', {
+    req.logger.error(error, 'Failed to parse response message', {
       message
     })
     if (typeof message === 'string') {

@@ -1,4 +1,5 @@
 const appInsights = require('applicationinsights')
+const config = require('./config')
 
 const setup = () => {
   if (process.env.APPINSIGHTS_CONNECTIONSTRING) {
@@ -72,6 +73,10 @@ const logTrace = ({ message, severity }, request) => {
 
 const logEvent = (eventName, props) => {
   try {
+    if (config.logLevel === 'debug') {
+      console.debug({ name: eventName, properties: props })
+    }
+
     const client = appInsights.defaultClient
 
     if (client) {
