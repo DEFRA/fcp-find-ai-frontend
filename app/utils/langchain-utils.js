@@ -67,22 +67,18 @@ const processResponseSummaries = (response) => {
   try {
     const summaries = JSON.parse(response.answer).items
 
-    if (!summaries || summaries.length === 0) {
+    if (!summaries?.length) {
       return ''
     }
 
-    // check if summaries are formatted as such: { title: string, scheme: string }
-    let error = false
-    summaries.forEach((summary) => {
-      if (!summary.title || !summary.scheme) {
-        error = true
-      }
-    })
+    const invalidSummary = summaries.some(summary => !summary.title || !summary.scheme)
+    
+    if (invalidSummary) {
+      return ''
+    }
 
-    const summariesString = summaries.map((summary) => `Title: ${summary.title} | Scheme: ${summary.scheme}`).join(', ')
-
-    return error ? '' : summariesString
-  } catch (error) {
+    return summaries.map(summary => `Title: ${summary.title} | Scheme: ${summary.scheme}`).join(', ')
+  } catch {
     return ''
   }
 }

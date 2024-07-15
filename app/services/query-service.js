@@ -6,7 +6,7 @@ const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_
 const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
-const { trackHallucinatedLinkInResponse } = require('../lib/events')
+const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('../lib/events')
 const { extractLinksForValidatingResponse, processResponseSummaries } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
@@ -110,7 +110,11 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
 
     return response
   } catch (error) {
-    return { answer: 'I am sorry, I could not find an answer to your question' }
+    trackFetchResponseFailed({
+      errorMessage: error.message,
+      requestQuery: query
+    })
+    return { answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead' }
   }
 }
 
