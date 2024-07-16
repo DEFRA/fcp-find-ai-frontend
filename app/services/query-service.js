@@ -137,14 +137,10 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  let response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesString: '' })
-  const summaries = processResponseSummaries(response)
+  const summariesResponse = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesString: '' })
+  const summaries = processResponseSummaries(summariesResponse)
 
-  if (summaries.length === 0) {
-    response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: '' })
-  } else {
-    response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: summaries })
-  }
+  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: summaries })
 
   validateResponseLinks(response, query)
 
