@@ -135,13 +135,13 @@ module.exports = [
     }
   },
   {
-  method: 'GET',
-  path: '/test_prompts',
+    method: 'GET',
+    path: '/test_prompts',
     handler: async (request, h) => {
       if (process.env.NODE_ENV !== 'development') {
         return h.response().code(404)
       }
-      
+
       logger.info('Testing prompts')
 
       const inputs = [
@@ -165,10 +165,10 @@ module.exports = [
           responseDuration: ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
         })
 
-        logger.info("Response generated in " + ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2) + " seconds")
+        logger.info('Response generated in ' + ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2) + ' seconds')
       }
 
       return h.response(responses).code(200)
     }
-  },
+  }
 ]
