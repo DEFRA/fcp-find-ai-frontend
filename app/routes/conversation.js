@@ -5,6 +5,7 @@ const { schemes } = require('../domain/schemes')
 const { getChatHistory, parseMessage } = require('../utils/langchain-utils')
 const { trackMessage, trackSystemMessage, trackConversationPageView } = require('../lib/events')
 const boom = require('@hapi/boom')
+const { logger } = require('../lib/logger')
 
 module.exports = [
   {
@@ -132,5 +133,42 @@ module.exports = [
         schemesList
       })
     }
-  }
+  },
+  {
+  method: 'GET',
+  path: '/test_prompts',
+    handler: async (request, h) => {
+      if (process.env.NODE_ENV !== 'development') {
+        return h.response().code(404)
+      }
+      
+      logger.info('Testing prompts')
+
+      const inputs = [
+        'Give me grants for deer fencing',
+        'Give me grants to increase biodiversity',
+        'Give me grants for planting flowers',
+        "What's the price for FG10",
+        'what land types does AB1 apply to',
+        'funding for slurry'
+      ]
+
+      const responses = []
+
+      for (const input of inputs) {
+        const startTime = new Date()
+        const response = await fetchAnswer(request, input, [])
+        const endTime = new Date()
+        responses.push({
+          input,
+          response,
+          responseDuration: ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
+        })
+
+        logger.info("Response generated in " + ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2) + " seconds")
+      }
+
+      return h.response(responses).code(200)
+    }
+  },
 ]
