@@ -68,23 +68,28 @@ const extractLinksForValidatingResponse = (jsonObj) => {
   return entriesAndLinks
 }
 
-const processResponseSummaries = (response) => {
+const validateResponseSummaries = (response) => {
   try {
-    const summaries = JSON.parse(response.answer).items
+    const answer = JSON.parse(response.answer)
+    const items = answer.items
 
-    if (!summaries?.length) {
-      return ''
+    if (answer === 'Unknown') {
+      return false
     }
 
-    const invalidSummary = summaries.some(summary => !summary.title || !summary.scheme)
+    if (!items || items.length === 0) {
+      return false
+    }
+
+    const invalidSummary = items.some(item => !item.title || !item.scheme || !item.url || !item.summary)
 
     if (invalidSummary) {
-      return ''
+      return false
     }
 
-    return summaries.map((summary, index) => `Grant: ${index + 1} Title: ${summary.title} | Scheme: ${summary.scheme}`).join(' ||| ')
+    return true
   } catch {
-    return ''
+    return false
   }
 }
 
@@ -92,5 +97,5 @@ module.exports = {
   getChatHistory,
   parseMessage,
   extractLinksForValidatingResponse,
-  processResponseSummaries
+  validateResponseSummaries
 }

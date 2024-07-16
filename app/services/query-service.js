@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('../lib/events')
-const { extractLinksForValidatingResponse, processResponseSummaries } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse, validateResponseSummaries } = require('../utils/langchain-utils')
 const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
 
@@ -53,11 +53,11 @@ const validateResponseLinks = (response, query) => {
   return true
 }
 
-const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, summariesString }) => {
+const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model }) => {
   try {
     const vectorStoreKey = summariesMode ? 'summaryIndexName' : 'indexName'
     const itemsToCheck = summariesMode ? 40 : 20
-    const promptText = getPrompt(summariesMode, summariesString)
+    const promptText = getPrompt(summariesMode)
 
     const prompt = ChatPromptTemplate.fromMessages([
       ['system', promptText],
@@ -137,12 +137,16 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const summariesResponse = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, summariesString: '' })
-  const summaries = processResponseSummaries(summariesResponse)
+  const summariesResponse = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
+  const isResponseValid = validateResponseSummaries(summariesResponse)
 
-  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, summariesString: summaries })
+  if (isResponseValid) {
+    validateResponseLinks(summariesResponse, query)
 
-  validateResponseLinks(response, query)
+    return summariesResponse?.answer
+  }
+
+  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
   return response?.answer
 }
