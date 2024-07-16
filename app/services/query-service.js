@@ -148,6 +148,8 @@ const fetchAnswer = async (req, query, chatHistory) => {
 
   const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
+  validateResponseLinks(response, query)
+
   return response?.answer
 }
 
