@@ -23,6 +23,11 @@ const parseMessage = (req, message) => {
     req.logger.error('Failed to parse response message', {
       message
     })
+    if (typeof message === 'string') {
+      return {
+        answer: message
+      }
+    }
 
     throw error
   }
@@ -63,8 +68,34 @@ const extractLinksForValidatingResponse = (jsonObj) => {
   return entriesAndLinks
 }
 
+const validateResponseSummaries = (response) => {
+  try {
+    const answer = JSON.parse(response.answer)
+    const items = answer.items
+
+    if (answer === 'Unknown') {
+      return false
+    }
+
+    if (!items || items.length === 0) {
+      return false
+    }
+
+    const invalidSummary = items.some(item => !item.title || !item.scheme || !item.url || !item.summary)
+
+    if (invalidSummary) {
+      return false
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
 module.exports = {
   getChatHistory,
   parseMessage,
-  extractLinksForValidatingResponse
+  extractLinksForValidatingResponse,
+  validateResponseSummaries
 }

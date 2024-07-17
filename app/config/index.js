@@ -49,6 +49,7 @@ const schema = Joi.object({
     searchUrl: Joi.string().uri().required(),
     searchApiKey: Joi.string().required(),
     indexName: Joi.string().required(),
+    summaryIndexName: Joi.string().required(),
 
     openAiInstanceName: Joi.string().required(),
     openAiEndpoint: Joi.string().uri().required(),
@@ -69,7 +70,7 @@ const schema = Joi.object({
 const config = {
   env: process.env.NODE_ENV,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
-  version: '0.1.39',
+  version: '0.1.40',
   logLevel: process.env.LOG_LEVEL || 'error',
 
   auth: {
@@ -110,6 +111,7 @@ const config = {
     searchUrl: process.env.AZURE_AISEARCH_ENDPOINT,
     searchApiKey: process.env.AZURE_AISEARCH_KEY,
     indexName: process.env.AZURE_SEARCH_INDEX_NAME,
+    summaryIndexName: process.env.AZURE_SEARCH_SUMMARIES_INDEX_NAME,
 
     openAiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
     openAiEndpoint: process.env.AZURE_OPENAI_API_ENDPOINT,
