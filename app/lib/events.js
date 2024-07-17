@@ -5,7 +5,8 @@ const Event = {
   SYSTEM_MESSAGE: 'EVENT_SYSTEM_MESSAGE',
   LANDING_PAGE_VIEW: 'EVENT_LANDING_PAGE_VIEW',
   CONVERSATION_PAGE_VIEW: 'EVENT_CONVERSATION_PAGE_VIEW',
-  HALLUCINATED_LINK: 'EVENT_HALLUCINATED_LINK'
+  HALLUCINATED_LINK: 'EVENT_HALLUCINATED_LINK',
+  FETCH_RESPONSE_FAILED: 'EVENT_FETCH_RESPONSE_FAILED'
 }
 
 /**
@@ -36,11 +37,16 @@ const trackHallucinatedLinkInResponse = ({ requestQuery, errorMessage, failedObj
   logEvent(Event.HALLUCINATED_LINK, { time: new Date(), requestQuery, errorMessage, failedObject })
 }
 
+const trackFetchResponseFailed = ({ requestQuery, errorMessage }) => {
+  logEvent(Event.FETCH_RESPONSE_FAILED, { time: new Date(), requestQuery, errorMessage })
+}
+
 module.exports = {
   Event,
   trackMessage,
   trackSystemMessage,
   trackLandingPageView,
   trackConversationPageView,
-  trackHallucinatedLinkInResponse
+  trackHallucinatedLinkInResponse,
+  trackFetchResponseFailed
 }
