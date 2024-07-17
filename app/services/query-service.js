@@ -32,22 +32,6 @@ const validateResponseLinks = (response, query) => {
       return trackIssueAndBreak('validateResponseLinks failed because response object does not contain answer or context fields')
     }
 
-    // while it still does not return JSON always, have this check to avoid invalidating reasonable string responses
-    if (typeof response.answer === 'string'
-      && !response.answer.includes('Unknown')
-      && !response.answer.includes('tool cannot answer that kind of question')
-      && response.answer.length > 100
-      && !response.answer.includes('not mentioned in the provided documents')
-      && !response.answer.includes('not included in the provided documents')
-      && !response.answer.includes('not found in the provided documents')
-      && !response.answer.includes('documents do not mention')
-      && !response.answer.includes('documents do not include')
-      && !response.answer.includes('not found in the documents')
-      && !response.answer.includes('not mentioned in the documents')
-    ) {
-      return true
-    }
-
     const responseEntriesAndLinks = extractLinksForValidatingResponse(JSON.parse(response.answer))
     const trueEntriesAndLinks = extractLinksForValidatingResponse(response.context)
 
@@ -55,7 +39,11 @@ const validateResponseLinks = (response, query) => {
       return trackIssueAndBreak('validateResponseLinks failed because no links detected in true context object')
     }
 
-    if (!responseEntriesAndLinks && !trueEntriesAndLinks || (responseEntriesAndLinks !== undefined && responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks !== undefined && trueEntriesAndLinks.length === 0)) {
+    if (!responseEntriesAndLinks && !trueEntriesAndLinks) {
+      return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
+    }
+
+    if (responseEntriesAndLinks !== undefined && responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks !== undefined && trueEntriesAndLinks.length === 0) {
       return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
     }
 
