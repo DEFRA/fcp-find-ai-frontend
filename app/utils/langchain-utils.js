@@ -70,21 +70,22 @@ const extractLinksForValidatingResponse = (jsonObj) => {
 
 const validateResponseSummaries = (response) => {
   try {
-    const answer = JSON.parse(response.answer)
-    const items = answer.items
-
-    if (answer === 'Unknown') {
+    if (response.answer === 'Unknown') {
       return false
     }
 
-    if (!items || items.length === 0) {
-      return false
-    }
+    try {
+      const items = JSON.parse(response.answer).items
 
-    const invalidSummary = items.some(item => !item.title || !item.scheme || !item.url || !item.summary)
+      const invalidSummary = items && items.length > 0 && items.some(item => !item.title || !item.scheme || !item.url || !item.summary)
 
-    if (invalidSummary) {
-      return false
+      if (invalidSummary) {
+        return false
+      }
+    } catch {
+      if (typeof response.answer === 'string') {
+        return true
+      }
     }
 
     return true
