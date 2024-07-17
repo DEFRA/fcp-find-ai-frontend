@@ -153,58 +153,50 @@ module.exports = [
         'funding for slurry'
       ]
 
-      const responses = []
+      const processInput = async (input, index) => {
+        try {
+          const startTime = new Date()
+          let response
+          let passedValidation = false
 
-      for (const input of inputs) {
-        const startTime = new Date()
-        const response = await fetchAnswer(request, input, [])
-        const endTime = new Date()
-        responses.push({
-          input,
-          response,
-          responseDuration: ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-        })
+          try {
+            response = await fetchAnswer(request, input, [])
+            passedValidation = parseMessage(request, response) !== undefined
+          } catch (error) {
+            logger.info(`Response ${index + 1} out of ${inputs.length} failed validation or fetch`)
+          }
 
-        logger.info('Response generated in ' + ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2) + ' seconds')
+          const endTime = new Date()
+          const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
+          const responseLength = response && JSON.parse(response).answer ? JSON.parse(response).answer.split(' ').length : 0
+
+          logger.info(`Response ${index + 1} out of ${inputs.length} generated in ${responseDuration} seconds`)
+
+          return {
+            question: input,
+            answer: JSON.parse(response),
+            responseDuration,
+            responseLength,
+            passedValidation
+          }
+        } catch {
+          return {
+            question: input,
+            answer: 'Error',
+            responseDuration: 0,
+            responseLength: 0,
+            passedValidation: false
+          }
+        }
       }
 
-      // return response as an html table
-      const table = responses.map((response) => {
-        return `<tr><td>${response.input}</td><td>${response.response}</td><td>${response.responseDuration}</td></tr>`
-      }).join('')
+      const responses = await Promise.all(inputs.map(async (input, index) =>
+        await processInput(input, index)
+      ))
 
-      const html = `
-        <html>
-          <head>
-            <style>
-              table {
-                border-collapse: collapse;
-                width: 100%;
-              }
-              th, td {
-                border: 1px solid black;
-                padding: 8px;
-                text-align: left;
-              }
-              th {
-                background-color: #f2f2f2;
-              }
-            </style>
-          </head>
-          <body>
-            <table>
-              <tr>
-                <th>Input</th>
-                <th>Response</th>
-                <th>Duration</th>
-              </tr>
-              ${table}
-            </table>
-          </body>
-        </html>
-      `
-
-      return h.response(html).type('text/html')
+      return h.view('test_prompts_response', {
+        responses
+      })
     }
   }
 ]

@@ -1,0 +1,26 @@
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>#</th> <!-- Added index column header -->
+            <th>Question</th>
+            <th>Response Duration</th>
+            <th>Answer Length</th>
+            <th>Passed Validation</th>
+            <th>Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for response in responses %}
+        <tr>
+            <td>{{ loop.index }}</td> <!-- Added index column -->
+            <td>{{ response.question }}</td>
+            <td>{{ response.responseDuration }}s</td>
+            <td>{{ response.responseLength }} words</td>
+            <td>{{ response.passedValidation }}</td>
+            <td>{{ response.answer | dump(2) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
