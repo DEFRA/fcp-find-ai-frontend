@@ -35,7 +35,15 @@ const validateResponseLinks = (response, query) => {
     const responseEntriesAndLinks = extractLinksForValidatingResponse(JSON.parse(response.answer))
     const trueEntriesAndLinks = extractLinksForValidatingResponse(response.context)
 
-    if (responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks.length === 0) {
+    if (trueEntriesAndLinks === undefined || trueEntriesAndLinks.length === 0) {
+      return trackIssueAndBreak('validateResponseLinks failed because no links detected in true context object')
+    }
+
+    if (!responseEntriesAndLinks && !trueEntriesAndLinks) {
+      return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
+    }
+
+    if (responseEntriesAndLinks !== undefined && responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks !== undefined && trueEntriesAndLinks.length === 0) {
       return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
     }
 
@@ -43,7 +51,7 @@ const validateResponseLinks = (response, query) => {
       entry.matches.some((link) => !trueEntriesAndLinks.some((trueEntry) => trueEntry.matches.includes(link)))
     )
 
-    if (invalidLinks.length > 0) {
+    if (invalidLinks !== undefined && invalidLinks.length > 0) {
       return trackIssueAndBreak('validateResponseLinks failed because invalid links detected in response objects')
     }
   } catch {
@@ -108,17 +116,21 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
       input: redactedQuery
     })
 
-    return response
+    const hallucinated = !validateResponseLinks(response, query)
+
+    return { response, hallucinated }
   } catch (error) {
     trackFetchResponseFailed({
       errorMessage: error.message,
       requestQuery: query
     })
-    return { answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead' }
+    return {
+      response: { answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead' }
+    }
   }
 }
 
-const fetchAnswer = async (req, query, chatHistory) => {
+const fetchAnswer = async (req, query, chatHistory, summariesEnabled = false) => {
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
     azureOpenAIApiKey: config.azureOpenAI.openAiKey,
@@ -137,18 +149,15 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const summariesResponse = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
-  const isResponseValid = validateResponseSummaries(summariesResponse)
+  if (summariesEnabled) {
+    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
+    const isResponseValid = validateResponseSummaries(summariesResponse)
 
-  if (isResponseValid) {
-    validateResponseLinks(summariesResponse, query)
-
-    return summariesResponse?.answer
+    if (isResponseValid && !hallucinated && hallucinated !== undefined) {
+      return summariesResponse?.answer
+    }
   }
-
-  const response = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
-
-  validateResponseLinks(response, query)
+  const { response } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
   return response?.answer
 }
