@@ -51,3 +51,6 @@
   type: "keyvault"
 - key: GOOGLE_TAG_MANAGER_KEY
   value: "G-NF25VDMQQX"
+- key: ENDPOINT_TESTING_ENABLED
+  value: "{{servicename}}-ENDPOINT-TESTING-ENABLED"
+  type: "keyvault"
