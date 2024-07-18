@@ -130,7 +130,7 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
   }
 }
 
-const fetchAnswer = async (req, query, chatHistory) => {
+const fetchAnswer = async (req, query, chatHistory, summariesEnabled = false) => {
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
     azureOpenAIApiKey: config.azureOpenAI.openAiKey,
@@ -149,13 +149,14 @@ const fetchAnswer = async (req, query, chatHistory) => {
       onFailedAttempt
     })
 
-  const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
-  const isResponseValid = validateResponseSummaries(summariesResponse)
+  if (summariesEnabled) {
+    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
+    const isResponseValid = validateResponseSummaries(summariesResponse)
 
-  if (isResponseValid && !hallucinated && hallucinated !== undefined) {
-    return summariesResponse?.answer
+    if (isResponseValid && !hallucinated && hallucinated !== undefined) {
+      return summariesResponse?.answer
+    }
   }
-
   const { response } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
   return response?.answer
