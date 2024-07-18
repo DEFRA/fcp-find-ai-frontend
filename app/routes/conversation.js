@@ -6,6 +6,8 @@ const { getChatHistory, parseMessage } = require('../utils/langchain-utils')
 const { trackMessage, trackSystemMessage, trackConversationPageView } = require('../lib/events')
 const boom = require('@hapi/boom')
 const { logger } = require('../lib/logger')
+const { redact } = require('../utils/redact-utils')
+const config = require('../config')
 
 module.exports = [
   {
@@ -84,18 +86,21 @@ module.exports = [
         })
       }
 
+      const redactedQuery = await redact(input)
+
       const startTime = new Date()
-      trackMessage({ message: input, conversationId, schemesList, characterCount: input.length, time: startTime, conversationPosition: chatHistory.length + 1 })
+      trackMessage({ message: redactedQuery, conversationId, schemesList, characterCount: redactedQuery.length, time: startTime, conversationPosition: chatHistory.length + 1 })
 
       messages.push({
         role: 'user',
-        answer: input
+        answer: redactedQuery
       })
 
-      const response = await fetchAnswer(request, input, chatHistory)
+      const response = await fetchAnswer(request, redactedQuery, chatHistory, config.azureOpenAI.cacheEnabled)
+
       const endTime = new Date()
 
-      request.logger.info(`Generated response: ${response}`, {
+      request.logger.debug(`Generated response: ${response}`, {
         conversationId
       })
 

@@ -2,6 +2,7 @@ const conversationPage = require('../../../app/routes/conversation')
 const { fetchAnswer } = require('../../../app/services/query-service')
 
 jest.mock('../../../app/services/query-service')
+jest.mock('../../../app/services/ai-search-service')
 
 describe('/conversation', () => {
   beforeEach(() => {

@@ -50,6 +50,8 @@ const schema = Joi.object({
     searchApiKey: Joi.string().required(),
     indexName: Joi.string().required(),
     summaryIndexName: Joi.string().required(),
+    cacheEnabled: Joi.boolean().default(true),
+    cacheIndexName: Joi.string().required(),
 
     openAiInstanceName: Joi.string().required(),
     openAiEndpoint: Joi.string().uri().required(),
@@ -112,6 +114,8 @@ const config = {
     searchApiKey: process.env.AZURE_AISEARCH_KEY,
     indexName: process.env.AZURE_SEARCH_INDEX_NAME,
     summaryIndexName: process.env.AZURE_SEARCH_SUMMARIES_INDEX_NAME,
+    cacheEnabled: process.env.AZURE_SEARCH_CACHE_ENABLED !== 'false',
+    cacheIndexName: process.env.AZURE_SEARCH_CACHE_INDEX_NAME,
 
     openAiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
     openAiEndpoint: process.env.AZURE_OPENAI_API_ENDPOINT,

@@ -1,6 +1,9 @@
 - key: APPINSIGHTS_CONNECTIONSTRING
   value: "{{servicename}}-APPINSIGHTS-CONNECTIONSTRING"
   type: "keyvault"
+- key: LOG_LEVEL
+  value: "{{servicename}}-LOG-LEVEL"
+  type: "keyvault"
 - key: COOKIE_PASSWORD
   value: "{{servicename}}-COOKIE-PASSWORD"
   type: "keyvault"
@@ -33,6 +36,12 @@
   type: "keyvault"
 - key: AZURE_SEARCH_SUMMARIES_INDEX_NAME
   value: "{{servicename}}-AZURE-SEARCH-SUMMARIES-INDEX-NAME"
+  type: "keyvault"
+- key: AZURE_SEARCH_CACHE_ENABLED
+  value: "{{servicename}}-AZURE-SEARCH-CACHE-ENABLED"
+  type: "keyvault"
+- key: AZURE_SEARCH_CACHE_INDEX_NAME
+  value: "{{servicename}}-AZURE-SEARCH-CACHE-INDEX-NAME"
   type: "keyvault"
 - key: AZURE_OPENAI_API_INSTANCE_NAME
   value: "{{servicename}}-AZURE-OPENAI-API-INSTANCE-NAME"
