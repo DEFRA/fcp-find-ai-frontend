@@ -66,7 +66,8 @@ const schema = Joi.object({
 
   googleAnalytics: Joi.object({
     key: Joi.string().default('')
-  }).required()
+  }).required(),
+  endpointTestingEnabled: Joi.boolean().default(false)
 })
 
 const config = {
@@ -128,7 +129,9 @@ const config = {
 
   googleAnalytics: {
     key: process.env.GOOGLE_TAG_MANAGER_KEY || ''
-  }
+  },
+
+  endpointTestingEnabled: process.env.ENDPOINT_TESTING_ENABLED === 'true'
 }
 
 const result = schema.validate(config, {

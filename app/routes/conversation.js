@@ -143,7 +143,7 @@ module.exports = [
     method: 'GET',
     path: '/test_prompts',
     handler: async (request, h) => {
-      if (process.env.ENDPOINT_TESTING_ENABLED !== 'true') {
+      if (!config.endpointTestingEnabled) {
         return h.response().code(404)
       }
 
