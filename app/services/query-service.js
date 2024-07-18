@@ -8,8 +8,8 @@ const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('../lib/events')
 const { extractLinksForValidatingResponse, validateResponseSummaries } = require('../utils/langchain-utils')
-const { redact } = require('../utils/redact-utils')
 const { getPrompt } = require('../domain/prompt')
+const { searchCache, uploadToCache } = require('./ai-search-service')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -109,11 +109,9 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
       retriever: historyAwareRetriever
     })
 
-    const redactedQuery = await redact(query)
-
     const response = await retrievalChain.invoke({
       chat_history: chatHistory,
-      input: redactedQuery
+      input: query
     })
 
     const hallucinated = !validateResponseLinks(response, query)
@@ -130,7 +128,15 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
   }
 }
 
-const fetchAnswer = async (req, query, chatHistory, summariesEnabled = false) => {
+const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabled = false) => {
+  if (cacheEnabled) {
+    const cacheResponse = await searchCache(query)
+
+    if (cacheResponse) {
+      return cacheResponse
+    }
+  }
+
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
     azureOpenAIApiKey: config.azureOpenAI.openAiKey,
@@ -154,10 +160,15 @@ const fetchAnswer = async (req, query, chatHistory, summariesEnabled = false) =>
     const isResponseValid = validateResponseSummaries(summariesResponse)
 
     if (isResponseValid && !hallucinated && hallucinated !== undefined) {
+      // TODO cache summaries response after enabled
       return summariesResponse?.answer
     }
   }
-  const { response } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
+  const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
+
+  if (cacheEnabled && !hallucinated) {
+    await uploadToCache(query, response.answer)
+  }
 
   return response?.answer
 }

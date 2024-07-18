@@ -1,6 +1,7 @@
 const { Contracts } = require('applicationinsights')
 
 const pinoLevelToSeverityLevel = (level) => {
+  console.log(level)
   if (level === 10 || level === 20) {
     return Contracts.SeverityLevel.Verbose
   }

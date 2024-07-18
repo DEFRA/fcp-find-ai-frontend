@@ -12,7 +12,7 @@ const getLogger = () => {
       target: 'pino-pretty',
       options: {
         colorize: true,
-        ignore: 'pid,req,res'
+        ignore: 'pid,req,res,created,started,host,port,address'
       }
     }
   })

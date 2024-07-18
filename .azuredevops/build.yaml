@@ -43,20 +43,20 @@ extends:
     teamName: "fcp-find"
     deployFromFeature: ${{ parameters.deployFromFeature }}
     appBuildConfig:
-      appFrameworkType: "nodejs"    
+      appFrameworkType: "nodejs"
       projectPath: "./package.json"
       manifestPath: "./package.json"
       imageRepoName: "fcp-find-ai-frontend"
     appTestConfig:
       testFilePath: "./docker-compose.test.yaml"
     appDeployConfig:
-      filepath: "./appConfig"  
+      filepath: "./appConfig"
       filetype: "yaml"
-      
+
       # TO BE ADDED IF THERE ARE ANY KEYVAULT REFERENCES IN APP CONFIG
-      variableGroups: 
+      variableGroups:
         - fcp-find-ai-frontend-<environment>
-      variables:  # FILTER FOR SECRETS IN THE VARIABLE GROUP
+      variables: # FILTER FOR SECRETS IN THE VARIABLE GROUP
         - fcp-find-ai-frontend-APPINSIGHTS-CONNECTIONSTRING
         - fcp-find-ai-frontend-FARMING-FUNDING-API-KEY
         - fcp-find-ai-frontend-COOKIE-PASSWORD
@@ -69,8 +69,12 @@ extends:
         - fcp-find-ai-frontend-AZURE-AISEARCH-ENDPOINT
         - fcp-find-ai-frontend-AZURE-AISEARCH-KEY
         - fcp-find-ai-frontend-AZURE-SEARCH-INDEX-NAME
+        - fcp-find-ai-frontend-AZURE-SEARCH-SUMMARIES-INDEX-NAME
+        - fcp-find-ai-frontend-AZURE-SEARCH-CACHE-ENABLED
+        - fcp-find-ai-frontend-AZURE-SEARCH-CACHE-INDEX-NAME
         - fcp-find-ai-frontend-AZURE-OPENAI-API-INSTANCE-NAME
         - fcp-find-ai-frontend-AZURE-OPENAI-API-ENDPOINT
         - fcp-find-ai-frontend-AZURE-OPENAI-API-KEY
         - fcp-find-ai-frontend-AZURE-OPENAI-API-EMBEDDING-DEPLOYMENT-NAME
         - fcp-find-ai-frontend-AZURE-OPENAI-API-MODEL-NAME
+        - fcp-find-ai-frontend-LOG-LEVEL
