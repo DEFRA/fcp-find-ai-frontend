@@ -1,28 +1,31 @@
-{# Backstage scaffolder to render the file as is and to skip this content to interpret as template   #}
-
 {% block content %}
 <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #ddd;">
     <thead>
         <tr>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">#</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Question                    </th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Response Duration                    </th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Answer Length                    </th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Is a valid JSON?                    </th>
+            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Details</th>
             <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Answer</th>
         </tr>
     </thead>
     <tbody>
         {% for response in responses %}
         <tr style="hover: background-color: #f5f5f5;">
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto;">{{ loop.index }}</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto; width: 200px;">{{ response.question }}</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto;">{{ response.responseDuration }}s</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto;">{{ response.responseLength }} words</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto;">{{ response.passedValidation }}</td>
+            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto; width: 300px;">
+                <strong>#:</strong> {{ loop.index }}<br>
+                <strong>Question:</strong> {{ response.question }}<br>
+                <strong>Response Duration:</strong> {{ response.responseDuration }}s<br>
+                <strong>Answer Length:</strong> {{ response.responseLength }} words<br>
+                <strong>Is a valid JSON?:</strong> {{ response.passedValidation }}
+            </td>
             <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto;">
+                {% if not response.passedValidation %}
                 <pre style="white-space: pre-wrap; word-wrap: break-word; background-color: #f8f8f8; padding: 10px; border: 1px solid #ddd; border-radius: 4px; max-height: 300px; overflow-y: auto;">{{ response.answer | dump(2) }}</pre>
+                {% endif %}
                 <div>
+                    {% if response.answer.answer %}
+                    <strong>Answer:</strong>
+                    {{ response.answer.answer }}
+                    <br />
+                    {% endif %}
                     {% if response.answer.items %}
                     <strong>Items:</strong>
                     <ul>
@@ -33,14 +36,6 @@
                             <a href="{{ item.url }}" target="_blank">{{ item.url }}</a><br>
                             {{ item.summary }}
                         </li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% if response.answer.source_urls %}
-                    <strong>Source URLs:</strong>
-                    <ul>
-                        {% for url in response.answer.source_urls %}
-                        <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
                         {% endfor %}
                     </ul>
                     {% endif %}

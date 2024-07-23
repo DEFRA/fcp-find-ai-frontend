@@ -24,21 +24,22 @@ module.exports = [
       ]
 
       const processInput = async (input, index) => {
-        try {
-          const startTime = new Date()
-          let response
-          let passedValidation = false
+        let response, parseResponse
+        let passedValidation = false
+        const startTime = new Date()
 
+        try {
           try {
             response = await fetchAnswer(request, input, [])
-            passedValidation = parseMessage(request, response) !== undefined
+            parseResponse = parseMessage(request, response)
+            passedValidation = parseResponse !== undefined
           } catch (error) {
             logger.info(`Response ${index + 1} out of ${inputs.length} failed validation or fetch with error:`, error)
           }
 
           const endTime = new Date()
           const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-          const responseLength = response && passedValidation ? JSON.parse(response).answer.split(' ').length : response.split(' ').length
+          const responseLength = response && passedValidation ? parseResponse.answer.split(' ').length : response.split(' ').length
 
           logger.info(`Response ${index + 1} out of ${inputs.length} generated in ${responseDuration} seconds`)
 
@@ -50,11 +51,14 @@ module.exports = [
             passedValidation
           }
         } catch (error) {
+          const endTime = new Date()
+          const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
+          const responseLength = response ? response.split(' ').length : 0
           return {
             question: input,
-            answer: 'Error:' + error,
-            responseDuration: 0,
-            responseLength: 0,
+            answer: response,
+            responseDuration,
+            responseLength,
             passedValidation: false
           }
         }

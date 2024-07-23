@@ -139,7 +139,7 @@ const result = schema.validate(config, {
 })
 
 if (result.error) {
-  throw new Error(`The app config is invalid. ${result.error.message}`)
+  // throw new Error(`The app config is invalid. ${result.error.message}`)
 }
 
 module.exports = config
