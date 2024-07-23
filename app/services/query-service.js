@@ -166,7 +166,7 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
   }
   const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
-  if (cacheEnabled && !hallucinated) {
+  if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
     await uploadToCache(query, response.answer)
   }
 

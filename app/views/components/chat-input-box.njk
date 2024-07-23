@@ -39,24 +39,6 @@
       Results from this AI-enabled tool may not always be 100% accurate – always check against the GOV.UK  content provided.
     </span>
   {% endif %}
-
-  <div class="filter-pills govuk-!-margin-top-2">
-    <div class="filter-pill">
-      <div class="filterGroup">
-        <input id="schemeAll" name="schemeAll" class="schemeCheckbox" type="checkbox" value="ALL"/>
-        <label for="schemeAll">all</label>
-      </div>
-    </div>
-
-    {% for scheme in schemesList %}
-      <div class="filter-pill">
-        <div class="filterGroup">
-          <input id="scheme{{ scheme.key }}" name="scheme" class="schemeCheckbox" type="checkbox" value="{{ scheme.key }}" {% if scheme.isSelected %} checked {% endif %}/>
-          <label for="scheme{{ scheme.key }}">{{ scheme.name }}</label>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
 </form>
 
 {% include "components/instructions.njk" %}

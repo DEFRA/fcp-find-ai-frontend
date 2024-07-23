@@ -1,7 +1,6 @@
 const { isAuthenticated } = require('../cookie-manager')
 const { getMessages, setMessages } = require('../session/messages')
 const { fetchAnswer } = require('../services/query-service')
-const { schemes } = require('../domain/schemes')
 const { getChatHistory, parseMessage } = require('../utils/langchain-utils')
 const { trackMessage, trackSystemMessage, trackConversationPageView } = require('../lib/events')
 const boom = require('@hapi/boom')
@@ -23,14 +22,6 @@ module.exports = [
 
       trackConversationPageView(conversationId)
 
-      const selectedSchemes = [].concat(request.payload?.scheme || [])
-      const schemesList = [...schemes].map((scheme) => {
-        return {
-          ...scheme,
-          isSelected: selectedSchemes.includes(scheme.key)
-        }
-      })
-
       const messages = getMessages(request, conversationId)
 
       if (!messages) {
@@ -42,8 +33,7 @@ module.exports = [
         messages,
         commandText: 'Ask follow-on question...',
         conversationId,
-        showHintText: true,
-        schemesList
+        showHintText: true
       })
     }
   },
@@ -63,13 +53,6 @@ module.exports = [
 
       const input = request.payload?.input
       const validationError = !input
-      const selectedSchemes = [].concat(request.payload?.scheme || [])
-      const schemesList = [...schemes].map((scheme) => {
-        return {
-          ...scheme,
-          isSelected: selectedSchemes.includes(scheme.key)
-        }
-      })
 
       const messages = getMessages(request, conversationId) || []
       const chatHistory = getChatHistory(messages)
@@ -80,15 +63,14 @@ module.exports = [
           messages,
           commandText: 'Ask follow-on question...',
           conversationId,
-          showHintText: true,
-          schemesList
+          showHintText: true
         })
       }
 
       const redactedQuery = await redact(input)
 
       const startTime = new Date()
-      trackMessage({ message: redactedQuery, conversationId, schemesList, characterCount: redactedQuery.length, time: startTime, conversationPosition: chatHistory.length + 1 })
+      trackMessage({ message: redactedQuery, conversationId, characterCount: redactedQuery.length, time: startTime, conversationPosition: chatHistory.length + 1 })
 
       messages.push({
         role: 'user',
@@ -133,8 +115,7 @@ module.exports = [
         messages: formattedMessages,
         commandText: 'Ask follow-on question...',
         conversationId,
-        showHintText: true,
-        schemesList
+        showHintText: true
       })
     }
   }
