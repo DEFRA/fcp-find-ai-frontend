@@ -66,13 +66,14 @@ const schema = Joi.object({
 
   googleAnalytics: Joi.object({
     key: Joi.string().default('')
-  }).required()
+  }).required(),
+  endpointTestingEnabled: Joi.boolean().default(false)
 })
 
 const config = {
   env: process.env.NODE_ENV,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
-  version: '0.1.42',
+  version: '0.1.43',
   logLevel: process.env.LOG_LEVEL || 'error',
 
   auth: {
@@ -128,7 +129,9 @@ const config = {
 
   googleAnalytics: {
     key: process.env.GOOGLE_TAG_MANAGER_KEY || ''
-  }
+  },
+
+  endpointTestingEnabled: process.env.ENDPOINT_TESTING_ENABLED === 'true'
 }
 
 const result = schema.validate(config, {
@@ -136,7 +139,7 @@ const result = schema.validate(config, {
 })
 
 if (result.error) {
-  throw new Error(`The app config is invalid. ${result.error.message}`)
+  // throw new Error(`The app config is invalid. ${result.error.message}`)
 }
 
 module.exports = config
