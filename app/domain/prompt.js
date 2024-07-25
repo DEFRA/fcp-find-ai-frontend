@@ -39,7 +39,6 @@ const getPrompt = (summariesMode) => {
         "url": "String - The source URL identified in the grant document identifier",
         "summary": "String - A sentence of the respective grant, that summarises its aims and use-cases."
       }}
-      // Repeat for each grant
     ]
   }}
 

@@ -1,48 +1,85 @@
+{% extends '_layout.njk' %}
+
+{% from "components/macro-defra-header.njk" import defraHeader %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block header %}
+  {{ defraHeader({
+    homepageUrl: "https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs",
+    serviceName: serviceName
+  }) }}
+{% endblock %}
+
 {% block content %}
-<table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #ddd;">
-    <thead>
-        <tr>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Details</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: #f2f2f2;">Answer</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for response in responses %}
-        <tr style="hover: background-color: #f5f5f5;">
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto; width: 300px;">
-                <strong>#:</strong> {{ loop.index }}<br>
-                <strong>Question:</strong> {{ response.question }}<br>
-                <strong>Response Duration:</strong> {{ response.responseDuration }}s<br>
-                <strong>Answer Length:</strong> {{ response.responseLength }} words<br>
-                <strong>Is a valid JSON?:</strong> {{ response.passedValidation }}
-            </td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd; overflow-x: hidden; overflow-y: auto;">
-                {% if not response.passedValidation %}
-                <pre style="white-space: pre-wrap; word-wrap: break-word; background-color: #f8f8f8; padding: 10px; border: 1px solid #ddd; border-radius: 4px; max-height: 300px; overflow-y: auto;">{{ response.answer | dump(2) }}</pre>
-                {% endif %}
-                <div>
-                    {% if response.answer.answer %}
-                    <strong>Answer:</strong>
-                    {{ response.answer.answer }}
-                    <br />
-                    {% endif %}
-                    {% if response.answer.items %}
-                    <strong>Items:</strong>
-                    <ul>
-                        {% for item in response.answer.items %}
-                        <li>
-                            <strong>{{ item.title }}</strong><br>
-                            <em>{{ item.scheme }}</em><br>
-                            <a href="{{ item.url }}" target="_blank">{{ item.url }}</a><br>
-                            {{ item.summary }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+  {% set rows = [] %}
+
+  {% for response in responses %}
+    {% set metadataRow %}
+      {{ loop.index }}
+      <div style="display: flex;">Valid: {% if response.passedValidation %} ✅ {% else %} ❌ {% endif %}</div>
+      <div style="display: flex;">{{ response.responseLength }} chars</div>
+      <div style="display: flex;">Time: {{ response.responseDuration }}s</div>
+    {% endset %}
+
+    {% set contentRow %}
+      <div>
+        <span class="govuk-!-font-weight-bold">Question:</span>
+        {{response.question}}
+      </div>
+
+      {% if response.passedValidation %}
+        <div class="govuk-!-margin-top-5">
+          <span class="govuk-!-font-weight-bold">Answer:</span>
+          {{response.answer.answer}}
+        </div>
+
+        <ul>
+          {% for item in response.answer.items %}
+            <li class="govuk-!-margin-top-2">
+              <a href="{{ item.url }}" class="govuk-link" target="_blank"><strong>{{ item.title }}</strong></a><br>
+              {{ item.summary }}
+            </li>
+          {% endfor %}
+        <ul>
+      {% else %}
+        {% set rawCode %}
+          <code>{{ response.answer }}</code>
+        {% endset %}
+
+        {{ govukDetails({
+          summaryText: "Raw response",
+          html: rawCode
+        }) }}
+
+      {% endif %}
+    {% endset %}
+
+    {% set row = [
+      {
+        "html": metadataRow,
+        classes: "govuk-!-width-one-quarter"
+      }, {
+        "html": contentRow,
+        classes: "govuk-!-width-three-quarter"
+      }
+    ] %}
+
+    {% set rows = (rows.push(row), rows) %}
+  {% endfor %}
+
+  {{ govukTable({
+    caption: "Evaluation Sheet",
+    captionClasses: "govuk-table__caption--m",
+    firstCellIsHeader: true,
+    head: [
+      {
+        text: "#"
+      },
+      {
+        text: "Content" 
+      }
+    ],
+    rows: rows
+  }) }}
 {% endblock %}
