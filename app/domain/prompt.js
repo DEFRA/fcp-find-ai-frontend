@@ -27,22 +27,18 @@ const getPrompt = (summariesMode) => {
 
   - Ensure you include as many relevant grant options as possible in your response.
 
-  - Structure the response into a valid JSON object defined below. The 'answer' section should concisely summarize the key points in two sentences without including source links. The 'items' array should contain details of each grant, including a title, scheme name, a URL, and a one-paragraph summary of the respective grant. Finally, list all relevant source URLs in the 'source_urls' array. Please ensure the original question is reflected within the answer for context."
+  - Structure the response into a valid JSON object defined below. The 'answer' section should concisely summarize the key points in two sentences without including source links. The 'items' array should contain details of each grant, including a title, scheme name, a URL, and a one-paragraph summary of the respective grant."
 
   Schema:
   {{
-    "answer": "String - The main body of the answer, keeping it to one or two sentences without source links",
+    "answer": "String - The main body of the answer, keeping it to one sentence without source links",
     "items": [
       {{
         "title": "String - The grant option title identified in the grant document identifier",
         "scheme": "String - The grant scheme name identified in the grant document identifier",
         "url": "String - The source URL identified in the grant document identifier",
-        "summary": "String - A one-paragraph summary of the respective grant, that summarises its aims and use-cases."
+        "summary": "String - A sentence of the respective grant, that summarises its aims and use-cases."
       }}
-      // Repeat for each grant
-    ],
-    "source_urls": [
-      "String - The relevant source URLs, as outlined in the document identifiers"
     ]
   }}
 

@@ -64,12 +64,6 @@ describe('/conversation', () => {
           answer: 'test message',
           role: 'user'
         }],
-        schemesList: [
-          { isSelected: false, key: 'CS', name: 'countryside stewardship' },
-          { isSelected: false, key: 'FETF', name: 'Farming equipment & technology fund' },
-          { isSelected: false, key: 'SIG', name: 'Slurry infrastructure grant' },
-          { isSelected: false, key: 'SFI', name: 'sustainable farming incentive' }
-        ],
         showHintText: true,
         validationError: false
       })
@@ -162,12 +156,6 @@ describe('/conversation', () => {
         commandText: 'Ask follow-on question...',
         conversationId: 'testConversationId',
         messages: expectedMessages,
-        schemesList: [
-          { isSelected: false, key: 'CS', name: 'countryside stewardship' },
-          { isSelected: false, key: 'FETF', name: 'Farming equipment & technology fund' },
-          { isSelected: false, key: 'SIG', name: 'Slurry infrastructure grant' },
-          { isSelected: false, key: 'SFI', name: 'sustainable farming incentive' }
-        ],
         showHintText: true,
         validationError: false
       })
@@ -214,12 +202,6 @@ describe('/conversation', () => {
         commandText: 'Ask follow-on question...',
         conversationId: 'testConversationId',
         messages: expectedMessages,
-        schemesList: [
-          { isSelected: false, key: 'CS', name: 'countryside stewardship' },
-          { isSelected: false, key: 'FETF', name: 'Farming equipment & technology fund' },
-          { isSelected: false, key: 'SIG', name: 'Slurry infrastructure grant' },
-          { isSelected: false, key: 'SFI', name: 'sustainable farming incentive' }
-        ],
         showHintText: true,
         validationError: true
       })

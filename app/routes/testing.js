@@ -15,12 +15,12 @@ module.exports = [
       logger.info('Testing prompts')
 
       const inputs = [
-        'Give me grants for deer fencing',
+        'Give me grants for managing ponds',
         'Give me grants to increase biodiversity',
         'Give me grants for planting flowers',
-        "What's the price for FG10",
-        'what land types does AB1 apply to',
-        'funding for slurry'
+        "What's the price for CHRW3",
+        'what land types does BFS1 apply to',
+        'funding for woodland'
       ]
 
       const processInput = async (input, index) => {
@@ -30,18 +30,20 @@ module.exports = [
 
         try {
           try {
-            response = await fetchAnswer(request, input, [])
+            const cacheEnabled = false
+            const summariesEnabled = false
+            response = await fetchAnswer(request, input, [], cacheEnabled, summariesEnabled)
             parseResponse = parseMessage(request, response)
             passedValidation = parseResponse !== undefined
           } catch (error) {
-            logger.info(`Response ${index + 1} out of ${inputs.length} failed validation or fetch with error:`, error)
+            logger.info(`Test Response ${index + 1} out of ${inputs.length} failed validation or fetch with error:`, error)
           }
 
           const endTime = new Date()
           const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-          const responseLength = response && passedValidation ? parseResponse.answer.split(' ').length : response.split(' ').length
+          const responseLength = response.length
 
-          logger.info(`Response ${index + 1} out of ${inputs.length} generated in ${responseDuration} seconds`)
+          logger.info(`Test Response ${index + 1} out of ${inputs.length} generated in ${responseDuration} seconds`)
 
           return {
             question: input,
@@ -53,7 +55,7 @@ module.exports = [
         } catch (error) {
           const endTime = new Date()
           const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-          const responseLength = response ? response.split(' ').length : 0
+          const responseLength = response ? response.length : 0
           return {
             question: input,
             answer: response,
