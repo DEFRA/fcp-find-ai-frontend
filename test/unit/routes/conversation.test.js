@@ -93,11 +93,13 @@ describe('/conversation', () => {
     })
 
     test('send user input and load response', async () => {
-      fetchAnswer.mockResolvedValue(JSON.stringify({
-        answer: 'responseMsg',
-        items: [],
-        source_urls: []
-      }))
+      fetchAnswer.mockResolvedValue({
+        response: JSON.stringify({
+          answer: 'responseMsg',
+          items: [],
+          source_urls: []
+        })
+      })
       const mockRequest = {
         payload: {
           input: 'grants for deer fencing'

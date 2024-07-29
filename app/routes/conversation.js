@@ -77,7 +77,7 @@ module.exports = [
         answer: redactedQuery
       })
 
-      const response = await fetchAnswer(request, redactedQuery, chatHistory, config.azureOpenAI.cacheEnabled)
+      const { response } = await fetchAnswer(request, redactedQuery, chatHistory, config.azureOpenAI.cacheEnabled)
 
       const endTime = new Date()
 

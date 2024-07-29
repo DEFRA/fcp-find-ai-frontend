@@ -32,7 +32,8 @@ module.exports = [
           try {
             const cacheEnabled = false
             const summariesEnabled = false
-            response = await fetchAnswer(request, input, [], cacheEnabled, summariesEnabled)
+            const { answer } = await fetchAnswer(request, input, [], cacheEnabled, summariesEnabled)
+            response = answer
             parseResponse = parseMessage(request, response)
             passedValidation = parseResponse !== undefined
           } catch (error) {
