@@ -166,7 +166,11 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
 
     if (isResponseValid && !hallucinated) {
       // TODO cache summaries response after enabled
-      return summariesResponse?.answer
+      return {
+        answer: summariesResponse?.answer,
+        summariesMode: true,
+        hallucinated
+      }
     }
   }
 
@@ -176,7 +180,11 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     await uploadToCache(query, response.answer)
   }
 
-  return response?.answer
+  return {
+    response: response?.answer,
+    summariesMode: false,
+    hallucinated
+  }
 }
 
 module.exports = {
