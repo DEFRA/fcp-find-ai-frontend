@@ -1,5 +1,6 @@
 const homeRoutes = require('../../../app/routes/home')
 const conversationRoutes = require('../../../app/routes/conversation')
+const testingRoutes = require('../../../app/routes/testing')
 const loginRoutes = require('../../../app/routes/login')
 const resetRoutes = require('../../../app/routes/reset')
 const healthyRoutes = require('../../../app/routes/healthy')
@@ -15,6 +16,7 @@ jest.mock('../../../app/routes/reset', () => [{ path: '/reset' }])
 jest.mock('../../../app/routes/healthy', () => [{ path: '/healthy' }])
 jest.mock('../../../app/routes/healthz', () => [{ path: '/healthz' }])
 jest.mock('../../../app/routes/static', () => [{ path: '/static' }])
+jest.mock('../../../app/routes/testing', () => [{ path: '/test_prompts' }])
 
 describe('router plugin', () => {
   test('should register routes when register is called', () => {
@@ -28,6 +30,7 @@ describe('router plugin', () => {
       [].concat(
         homeRoutes,
         conversationRoutes,
+        testingRoutes,
         loginRoutes,
         resetRoutes,
         healthyRoutes,

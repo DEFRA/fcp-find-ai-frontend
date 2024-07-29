@@ -1,0 +1,85 @@
+{% extends '_layout.njk' %}
+
+{% from "components/macro-defra-header.njk" import defraHeader %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block header %}
+  {{ defraHeader({
+    homepageUrl: "https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs",
+    serviceName: serviceName
+  }) }}
+{% endblock %}
+
+{% block content %}
+  {% set rows = [] %}
+
+  {% for response in responses %}
+    {% set metadataRow %}
+      {{ loop.index }}
+      <div style="display: flex;">Valid: {% if response.passedValidation %} ✅ {% else %} ❌ {% endif %}</div>
+      <div style="display: flex;">{{ response.responseLength }} chars</div>
+      <div style="display: flex;">Time: {{ response.responseDuration }}s</div>
+    {% endset %}
+
+    {% set contentRow %}
+      <div>
+        <span class="govuk-!-font-weight-bold">Question:</span>
+        {{response.question}}
+      </div>
+
+      {% if response.passedValidation %}
+        <div class="govuk-!-margin-top-5">
+          <span class="govuk-!-font-weight-bold">Answer:</span>
+          {{response.answer.answer}}
+        </div>
+
+        <ul>
+          {% for item in response.answer.items %}
+            <li class="govuk-!-margin-top-2">
+              <a href="{{ item.url }}" class="govuk-link" target="_blank"><strong>{{ item.title }}</strong></a><br>
+              {{ item.summary }}
+            </li>
+          {% endfor %}
+        <ul>
+      {% else %}
+        {% set rawCode %}
+          <code>{{ response.answer }}</code>
+        {% endset %}
+
+        {{ govukDetails({
+          summaryText: "Raw response",
+          html: rawCode
+        }) }}
+
+      {% endif %}
+    {% endset %}
+
+    {% set row = [
+      {
+        "html": metadataRow,
+        classes: "govuk-!-width-one-quarter"
+      }, {
+        "html": contentRow,
+        classes: "govuk-!-width-three-quarter"
+      }
+    ] %}
+
+    {% set rows = (rows.push(row), rows) %}
+  {% endfor %}
+
+  {{ govukTable({
+    caption: "Evaluation Sheet",
+    captionClasses: "govuk-table__caption--m",
+    firstCellIsHeader: true,
+    head: [
+      {
+        text: "#"
+      },
+      {
+        text: "Content" 
+      }
+    ],
+    rows: rows
+  }) }}
+{% endblock %}

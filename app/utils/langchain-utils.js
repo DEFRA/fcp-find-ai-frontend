@@ -55,10 +55,13 @@ const extractLinksForValidatingResponse = (jsonObj) => {
     return []
   }
 
-  const urlRegex = /https?:\/\/[^\s|)]+/g
+  // Improved URL regex to match valid URLs and exclude unwanted strings
+  const urlRegex = /\bhttps?:\/\/[^\s"')]+/g
 
   const entriesAndLinks = entries.map((entryObj) => {
-    const matches = entryObj.link.match(urlRegex).filter((value, index, self) => self.indexOf(value) === index)
+    const matches = entryObj.link.match(urlRegex)
+      .map((url) => url.replace('/api/content', '').replace(/["',]/g, ''))
+      .filter((value, index, self) => self.indexOf(value) === index)
     return {
       matches,
       entry: entryObj.entry
