@@ -165,6 +165,8 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
     // const isResponseValid = validateResponseSummaries(summariesResponse)
 
+    console.log(summariesResponse)
+
     // if (isResponseValid && !hallucinated) {
     //   // TODO cache summaries response after enabled
     // console.log(summariesResponse)
