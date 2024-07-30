@@ -7,7 +7,7 @@ const { FakeChatModel } = require('@langchain/core/utils/testing')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('../lib/events')
-const { extractLinksForValidatingResponse, validateResponseSummaries } = require('../utils/langchain-utils')
+const { extractLinksForValidatingResponse, returnValidatedResponse } = require('../utils/langchain-utils')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
 
@@ -115,8 +115,9 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
     })
 
     const hallucinated = !validateResponseLinks(response, query)
+    const validatedReponse = returnValidatedResponse(response)
 
-    return { response, hallucinated }
+    return { response: validatedReponse, hallucinated }
   } catch (error) {
     trackFetchResponseFailed({
       errorMessage: error.message,
@@ -157,13 +158,13 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
 
   if (summariesEnabled) {
     const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
-    const isResponseValid = validateResponseSummaries(summariesResponse)
 
-    if (isResponseValid && !hallucinated && hallucinated !== undefined) {
+    if (!hallucinated && hallucinated !== undefined) {
       // TODO cache summaries response after enabled
       return summariesResponse?.answer
     }
   }
+
   const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
   if (cacheEnabled && !hallucinated && !config.useFakeLlm) {

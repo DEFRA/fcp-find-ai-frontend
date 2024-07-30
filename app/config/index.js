@@ -73,7 +73,7 @@ const schema = Joi.object({
 const config = {
   env: process.env.NODE_ENV,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
-  version: '0.1.44',
+  version: '0.1.45',
   logLevel: process.env.LOG_LEVEL || 'error',
 
   auth: {
