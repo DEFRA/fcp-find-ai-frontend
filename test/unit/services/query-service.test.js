@@ -127,6 +127,7 @@ describe('query-service', () => {
         })
       })
 
+
       const prompt = jest.fn()
       const input = 'deer fencing'
       ChatPromptTemplate.fromMessages.mockReturnValue(prompt)

@@ -10,6 +10,7 @@ const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('.
 const { extractLinksForValidatingResponse, validateResponseSummaries } = require('../utils/langchain-utils')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
+const { parseItemFromContext } = require( '../utils/parse-utils' )
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -162,21 +163,44 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
 
   if (summariesEnabled) {
     const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
-    const isResponseValid = validateResponseSummaries(summariesResponse)
+    // const isResponseValid = validateResponseSummaries(summariesResponse)
 
-    if (isResponseValid && !hallucinated) {
-      // TODO cache summaries response after enabled
-      return summariesResponse?.answer
+    // if (isResponseValid && !hallucinated) {
+    //   // TODO cache summaries response after enabled
+    // console.log(summariesResponse)
+    const url = JSON.parse(summariesResponse.answer)[0]
+    let body = ''
+
+    const contexts = summariesResponse.context
+
+    for (const context of contexts) {
+      const pageContent = context.pageContent
+
+      if (pageContent.includes(url)) {
+        body = pageContent
+      }
     }
+
+    const item = parseItemFromContext(body)
+
+    const result = {
+      answer: 'Summarised Answer below...',
+      items: [
+        item
+      ]
+    }
+
+    return JSON.stringify(result)
+    // }
   }
 
-  const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
+  // const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
 
-  if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
-    await uploadToCache(query, response.answer)
-  }
+  // if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
+  //   await uploadToCache(query, response.answer)
+  // }
 
-  return response?.answer
+  return 'No summary answer found'
 }
 
 module.exports = {
