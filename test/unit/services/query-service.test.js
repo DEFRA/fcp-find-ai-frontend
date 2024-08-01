@@ -25,7 +25,10 @@ describe('query-service', () => {
 
       const { response } = await fetchAnswer({}, input)
 
-      expect(JSON.parse(response).answer).toStrictEqual('generated response')
+      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({
+        answer: 'generated response',
+        items: []
+      }))
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(expect.objectContaining({ prompt }))
     })
 
