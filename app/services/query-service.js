@@ -164,7 +164,7 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
   if (summariesEnabled) {
     const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
 
-    if (isResponseValid && !hallucinated) {
+    if (!hallucinated) {
       // TODO cache summaries response after enabled
       return {
         answer: summariesResponse?.answer,
