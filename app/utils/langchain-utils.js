@@ -68,29 +68,79 @@ const extractLinksForValidatingResponse = (jsonObj) => {
   return entriesAndLinks
 }
 
-const validateResponseSummaries = (response) => {
+const validateJSONResponse = (response) => {
   try {
     if (response.answer === 'Unknown') {
-      return false
+      return {
+        valid: false,
+        response
+      }
     }
 
     try {
       const items = JSON.parse(response.answer).items
 
-      const invalidSummary = items && items.length > 0 && items.some(item => !item.title || !item.scheme || !item.url || !item.summary)
+      const invalidSummary =
+        !items ||
+        items.length === 0 ||
+        items.some(
+          (item) => !item.title || !item.scheme || !item.url || !item.summary
+        )
 
-      if (invalidSummary) {
-        return false
+      return {
+        valid: !invalidSummary,
+        response: {
+          ...response,
+          items: []
+        }
       }
     } catch {
       if (typeof response.answer === 'string') {
-        return true
+        return {
+          valid: false,
+          response: {
+            ...response,
+            items: []
+          }
+        }
       }
     }
 
-    return true
+    return {
+      valid: true,
+      response
+    }
   } catch {
-    return false
+    return {
+      valid: false,
+      response: {
+        ...response,
+        items: []
+      }
+    }
+  }
+}
+
+const returnValidatedResponse = (response) => {
+  try {
+    response = validateJSONResponse(response)
+
+    if (!response.valid) {
+      return {
+        ...response,
+        answer: JSON.stringify({
+          answer: response.response.answer || 'Unknown',
+          items: response.items || []
+        })
+      }
+    }
+
+    return {
+      ...response.response,
+      answer: response.response.answer
+    }
+  } catch {
+    return response
   }
 }
 
@@ -98,5 +148,5 @@ module.exports = {
   getChatHistory,
   parseMessage,
   extractLinksForValidatingResponse,
-  validateResponseSummaries
+  returnValidatedResponse
 }
