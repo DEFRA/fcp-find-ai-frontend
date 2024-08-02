@@ -139,7 +139,11 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     const cacheResponse = await searchCache(query)
 
     if (cacheResponse) {
-      return cacheResponse
+      return {
+        response: cacheResponse,
+        summariesMode: summariesEnabled,
+        hallucinated: false
+      }
     }
   }
 
