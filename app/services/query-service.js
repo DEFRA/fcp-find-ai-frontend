@@ -142,7 +142,7 @@ const runFetchAnswer = async ({ query, chatHistory, cacheEnabled, summariesEnabl
     if (!hallucinated) {
       // TODO cache summaries response after enabled
       return {
-        answer: summariesResponse?.answer,
+        response: summariesResponse?.answer,
         summariesMode: true,
         hallucinated
       }
@@ -206,7 +206,7 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
   }
 
   return {
-    response: 'This tool cannot answer that kind of question, ask something about Defra funding instead',
+    response: JSON.stringify({ answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead', items: [] }),
     hallucinated: true,
     summariesMode: finalResponse.summariesMode
   }
