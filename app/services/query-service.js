@@ -66,7 +66,7 @@ const validateResponseLinks = (response, query) => {
   return true
 }
 
-const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model }) => {
+const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, retryCount }) => {
   try {
     const vectorStoreKey = summariesMode ? 'summaryIndexName' : 'indexName'
     const itemsToCheck = summariesMode ? 40 : 20
@@ -126,11 +126,39 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
   } catch (error) {
     trackFetchResponseFailed({
       errorMessage: error.message,
-      requestQuery: query
+      requestQuery: query,
+      retryCount
     })
     return {
       response: { answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead', hallucinated: true }
     }
+  }
+}
+
+const runFetchAnswer = async ({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount }) => {
+  if (summariesEnabled) {
+    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, retryCount })
+
+    if (!hallucinated) {
+      // TODO cache summaries response after enabled
+      return {
+        answer: summariesResponse?.answer,
+        summariesMode: true,
+        hallucinated
+      }
+    }
+  }
+
+  const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, retryCount })
+
+  if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
+    await uploadToCache(query, response.answer)
+  }
+
+  return {
+    response: response?.answer,
+    summariesMode: false,
+    hallucinated
   }
 }
 
@@ -139,7 +167,11 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     const cacheResponse = await searchCache(query)
 
     if (cacheResponse) {
-      return cacheResponse
+      return {
+        response: cacheResponse,
+        summariesMode: summariesEnabled,
+        hallucinated: false
+      }
     }
   }
 
@@ -161,29 +193,22 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
       onFailedAttempt
     })
 
-  if (summariesEnabled) {
-    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
+  const initialResponse = await runFetchAnswer({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount: 0 })
 
-    if (!hallucinated) {
-      // TODO cache summaries response after enabled
-      return {
-        answer: summariesResponse?.answer,
-        summariesMode: true,
-        hallucinated
-      }
-    }
+  if (!initialResponse.hallucinated) {
+    return initialResponse
   }
 
-  const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
+  const finalResponse = await runFetchAnswer({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount: 1 })
 
-  if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
-    await uploadToCache(query, response.answer)
+  if (!finalResponse.hallucinated) {
+    return finalResponse
   }
 
   return {
-    response: response?.answer,
-    summariesMode: false,
-    hallucinated
+    response: 'This tool cannot answer that kind of question, ask something about Defra funding instead',
+    hallucinated: true,
+    summariesMode: finalResponse.summariesMode
   }
 }
 

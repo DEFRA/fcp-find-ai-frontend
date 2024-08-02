@@ -39,8 +39,8 @@ const trackHallucinatedLinkInResponse = ({ requestQuery, errorMessage, failedObj
   logEvent(Event.HALLUCINATED_LINK, { time: new Date(), requestQuery, errorMessage, failedObject })
 }
 
-const trackFetchResponseFailed = ({ requestQuery, errorMessage }) => {
-  logEvent(Event.FETCH_RESPONSE_FAILED, { time: new Date(), requestQuery, errorMessage })
+const trackFetchResponseFailed = ({ requestQuery, errorMessage, retryCount }) => {
+  logEvent(Event.FETCH_RESPONSE_FAILED, { time: new Date(), requestQuery, errorMessage, retryCount })
 }
 
 module.exports = {
