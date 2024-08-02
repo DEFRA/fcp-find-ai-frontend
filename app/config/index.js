@@ -73,7 +73,7 @@ const schema = Joi.object({
 const config = {
   env: process.env.NODE_ENV,
   appInsightsKey: process.env.APPINSIGHTS_CONNECTIONSTRING,
-  version: '0.1.45',
+  version: '0.1.46',
   logLevel: process.env.LOG_LEVEL || 'error',
 
   auth: {
@@ -139,7 +139,7 @@ const result = schema.validate(config, {
 })
 
 if (result.error) {
-  // throw new Error(`The app config is invalid. ${result.error.message}`)
+  throw new Error(`The app config is invalid. ${result.error.message}`)
 }
 
 module.exports = config
