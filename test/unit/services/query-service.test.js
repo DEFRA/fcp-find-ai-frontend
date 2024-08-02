@@ -12,10 +12,22 @@ jest.mock('../../../app/lib/azure-vector-store')
 
 describe('query-service', () => {
   describe('fetchAnswer', () => {
+    beforeEach(() => {
+      // Reset mocks before each test to ensure no state leakage
+      jest.clearAllMocks()
+    })
+
     test('perform langchain call', async () => {
       createRetrievalChain.mockResolvedValue({
         invoke: jest.fn().mockResolvedValue({
-          answer: JSON.stringify({ answer: 'generated response', items: [] })
+          answer: JSON.stringify({ answer: 'generated response', items: [] }),
+          context: [
+            {
+              pageContent:
+                '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.gov.uk/link | Chunk Number: 0)===True summary',
+              metadata: {}
+            }
+          ]
         })
       })
 
@@ -23,7 +35,7 @@ describe('query-service', () => {
       const input = 'deer fencing'
       ChatPromptTemplate.fromMessages.mockReturnValue(prompt)
 
-      const { response } = await fetchAnswer({}, input)
+      const { response } = await fetchAnswer({}, input, [], false, false)
 
       expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({
         answer: 'generated response',
@@ -126,7 +138,14 @@ describe('query-service', () => {
     test('fetchAnswer returns summary answer when summariesEnabled is true', async () => {
       createRetrievalChain.mockResolvedValue({
         invoke: jest.fn().mockResolvedValue({
-          answer: JSON.stringify({ answer: 'summary response', items: [] })
+          answer: JSON.stringify({ answer: 'summary response', items: [] }),
+          context: [
+            {
+              pageContent:
+                '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.gov.uk/link | Chunk Number: 0)===True summary',
+              metadata: {}
+            }
+          ]
         })
       })
 
@@ -149,7 +168,14 @@ describe('query-service', () => {
     test('fetchAnswer does not return summary answer when summariesEnabled is false', async () => {
       createRetrievalChain.mockResolvedValue({
         invoke: jest.fn().mockResolvedValue({
-          answer: JSON.stringify({ answer: 'full index response', items: [] })
+          answer: JSON.stringify({ answer: 'full index response', items: [] }),
+          context: [
+            {
+              pageContent:
+                '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.gov.uk/link | Chunk Number: 0)===True summary',
+              metadata: {}
+            }
+          ]
         })
       })
 
@@ -194,7 +220,14 @@ describe('query-service', () => {
     test('fetchAnswer does not fall back to full index when summary answer is valid', async () => {
       createRetrievalChain.mockResolvedValueOnce({
         invoke: jest.fn().mockResolvedValue({
-          answer: JSON.stringify({ answer: 'summary response', items: [] })
+          answer: JSON.stringify({ answer: 'summary response', items: [] }),
+          context: [
+            {
+              pageContent:
+                '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.gov.uk/link | Chunk Number: 0)===True summary',
+              metadata: {}
+            }
+          ]
         })
       })
 
@@ -204,7 +237,7 @@ describe('query-service', () => {
 
       const { response } = await fetchAnswer({}, input, [], false, true)
 
-      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({ answer: 'full index response', items: [] }))
+      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({ answer: 'summary response', items: [] }))
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(
         expect.objectContaining({ prompt })
       )
@@ -230,7 +263,14 @@ describe('query-service', () => {
         })
         .mockResolvedValueOnce({
           invoke: jest.fn().mockResolvedValue({
-            answer: JSON.stringify({ answer: 'full index response', items: [] })
+            answer: JSON.stringify({ answer: 'full index response', items: [] }),
+            context: [
+              {
+                pageContent:
+                  '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.gov.uk/link | Chunk Number: 0)===True summary',
+                metadata: {}
+              }
+            ]
           })
         })
 
@@ -260,7 +300,14 @@ describe('query-service', () => {
               }
             ],
             source_urls: ['https://www.true-link.com']
-          })
+          }),
+          context: [
+            {
+              pageContent:
+                '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.true-link.com, | Chunk Number: 0)===True summary',
+              metadata: {}
+            }
+          ]
         })
       })
 
@@ -270,7 +317,7 @@ describe('query-service', () => {
 
       const { response } = await fetchAnswer({}, input, [], false, true)
 
-      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({ answer: 'full index response', items: [] }))
+      expect(JSON.parse(response).answer).toStrictEqual('summary response')
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(
         expect.objectContaining({ prompt })
       )
