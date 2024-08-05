@@ -80,3 +80,4 @@ extends:
         - fcp-find-ai-frontend-LOG-LEVEL
         - fcp-find-ai-frontend-ENDPOINT-TESTING-ENABLED
         - fcp-find-ai-frontend-FEATURE-SUMMARY-ENABLED
+        - fcp-find-ai-frontend-AZURE-SEARCH-CACHE-TARGET
