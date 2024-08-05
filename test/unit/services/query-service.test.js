@@ -1,8 +1,9 @@
-const { fetchAnswer, validateResponseLinks } = require('../../../app/services/query-service')
+const { fetchAnswer } = require('../../../app/services/query-service')
 const { createRetrievalChain } = require('langchain/chains/retrieval')
 const { createStuffDocumentsChain } = require('langchain/chains/combine_documents')
 const { ChatPromptTemplate } = require('@langchain/core/prompts')
 const { getChatHistory } = require('../../../app/utils/langchain-utils')
+const { validateResponseLinks } = require('../../../app/utils/validators')
 
 jest.mock('@langchain/openai')
 jest.mock('@langchain/core/prompts')
@@ -17,7 +18,6 @@ describe('query-service', () => {
       // Reset mocks before each test to ensure no state leakage
       jest.clearAllMocks()
     })
-
     test('perform langchain call', async () => {
       createRetrievalChain.mockResolvedValue({
         invoke: jest.fn().mockResolvedValue({
@@ -61,7 +61,14 @@ describe('query-service', () => {
         ]
       }
       const mockInvoke = jest.fn().mockResolvedValue({
-        answer: JSON.stringify(answer)
+        answer: JSON.stringify(answer),
+        context: [
+          {
+            pageContent:
+              '(Title: AB1 Grant name | Grant Scheme Name: SFI | Source:https://test.dev | Chunk Number: 0)===True summary',
+            metadata: {}
+          }
+        ]
       })
       createRetrievalChain.mockResolvedValue({
         invoke: mockInvoke
@@ -73,10 +80,11 @@ describe('query-service', () => {
         }
       ])
 
-      const { response, summariesMode } = await fetchAnswer({}, input, chatHistory, false, false)
+      const { response, summariesMode, hallucinated } = await fetchAnswer({}, input, chatHistory, false, false)
 
       expect(mockInvoke).toHaveBeenCalledWith({ chat_history: chatHistory, input })
       expect(summariesMode).toBe(false)
+      expect(hallucinated).toBe(false)
       expect(response).toStrictEqual(JSON.stringify(answer))
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(expect.objectContaining({ prompt }))
     })
@@ -219,10 +227,12 @@ describe('query-service', () => {
             title: 'AB1 Grant name',
             scheme: 'SFI',
             url: 'https://test.dev',
-            summary: 'description'
+            summary: 'Summary description'
           }
         ]
       }
+      const { response, summariesMode, hallucinated } = await fetchAnswer({}, input, [], false, true)
+
       createRetrievalChain
         .mockResolvedValueOnce({
           invoke: jest.fn().mockResolvedValue({
@@ -235,17 +245,15 @@ describe('query-service', () => {
           })
         })
 
-      const { response, summariesMode, hallucinated } = await fetchAnswer({}, input, [], false, true)
-
-      expect(hallucinated).toBe(true)
-      expect(summariesMode).toBe(false)
+      expect(hallucinated).toBe(false)
+      expect(summariesMode).toBe(true)
       expect(response).toStrictEqual(JSON.stringify(answer))
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(
         expect.objectContaining({ prompt })
       )
     })
 
-    test('fetchAnswer detects hallucinated link in summary answer and falls back to full index', async () => {
+    test('fetchAnswer detects hallucinated link in summary answer and falls back to full index, return a valid result', async () => {
       const input = 'deer fencing'
       const prompt = jest.fn()
       ChatPromptTemplate.fromMessages.mockReturnValue(prompt)
@@ -388,6 +396,10 @@ describe('query-service', () => {
   })
 
   describe('validateResponseLinks', () => {
+    beforeEach(() => {
+      // Reset mocks before each test to ensure no state leakage
+      jest.clearAllMocks()
+    })
     test('validateResponseLinks detects hallucinated links in summary answer', async () => {
       const mockResponseWithHallucinatedLinks = {
         answer: JSON.stringify({
