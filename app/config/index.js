@@ -52,6 +52,7 @@ const schema = Joi.object({
     summaryIndexName: Joi.string().required(),
     cacheEnabled: Joi.boolean().default(true),
     cacheIndexName: Joi.string().required(),
+    cacheTarget: Joi.number().required(),
 
     openAiInstanceName: Joi.string().required(),
     openAiEndpoint: Joi.string().uri().required(),
@@ -64,9 +65,12 @@ const schema = Joi.object({
       .default(16384 - 1024)
   }).required(),
 
+  featureSummaryEnabled: Joi.boolean().default(false),
+
   googleAnalytics: Joi.object({
     key: Joi.string().default('')
   }).required(),
+
   endpointTestingEnabled: Joi.boolean().default(false)
 })
 
@@ -117,6 +121,7 @@ const config = {
     summaryIndexName: process.env.AZURE_SEARCH_SUMMARIES_INDEX_NAME,
     cacheEnabled: process.env.AZURE_SEARCH_CACHE_ENABLED !== 'false',
     cacheIndexName: process.env.AZURE_SEARCH_CACHE_INDEX_NAME,
+    cacheTarget: Number(process.env.AZURE_SEARCH_CACHE_TARGET),
 
     openAiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
     openAiEndpoint: process.env.AZURE_OPENAI_API_ENDPOINT,
@@ -126,6 +131,8 @@ const config = {
 
     tokenBudget: 16384 - 1024
   },
+
+  featureSummaryEnabled: process.env.FEATURE_SUMMARY_ENABLED === 'true',
 
   googleAnalytics: {
     key: process.env.GOOGLE_TAG_MANAGER_KEY || ''

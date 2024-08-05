@@ -96,8 +96,7 @@ describe('/conversation', () => {
       fetchAnswer.mockResolvedValue({
         response: JSON.stringify({
           answer: 'responseMsg',
-          items: [],
-          source_urls: []
+          items: []
         })
       })
       const mockRequest = {
@@ -138,8 +137,7 @@ describe('/conversation', () => {
         {
           answer: 'responseMsg',
           items: [],
-          role: 'system',
-          source_urls: []
+          role: 'assistant'
         }
       ]
 
@@ -151,7 +149,7 @@ describe('/conversation', () => {
         testConversationId: [
           { answer: 'test message', role: 'user' },
           { answer: 'grants for deer fencing', role: 'user' },
-          { answer: 'responseMsg', items: [], role: 'system', source_urls: [] }
+          { answer: 'responseMsg', items: [], role: 'assistant' }
         ]
       })
       expect(mockH.view).toHaveBeenCalledWith('answer', {
