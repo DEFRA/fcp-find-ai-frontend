@@ -4,9 +4,13 @@ const config = require('../config')
 /**
  * Generates vector embeddings for content
  * @param {string} content
- * @returns {number[]}
+ * @returns {Promise<number[]>}
  */
 const generateEmbedding = async (content) => {
+  if (!content) {
+    throw new Error('Cannot generate embedding - content is empty')
+  }
+
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
     azureOpenAIApiKey: config.azureOpenAI.openAiKey,

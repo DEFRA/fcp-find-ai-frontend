@@ -79,3 +79,4 @@ extends:
         - fcp-find-ai-frontend-AZURE-OPENAI-API-MODEL-NAME
         - fcp-find-ai-frontend-LOG-LEVEL
         - fcp-find-ai-frontend-ENDPOINT-TESTING-ENABLED
+        - fcp-find-ai-frontend-FEATURE-SUMMARY-ENABLED

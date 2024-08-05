@@ -4,66 +4,20 @@ const { createStuffDocumentsChain } = require('langchain/chains/combine_document
 const { createRetrievalChain } = require('langchain/chains/retrieval')
 const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_retriever')
 const { FakeChatModel } = require('@langchain/core/utils/testing')
+// eslint-disable-next-line no-unused-vars
+const { BaseMessage } = require('@langchain/core/messages')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
-const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('../lib/events')
-const { extractLinksForValidatingResponse, returnValidatedResponse } = require('../utils/langchain-utils')
+const { trackFetchResponseFailed } = require('../lib/events')
+const { returnValidatedResponse } = require('../utils/langchain-utils')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
+const { validateResponseLinks } = require('../utils/validators')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
     throw new Error(`Failed to get embeddings: ${error}`)
   }
-}
-
-const validateResponseLinks = (response, query) => {
-  const trackIssueAndBreak = (errorMessage) => {
-    trackHallucinatedLinkInResponse({
-      errorMessage,
-      failedObject: response,
-      requestQuery: query
-    })
-    return false
-  }
-
-  try {
-    if (!response.answer || !response.context) {
-      return trackIssueAndBreak('validateResponseLinks failed because response object does not contain answer or context fields')
-    }
-
-    if (typeof response === 'string') {
-      response = JSON.parse(response)
-    }
-
-    const responseEntriesAndLinks = extractLinksForValidatingResponse(response.answer)
-    const trueEntriesAndLinks = extractLinksForValidatingResponse(response.context)
-
-    if (trueEntriesAndLinks === undefined || trueEntriesAndLinks.length === 0) {
-      return trackIssueAndBreak('validateResponseLinks failed because no links detected in true context object')
-    }
-
-    if (!responseEntriesAndLinks && !trueEntriesAndLinks) {
-      return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
-    }
-
-    if (responseEntriesAndLinks !== undefined && responseEntriesAndLinks.length !== 0 && trueEntriesAndLinks !== undefined && trueEntriesAndLinks.length === 0) {
-      return trackIssueAndBreak('validateResponseLinks failed because hallucinated links detected in response objects')
-    }
-
-    const trueMatches = trueEntriesAndLinks.map(entry => entry.matches).flat()
-    const responseMatches = responseEntriesAndLinks.map(entry => entry.matches).flat()
-
-    const invalidLinks = responseMatches.filter(link => !trueMatches.some(trueLink => trueLink === link || trueLink.includes(link)))
-
-    if (invalidLinks !== undefined && invalidLinks.length > 0) {
-      return trackIssueAndBreak('validateResponseLinks failed because invalid links detected in response objects')
-    }
-  } catch {
-    return trackIssueAndBreak('validateResponseLinks failed')
-  }
-
-  return true
 }
 
 const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model }) => {
@@ -134,6 +88,15 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
   }
 }
 
+/**
+ * Fetches answer from AI Search and OpenAI
+ * @param {*} req
+ * @param {string} query
+ * @param {BaseMessage[]} chatHistory
+ * @param {boolean} cacheEnabled
+ * @param {boolean} summariesEnabled
+ * @returns {{ response: string, summariesMode: boolean, hallucinated: boolean }}
+ */
 const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabled = false) => {
   if (cacheEnabled) {
     const cacheResponse = await searchCache(query)
@@ -171,7 +134,7 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     if (!hallucinated) {
       // TODO cache summaries response after enabled
       return {
-        answer: summariesResponse?.answer,
+        response: summariesResponse?.answer,
         summariesMode: true,
         hallucinated
       }
@@ -192,6 +155,5 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
 }
 
 module.exports = {
-  fetchAnswer,
-  validateResponseLinks
+  fetchAnswer
 }

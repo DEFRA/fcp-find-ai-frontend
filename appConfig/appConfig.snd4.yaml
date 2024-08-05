@@ -43,6 +43,9 @@
 - key: AZURE_SEARCH_CACHE_INDEX_NAME
   value: "{{servicename}}-AZURE-SEARCH-CACHE-INDEX-NAME"
   type: "keyvault"
+- key: AZURE_SEARCH_CACHE_TARGET
+  value: "{{servicename}}-AZURE-SEARCH-CACHE-TARGET"
+  type: "keyvault"
 - key: AZURE_OPENAI_API_INSTANCE_NAME
   value: "{{servicename}}-AZURE-OPENAI-API-INSTANCE-NAME"
   type: "keyvault"
@@ -57,6 +60,9 @@
   type: "keyvault"
 - key: AZURE_OPENAI_API_MODEL_NAME
   value: "{{servicename}}-AZURE-OPENAI-API-MODEL-NAME"
+  type: "keyvault"
+- key: FEATURE_SUMMARY_ENABLED
+  value: "{{servicename}}-FEATURE-SUMMARY-ENABLED"
   type: "keyvault"
 - key: GOOGLE_TAG_MANAGER_KEY
   value: "G-NF25VDMQQX"
