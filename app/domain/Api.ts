@@ -6,9 +6,7 @@ interface Item {
 }
 
 interface BotAnswer {
-  role: string
+  role: string // assistant or user
   answer: string
   items: Item[]
-  source_urls: string[]
-  is_latest: boolean
 }

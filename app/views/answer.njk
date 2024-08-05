@@ -67,7 +67,6 @@
           {{ chatMessage({
               role: message.role,
               answer: message.answer | markdown | safe,
-              urls: message.source_urls,
               items: message.items,
               scrollToMessage: message.scrollToMessage
           }) }}

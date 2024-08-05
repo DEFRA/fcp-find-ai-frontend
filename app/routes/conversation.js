@@ -77,7 +77,7 @@ module.exports = [
         answer: redactedQuery
       })
 
-      const { response } = await fetchAnswer(request, redactedQuery, chatHistory, config.azureOpenAI.cacheEnabled)
+      const { response, summariesMode, hallucinated } = await fetchAnswer(request, redactedQuery, chatHistory, config.azureOpenAI.cacheEnabled, config.featureSummaryEnabled)
 
       const endTime = new Date()
 
@@ -89,17 +89,17 @@ module.exports = [
         const langchainData = parseMessage(request, response)
 
         messages.push({
-          role: 'system',
+          role: 'assistant',
           ...langchainData
         })
       } catch (error) {
         messages.push({
-          role: 'system',
+          role: 'assistant',
           answer: response
         })
       } finally {
         const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-        trackSystemMessage({ message: response, conversationId, time: endTime, characterCount: response.length, responseDuration, conversationPosition: chatHistory.length + 2 })
+        trackSystemMessage({ message: response, conversationId, time: endTime, characterCount: response.length, responseDuration, conversationPosition: chatHistory.length + 2, hallucinated, summariesMode })
       }
 
       setMessages(request, conversationId, messages)

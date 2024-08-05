@@ -4,12 +4,15 @@ const { createStuffDocumentsChain } = require('langchain/chains/combine_document
 const { createRetrievalChain } = require('langchain/chains/retrieval')
 const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_retriever')
 const { FakeChatModel } = require('@langchain/core/utils/testing')
+// eslint-disable-next-line no-unused-vars
+const { BaseMessage } = require('@langchain/core/messages')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
-const { trackHallucinatedLinkInResponse, trackFetchResponseFailed } = require('../lib/events')
-const { extractLinksForValidatingResponse, returnValidatedResponse } = require('../utils/langchain-utils')
+const { trackFetchResponseFailed } = require('../lib/events')
+const { returnValidatedResponse } = require('../utils/langchain-utils')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
+const { validateResponseLinks } = require('../utils/validators')
 
 const onFailedAttempt = async (error) => {
   if (error.retriesLeft === 0) {
@@ -198,6 +201,18 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
   if (!initialResponse.hallucinated) {
     return initialResponse
   }
+  if (summariesEnabled) {
+    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
+
+    if (!hallucinated) {
+      // TODO cache summaries response after enabled
+      return {
+        response: summariesResponse?.answer,
+        summariesMode: true,
+        hallucinated
+      }
+    }
+  }
 
   const finalResponse = await runFetchAnswer({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount: 1 })
 
@@ -213,6 +228,5 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
 }
 
 module.exports = {
-  fetchAnswer,
-  validateResponseLinks
+  fetchAnswer
 }

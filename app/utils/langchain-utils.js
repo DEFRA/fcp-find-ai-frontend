@@ -1,5 +1,11 @@
-const { HumanMessage, AIMessage } = require('@langchain/core/messages')
+// eslint-disable-next-line no-unused-vars
+const { HumanMessage, AIMessage, BaseMessage } = require('@langchain/core/messages')
 
+/**
+ * Get Chat History for langchain
+ * @param {{role: string, answer: string}[]} messages
+ * @returns {BaseMessage[]}
+ */
 const getChatHistory = (messages) => {
   if (!messages || messages.length === 0) {
     return []

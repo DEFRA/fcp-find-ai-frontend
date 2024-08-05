@@ -27,7 +27,11 @@ const getPrompt = (summariesMode) => {
 
   - Ensure you include as many relevant grant options as possible in your response.
 
-  - Structure the response into a valid JSON object defined below. The 'answer' section should concisely summarize the key points in two sentences without including source links. The 'items' array should contain details of each grant, including a title, scheme name, a URL, and a one-paragraph summary of the respective grant."
+  - Structure the response into a valid JSON object defined below. 
+  - The 'answer' section should concisely summarize the key points in once sentence without including URLs or mentioning the scheme name. 
+    - Never mention the scheme name e.g. 'Sustainable Farming Incentive (SFI)' in the answer
+    - Never mention source URLs in the 'answer' section
+  - The 'items' array should contain details of each grant, including a title, scheme name, a URL, and a small summary of the respective grant including the price of the grant."
 
   Schema:
   {{
@@ -37,7 +41,7 @@ const getPrompt = (summariesMode) => {
         "title": "String - The grant option title identified in the grant document identifier",
         "scheme": "String - The grant scheme name identified in the grant document identifier",
         "url": "String - The source URL identified in the grant document identifier",
-        "summary": "String - A sentence of the respective grant, that summarises its aims and use-cases."
+        "summary": "String - A sentence of the respective grant, that summarises its use cases and price."
       }}
     ]
   }}

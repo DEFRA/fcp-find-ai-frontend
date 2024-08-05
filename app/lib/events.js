@@ -7,6 +7,7 @@ const Event = {
   CONVERSATION_PAGE_VIEW: 'EVENT_CONVERSATION_PAGE_VIEW',
   HALLUCINATED_LINK: 'EVENT_HALLUCINATED_LINK',
   FETCH_RESPONSE_FAILED: 'EVENT_FETCH_RESPONSE_FAILED',
+  CACHE_UPLOAD: 'EVENT_CACHE_UPLOAD',
   CACHE_HIT: 'EVENT_CACHE_HIT',
   CACHE_MISS: 'EVENT_CACHE_MISS'
 }
@@ -43,6 +44,10 @@ const trackFetchResponseFailed = ({ requestQuery, errorMessage, retryCount }) =>
   logEvent(Event.FETCH_RESPONSE_FAILED, { time: new Date(), requestQuery, errorMessage, retryCount })
 }
 
+const trackCacheUpload = ({ requestQuery }) => {
+  logEvent(Event.CACHE_UPLOAD, { time: new Date(), requestQuery })
+}
+
 module.exports = {
   Event,
   trackMessage,
@@ -50,5 +55,6 @@ module.exports = {
   trackLandingPageView,
   trackConversationPageView,
   trackHallucinatedLinkInResponse,
-  trackFetchResponseFailed
+  trackFetchResponseFailed,
+  trackCacheUpload
 }

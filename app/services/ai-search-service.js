@@ -3,7 +3,8 @@ const { generateEmbedding } = require('./open-ai-service')
 const { logger } = require('../lib/logger')
 const { getSearchClient } = require('../lib/azure-search-client')
 const { logEvent } = require('../insights')
-const { Event } = require('../lib/events')
+const { Event, trackCacheUpload } = require('../lib/events')
+const config = require('../config')
 
 /**
  * Uploads query and answer to cache
@@ -23,6 +24,8 @@ const uploadToCache = async (query, answer) => {
 
     const searchClient = await getSearchClient()
     await searchClient.uploadDocuments([document])
+
+    trackCacheUpload({ requestQuery: query })
   } catch (error) {
     logger.error(error, 'Failed to upload query to cache')
   }
@@ -34,7 +37,7 @@ const uploadToCache = async (query, answer) => {
  * @returns string
 */
 const searchCache = async (query) => {
-  const scoreTarget = 3.79
+  const scoreTarget = config.azureOpenAI.cacheTarget
 
   try {
     const searchClient = await getSearchClient()
