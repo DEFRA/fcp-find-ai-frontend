@@ -90,29 +90,39 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
 }
 
 const runFetchAnswer = async ({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount }) => {
-  if (summariesEnabled) {
-    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings, retryCount })
+  try {
+    if (summariesEnabled) {
+      const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: summariesEnabled, model, embeddings, retryCount })
 
-    if (!hallucinated) {
-      // TODO cache summaries response after enabled
-      return {
-        response: summariesResponse?.answer,
-        summariesMode: true,
-        hallucinated
+      if (!hallucinated) {
+        // TODO cache summaries response after enabled
+        return {
+          response: summariesResponse?.answer,
+          summariesMode: true,
+          hallucinated
+        }
       }
     }
-  }
 
-  const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model, retryCount })
+    summariesEnabled = false
 
-  if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
-    await uploadToCache(query, response.answer)
-  }
+    const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: summariesEnabled, embeddings, model, retryCount })
 
-  return {
-    response: response?.answer,
-    summariesMode: false,
-    hallucinated
+    if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
+      await uploadToCache(query, response.answer)
+    }
+
+    return {
+      response: response?.answer,
+      summariesMode: false,
+      hallucinated
+    }
+  } catch (error) {
+    return {
+      response: JSON.stringify({ answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead', items: [] }),
+      hallucinated: true,
+      summariesMode: summariesEnabled
+    }
   }
 }
 
