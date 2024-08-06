@@ -22,7 +22,7 @@ const uploadToCache = async (query, answer) => {
       content_vector: embedding
     }
 
-    const searchClient = await getSearchClient()
+    const searchClient = getSearchClient()
     await searchClient.uploadDocuments([document])
 
     trackCacheUpload({ requestQuery: query })
@@ -34,7 +34,7 @@ const uploadToCache = async (query, answer) => {
 /**
  * Searches cache
  * @param {string} query
- * @returns string
+ * @returns {Promise<string>}
 */
 const searchCache = async (query) => {
   const scoreTarget = config.azureOpenAI.cacheTarget
@@ -43,7 +43,7 @@ const searchCache = async (query) => {
     const searchClient = await getSearchClient()
     let highestScore = 0
 
-    const results = await searchClient.search(query)
+    const results = await searchClient.search(query, { queryType})
 
     for await (const result of results.results) {
       if (result.score > highestScore) {

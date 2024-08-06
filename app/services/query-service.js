@@ -13,12 +13,7 @@ const { returnValidatedResponse } = require('../utils/langchain-utils')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
 const { validateResponseLinks } = require('../utils/validators')
-
-const onFailedAttempt = async (error) => {
-  if (error.retriesLeft === 0) {
-    throw new Error(`Failed to get embeddings: ${error}`)
-  }
-}
+const { getOpenAIClient, getEmbeddingClient } = require('../lib/open-ai-client')
 
 const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model }) => {
   try {
@@ -110,23 +105,8 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     }
   }
 
-  const embeddings = new OpenAIEmbeddings({
-    azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-    azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-    azureOpenAIApiDeploymentName: 'text-embedding-ada-002',
-    azureOpenAIApiVersion: '2024-02-01',
-    onFailedAttempt
-  })
-
-  const model = config.useFakeLlm
-    ? new FakeChatModel({ onFailedAttempt })
-    : new ChatOpenAI({
-      azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-      azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-      azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
-      azureOpenAIApiVersion: '2024-02-01',
-      onFailedAttempt
-    })
+  const embeddings = getEmbeddingClient()
+  const model = getOpenAIClient()
 
   if (summariesEnabled) {
     const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
