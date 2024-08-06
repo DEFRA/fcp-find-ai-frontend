@@ -132,12 +132,8 @@ const validateJSONResponse = (response) => {
 
 /**
  * Validates and formats a JSON response.
- *
- * @param {Object} response - The response object to validate and format.
- * @param {Object} response.response - The actual response data.
- * @param {Boolean} response.valid - A flag indicating whether the response is valid.
- * @param {Array} [response.items] - An array of items related to the response.
- * @returns {Object} - The formatted response object.
+ * @param {{ chat_history: [], context: [], answer: string }} response
+ * @returns {{ chat_history: [], context: [], answer: string }}
  */
 const returnValidatedResponse = (response) => {
   try {

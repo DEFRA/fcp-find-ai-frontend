@@ -88,7 +88,15 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
     }
   }
 }
-
+/**
+ * Fetches answer from AI Search and OpenAI
+ * @param {*} req
+ * @param {string} query
+ * @param {BaseMessage[]} chatHistory
+ * @param {boolean} cacheEnabled
+ * @param {boolean} summariesEnabled
+ * @returns {{ response: string, summariesMode: boolean, hallucinated: boolean }}
+ */
 const runFetchAnswer = async ({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount }) => {
   try {
     if (summariesEnabled) {

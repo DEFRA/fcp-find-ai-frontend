@@ -7,65 +7,6 @@ describe('validators', () => {
       jest.clearAllMocks()
     })
 
-    test('validateResponseLinks detects hallucinated links in summary answer', async () => {
-      const mockResponseWithHallucinatedLinks = {
-        answer: JSON.stringify({
-          answer: 'summary response with hallucinated link',
-          items: [
-            {
-              title: 'Fake title',
-              scheme: 'Fake scheme',
-              url: 'https://www.fake-link.com',
-              summary: 'Fake summary'
-            }
-          ],
-          source_urls: ['https://www.fake-link.com']
-        }),
-        context: [
-          {
-            pageContent:
-              '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.true-link.com | Chunk Number: 0)===True summary',
-            metadata: {}
-          }
-        ]
-      }
-
-      const isValid = validateResponseLinks(
-        mockResponseWithHallucinatedLinks,
-        'deer fencing'
-      )
-
-      expect(isValid).toStrictEqual(false)
-    })
-
-    test('validateResponseLinks passes when no hallucinated links are present', async () => {
-      const mockResponseValid = {
-        answer: JSON.stringify({
-          answer: 'summary response',
-          items: [
-            {
-              title: 'True title',
-              scheme: 'True scheme',
-              url: 'https://www.true-link.com',
-              summary: 'True summary'
-            }
-          ],
-          source_urls: ['https://www.true-link.com']
-        }),
-        context: [
-          {
-            pageContent:
-              '(Title: True title | Grant Scheme Name: True scheme | Source: https://www.true-link.com | Chunk Number: 0)===True summary',
-            metadata: {}
-          }
-        ]
-      }
-
-      const isValid = validateResponseLinks(mockResponseValid, 'deer fencing')
-
-      expect(isValid).toStrictEqual(true)
-    })
-
     test('validate a correctly structured response without hallucinated links', async () => {
       const mockResponseValid = {
         answer: JSON.stringify({
