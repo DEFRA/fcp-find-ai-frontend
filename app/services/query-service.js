@@ -1,9 +1,7 @@
-const { OpenAIEmbeddings, ChatOpenAI } = require('@langchain/openai')
 const { ChatPromptTemplate, MessagesPlaceholder } = require('@langchain/core/prompts')
 const { createStuffDocumentsChain } = require('langchain/chains/combine_documents')
 const { createRetrievalChain } = require('langchain/chains/retrieval')
 const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_retriever')
-const { FakeChatModel } = require('@langchain/core/utils/testing')
 // eslint-disable-next-line no-unused-vars
 const { BaseMessage } = require('@langchain/core/messages')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
@@ -12,12 +10,7 @@ const { trackFetchResponseFailed } = require('../lib/events')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
 const { validateResponseLinks } = require('../utils/validators')
-
-const onFailedAttempt = async (error) => {
-  if (error.retriesLeft === 0) {
-    throw new Error(`Failed to get embeddings: ${error}`)
-  }
-}
+const { getOpenAIClient, getEmbeddingClient } = require('../lib/open-ai-client')
 
 const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, retryCount }) => {
   try {
@@ -145,23 +138,8 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
     }
   }
 
-  const embeddings = new OpenAIEmbeddings({
-    azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-    azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-    azureOpenAIApiDeploymentName: 'text-embedding-ada-002',
-    azureOpenAIApiVersion: '2024-02-01',
-    onFailedAttempt
-  })
-
-  const model = config.useFakeLlm
-    ? new FakeChatModel({ onFailedAttempt })
-    : new ChatOpenAI({
-      azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
-      azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-      azureOpenAIApiDeploymentName: config.azureOpenAI.openAiModelName,
-      azureOpenAIApiVersion: '2024-02-01',
-      onFailedAttempt
-    })
+  const embeddings = getEmbeddingClient()
+  const model = getOpenAIClient()
 
   const initialResponse = await runFetchAnswer({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount: 0 })
 

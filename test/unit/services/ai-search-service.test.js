@@ -18,7 +18,7 @@ describe('AI Search Service', () => {
       search: jest.fn()
     }
 
-    getSearchClient.mockResolvedValue(AISearchClient)
+    getSearchClient.mockReturnValue(AISearchClient)
   })
 
   afterEach(() => {

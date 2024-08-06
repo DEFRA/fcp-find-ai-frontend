@@ -3,9 +3,9 @@ const config = require('../config')
 
 /**
  * Returns instance of azure ai search client
- * @returns SearchClient
+ * @returns {SearchClient}
  */
-const getSearchClient = async () => {
+const getSearchClient = () => {
   const searchClient = new SearchClient(
     config.azureOpenAI.searchUrl,
     config.azureOpenAI.cacheIndexName,
