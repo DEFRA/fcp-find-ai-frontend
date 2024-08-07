@@ -130,6 +130,11 @@ const validateJSONResponse = (response) => {
   }
 }
 
+/**
+ * Validates and formats a JSON response.
+ * @param {{ chat_history: [], context: [], answer: string }} response
+ * @returns {{ chat_history: [], context: [], answer: string }}
+ */
 const returnValidatedResponse = (response) => {
   try {
     response = validateJSONResponse(response)

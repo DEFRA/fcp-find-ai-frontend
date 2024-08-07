@@ -2,6 +2,11 @@ const { validateResponseLinks } = require('../../../app/utils/validators')
 
 describe('validators', () => {
   describe('validateResponseLinks', () => {
+    beforeEach(() => {
+      // Reset mocks before each test to ensure no state leakage
+      jest.clearAllMocks()
+    })
+
     test('validate a correctly structured response without hallucinated links', async () => {
       const mockResponseValid = {
         answer: JSON.stringify({
