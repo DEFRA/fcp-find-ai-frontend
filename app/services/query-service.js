@@ -1,9 +1,7 @@
-const { OpenAIEmbeddings, ChatOpenAI } = require('@langchain/openai')
 const { ChatPromptTemplate, MessagesPlaceholder } = require('@langchain/core/prompts')
 const { createStuffDocumentsChain } = require('langchain/chains/combine_documents')
 const { createRetrievalChain } = require('langchain/chains/retrieval')
 const { createHistoryAwareRetriever } = require('langchain/chains/history_aware_retriever')
-const { FakeChatModel } = require('@langchain/core/utils/testing')
 // eslint-disable-next-line no-unused-vars
 const { BaseMessage } = require('@langchain/core/messages')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')

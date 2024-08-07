@@ -43,7 +43,7 @@ const searchCache = async (query) => {
     const searchClient = await getSearchClient()
     let highestScore = 0
 
-    const results = await searchClient.search(query, { queryType})
+    const results = await searchClient.search(query)
 
     for await (const result of results.results) {
       if (result.score > highestScore) {

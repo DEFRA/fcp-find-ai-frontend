@@ -15,10 +15,11 @@ describe('AI Search Service', () => {
 
     AISearchClient = {
       uploadDocuments: jest.fn(),
-      search: jest.fn()
+      search: jest.fn(),
+      blanky: 'testttt'
     }
 
-    getSearchClient.mockResolvedValue(AISearchClient)
+    getSearchClient.mockReturnValue(AISearchClient)
   })
 
   afterEach(() => {
