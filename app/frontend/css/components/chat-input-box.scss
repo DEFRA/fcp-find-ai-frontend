@@ -21,21 +21,18 @@
 
     .govuk-form-group {
       margin-bottom: 5px !important;
-
-      textarea {
-        min-height: 67px;
-        margin-bottom: 5px !important;
-      }
     }
   }
 
   .sendButton {
     position: absolute;
-    bottom: 10px;
-    right: 16px;
+    transform: translate(0%, 50%);
+    bottom: 20px;
+    top: auto;
+    right: 0;
     margin: 0;
-    border-radius: 20px;
     width: 40px;
+    height: 40px;
     padding: 4px 0;
     box-shadow: none;
     background-color: $defraDarkGreen;
@@ -50,13 +47,13 @@
       }
     }
 
-    &::active {
-      top: initial !important;
-    }
+    // &::active {
+    //   top: initial !important;
+    // }
 
-    &.govuk-button:active {
-      top: initial !important;
-    }
+    // &.govuk-button:active {
+    //   top: initial !important;
+    // }
 
     .sendIcon {
       padding: 3px;
@@ -87,8 +84,11 @@
 
 .hods-loading-spinner {
   position: absolute;
-  bottom: 9px;
-  right: 16px;
+  transform: translate(0%, 50%);
+  padding-top: 0px !important;
+  bottom: 20px;
+  top: auto;
+  right: 3px;
   display: none;
 
   @include govuk-responsive-padding(4, "top");
@@ -99,8 +99,8 @@
     border: 6px solid #dee0e2;
     border-radius: 50%;
     border-top-color: $defraGreen;
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     -webkit-animation: hods-loading-spinner-animation 2s linear infinite;
     animation: hods-loading-spinner-animation 2s linear infinite;
   }
