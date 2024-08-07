@@ -20,7 +20,7 @@ const onFailedAttempt = async (error) => {
   }
 }
 
-const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model }) => {
+const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddings, model, retryCount }) => {
   try {
     const vectorStoreKey = summariesMode ? 'summaryIndexName' : 'indexName'
     const itemsToCheck = summariesMode ? 40 : 20
@@ -80,14 +80,14 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
   } catch (error) {
     trackFetchResponseFailed({
       errorMessage: error.message,
-      requestQuery: query
+      requestQuery: query,
+      retryCount
     })
     return {
       response: { answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead', hallucinated: true }
     }
   }
 }
-
 /**
  * Fetches answer from AI Search and OpenAI
  * @param {*} req
@@ -97,6 +97,43 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
  * @param {boolean} summariesEnabled
  * @returns {{ response: string, summariesMode: boolean, hallucinated: boolean }}
  */
+const runFetchAnswer = async ({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount }) => {
+  try {
+    if (summariesEnabled) {
+      const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: summariesEnabled, model, embeddings, retryCount })
+
+      if (!hallucinated) {
+        // TODO cache summaries response after enabled
+        return {
+          response: summariesResponse?.answer,
+          summariesMode: true,
+          hallucinated
+        }
+      }
+    }
+
+    summariesEnabled = false
+
+    const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: summariesEnabled, embeddings, model, retryCount })
+
+    if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
+      await uploadToCache(query, response.answer)
+    }
+
+    return {
+      response: response?.answer,
+      summariesMode: false,
+      hallucinated
+    }
+  } catch (error) {
+    return {
+      response: JSON.stringify({ answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead', items: [] }),
+      hallucinated: true,
+      summariesMode: summariesEnabled
+    }
+  }
+}
+
 const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabled = false) => {
   if (cacheEnabled) {
     const cacheResponse = await searchCache(query)
@@ -128,29 +165,22 @@ const fetchAnswer = async (req, query, chatHistory, cacheEnabled, summariesEnabl
       onFailedAttempt
     })
 
-  if (summariesEnabled) {
-    const { response: summariesResponse, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: true, model, embeddings })
+  const initialResponse = await runFetchAnswer({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount: 0 })
 
-    if (!hallucinated) {
-      // TODO cache summaries response after enabled
-      return {
-        response: summariesResponse?.answer,
-        summariesMode: true,
-        hallucinated
-      }
-    }
+  if (!initialResponse.hallucinated) {
+    return initialResponse
   }
 
-  const { response, hallucinated } = await runFetchAnswerQuery({ query, chatHistory, summariesMode: false, embeddings, model })
+  const finalResponse = await runFetchAnswer({ query, chatHistory, cacheEnabled, summariesEnabled, embeddings, model, retryCount: 1 })
 
-  if (cacheEnabled && !hallucinated && !config.useFakeLlm) {
-    await uploadToCache(query, response.answer)
+  if (!finalResponse.hallucinated) {
+    return finalResponse
   }
 
   return {
-    response: response?.answer,
-    summariesMode: false,
-    hallucinated
+    response: JSON.stringify({ answer: 'This tool cannot answer that kind of question, ask something about Defra funding instead', items: [] }),
+    hallucinated: true,
+    summariesMode: finalResponse.summariesMode
   }
 }
 
