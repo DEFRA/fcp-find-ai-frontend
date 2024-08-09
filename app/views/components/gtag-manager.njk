@@ -2,4 +2,11 @@
 <script> window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date()); gtag('config', '{{googleTagManagerKey}}');
+function trackConversationEvent(action) {
+    gtag('event', action, {
+        'event_category': 'Conversation Button Clicks',
+        'event_label': action,
+        'value': 1
+    });
+}
 </script>
