@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         searching = true
+        trackConversationEvent && trackConversationEvent('conversation question')
         sendForm.submit()
       }
     }
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           }
 
           searching = true
+          trackConversationEvent && trackConversationEvent('conversation question')
           sendForm.submit()
         }
       }
@@ -75,12 +77,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
           }
         )
       }
+      trackConversationEvent && trackConversationEvent('copy')
     }
   }
 
   if (printButton) {
     printButton.onclick = (event) => {
       event.preventDefault()
+      trackConversationEvent && trackConversationEvent('print')
 
       window.print()
     }
@@ -96,6 +100,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         schemeSIG.checked = true
         schemeSFI.checked = true
       }
+
+      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeAll.checked ? 'enable' : 'disable'} all`)
     }
   }
 
@@ -104,6 +110,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (!schemeCS.checked) {
         schemeAll.checked = false
       }
+
+      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeCS.checked ? 'enable' : 'disable'} CS`)
     }
   }
 
@@ -112,6 +120,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (!schemeFETF.checked) {
         schemeAll.checked = false
       }
+
+      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeFETF.checked ? 'enable' : 'disable'} FETF`)
     }
   }
 
@@ -120,6 +130,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (!schemeSFI.checked) {
         schemeAll.checked = false
       }
+
+      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeSFI.checked ? 'enable' : 'disable'} SFI`)
     }
   }
 
@@ -128,6 +140,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (!schemeSIG.checked) {
         schemeAll.checked = false
       }
+    }
+
+    trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeSIG.checked ? 'enable' : 'disable'} SIG`)
+  }
+
+  // find form with the action including /reset string
+  const resetForm = document.querySelector('form[action*="/reset"]')
+
+  // if it exists, track the onsubmit event with the trackConversationEvent function
+  if (resetForm) {
+    resetForm.onsubmit = () => {
+      trackConversationEvent && trackConversationEvent('new conversation')
     }
   }
 })
