@@ -37,10 +37,7 @@ describe('query-service', () => {
 
       const { response } = await fetchAnswer({}, input, [], false, false)
 
-      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({
-        answer: 'generated response',
-        items: []
-      }))
+      expect(JSON.parse(response).answer).toStrictEqual('generated response')
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(expect.objectContaining({ prompt }))
     })
 
@@ -269,7 +266,7 @@ describe('query-service', () => {
 
       const { response, summariesMode } = await fetchAnswer({}, input, [], false, false)
 
-      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({ answer: 'full index response', items: [] }))
+      expect(JSON.parse(response).answer).toStrictEqual('full index response')
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(
         expect.objectContaining({ prompt })
       )
@@ -296,7 +293,7 @@ describe('query-service', () => {
 
       const { response } = await fetchAnswer({}, input, [], false, true)
 
-      expect(JSON.parse(response).answer).toStrictEqual(JSON.stringify({ answer: 'summary response', items: [] }))
+      expect(JSON.parse(response).answer).toStrictEqual('summary response')
       expect(createStuffDocumentsChain).toHaveBeenCalledWith(
         expect.objectContaining({ prompt })
       )

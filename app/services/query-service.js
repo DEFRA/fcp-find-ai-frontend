@@ -9,7 +9,6 @@ const { BaseMessage } = require('@langchain/core/messages')
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackFetchResponseFailed } = require('../lib/events')
-const { returnValidatedResponse } = require('../utils/langchain-utils')
 const { getPrompt } = require('../domain/prompt')
 const { searchCache, uploadToCache } = require('./ai-search-service')
 const { validateResponseLinks } = require('../utils/validators')
@@ -74,9 +73,8 @@ const runFetchAnswerQuery = async ({ query, chatHistory, summariesMode, embeddin
     })
 
     const hallucinated = !validateResponseLinks(response, query)
-    const validatedReponse = returnValidatedResponse(response)
 
-    return { response: validatedReponse, hallucinated }
+    return { response, hallucinated }
   } catch (error) {
     trackFetchResponseFailed({
       errorMessage: error.message,
