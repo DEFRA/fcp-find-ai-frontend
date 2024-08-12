@@ -2,6 +2,9 @@ import { initAll } from 'govuk-frontend'
 import './application.scss'
 initAll()
 
+// NOTE: the function trackConversationEvent is loaded in js elsewhere, and the 'trackConversationEvent &&' check ensures nothing breaks if it's not available
+// eslint ignores the 'no-undef' rule for trackConversationEvent so the tests don't fail
+
 document.addEventListener('DOMContentLoaded', (event) => {
   const sendButton = document.getElementById('sendButton')
   const sendForm = document.getElementById('sendForm')
@@ -24,6 +27,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         searching = true
+        // eslint-disable-next-line no-undef
         trackConversationEvent && trackConversationEvent('user message sent')
         sendForm.submit()
       }
@@ -46,6 +50,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           }
         )
       }
+      // eslint-disable-next-line no-undef
       trackConversationEvent && trackConversationEvent('copy')
     }
   }
@@ -53,6 +58,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   if (printButton) {
     printButton.onclick = (event) => {
       event.preventDefault()
+      // eslint-disable-next-line no-undef
       trackConversationEvent && trackConversationEvent('print')
 
       window.print()
@@ -65,6 +71,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   // if it exists, track the onsubmit event with the trackConversationEvent function
   if (resetForm) {
     resetForm.onsubmit = () => {
+      // eslint-disable-next-line no-undef
       trackConversationEvent && trackConversationEvent('new conversation')
     }
   }
