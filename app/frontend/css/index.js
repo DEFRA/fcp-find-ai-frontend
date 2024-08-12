@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         searching = true
-        trackConversationEvent && trackConversationEvent('conversation question')
+        trackConversationEvent && trackConversationEvent('user message sent')
         sendForm.submit()
       }
     }
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           }
 
           searching = true
-          trackConversationEvent && trackConversationEvent('conversation question')
+          trackConversationEvent && trackConversationEvent('user message sent')
           sendForm.submit()
         }
       }
@@ -88,61 +88,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
       window.print()
     }
-  }
-
-  if (schemeAll) {
-    schemeAll.onclick = (event) => {
-      // event.preventDefault()
-
-      if (schemeAll.checked) {
-        schemeCS.checked = true
-        schemeFETF.checked = true
-        schemeSIG.checked = true
-        schemeSFI.checked = true
-      }
-
-      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeAll.checked ? 'enable' : 'disable'} all`)
-    }
-  }
-
-  if (schemeCS) {
-    schemeCS.onclick = (event) => {
-      if (!schemeCS.checked) {
-        schemeAll.checked = false
-      }
-
-      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeCS.checked ? 'enable' : 'disable'} CS`)
-    }
-  }
-
-  if (schemeFETF) {
-    schemeFETF.onclick = (event) => {
-      if (!schemeFETF.checked) {
-        schemeAll.checked = false
-      }
-
-      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeFETF.checked ? 'enable' : 'disable'} FETF`)
-    }
-  }
-
-  if (schemeSFI) {
-    schemeSFI.onclick = (event) => {
-      if (!schemeSFI.checked) {
-        schemeAll.checked = false
-      }
-
-      trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeSFI.checked ? 'enable' : 'disable'} SFI`)
-    }
-  }
-
-  if (schemeSIG) {
-    schemeSIG.onclick = (event) => {
-      if (!schemeSIG.checked) {
-        schemeAll.checked = false
-      }
-    }
-
-    trackConversationEvent && trackConversationEvent(`scheme was filtered to ${schemeSIG.checked ? 'enable' : 'disable'} SIG`)
   }
 
   // find form with the action including /reset string
