@@ -8,12 +8,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const loadingSpinner = document.getElementById('loadingSpinner')
   let searching = false
 
-  const schemeAll = document.getElementById('schemeAll')
-  const schemeCS = document.getElementById('schemeCS')
-  const schemeFETF = document.getElementById('schemeFETF')
-  const schemeSIG = document.getElementById('schemeSIG')
-  const schemeSFI = document.getElementById('schemeSFI')
-
   const copyButton = document.getElementById('copyButton')
   const printButton = document.getElementById('printButton')
 
