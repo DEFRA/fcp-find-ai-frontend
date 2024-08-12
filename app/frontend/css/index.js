@@ -36,31 +36,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
   }
 
-  const promptTextArea = document.getElementById('prompt-id')
-
-  if (promptTextArea) {
-    promptTextArea.addEventListener('keypress', function (event) {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-
-        if (!searching) {
-          if (sendButton) {
-            sendButton.disabled = true
-            sendButton.style.display = 'none'
-          }
-
-          if (loadingSpinner) {
-            loadingSpinner.style.display = 'block'
-          }
-
-          searching = true
-          trackConversationEvent && trackConversationEvent('user message sent')
-          sendForm.submit()
-        }
-      }
-    })
-  }
-
   if (copyButton) {
     copyButton.onclick = (event) => {
       event.preventDefault()
