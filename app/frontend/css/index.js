@@ -2,17 +2,14 @@ import { initAll } from 'govuk-frontend'
 import './application.scss'
 initAll()
 
+// NOTE: the function trackConversationEvent is loaded in js elsewhere, and the 'trackConversationEvent &&' check ensures nothing breaks if it's not available
+// eslint ignores the 'no-undef' rule for trackConversationEvent so the tests don't fail
+
 document.addEventListener('DOMContentLoaded', (event) => {
   const sendButton = document.getElementById('sendButton')
   const sendForm = document.getElementById('sendForm')
   const loadingSpinner = document.getElementById('loadingSpinner')
   let searching = false
-
-  const schemeAll = document.getElementById('schemeAll')
-  const schemeCS = document.getElementById('schemeCS')
-  const schemeFETF = document.getElementById('schemeFETF')
-  const schemeSIG = document.getElementById('schemeSIG')
-  const schemeSFI = document.getElementById('schemeSFI')
 
   const copyButton = document.getElementById('copyButton')
   const printButton = document.getElementById('printButton')
@@ -30,6 +27,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         searching = true
+        // eslint-disable-next-line no-undef
+        trackConversationEvent && trackConversationEvent('user message sent')
         sendForm.submit()
       }
     }
@@ -51,59 +50,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
           }
         )
       }
+      // eslint-disable-next-line no-undef
+      trackConversationEvent && trackConversationEvent('copy')
     }
   }
 
   if (printButton) {
     printButton.onclick = (event) => {
       event.preventDefault()
+      // eslint-disable-next-line no-undef
+      trackConversationEvent && trackConversationEvent('print')
 
       window.print()
     }
   }
 
-  if (schemeAll) {
-    schemeAll.onclick = (event) => {
-      // event.preventDefault()
+  // find form with the action including /reset string
+  const resetForm = document.querySelector('form[action*="/reset"]')
 
-      if (schemeAll.checked) {
-        schemeCS.checked = true
-        schemeFETF.checked = true
-        schemeSIG.checked = true
-        schemeSFI.checked = true
-      }
-    }
-  }
-
-  if (schemeCS) {
-    schemeCS.onclick = (event) => {
-      if (!schemeCS.checked) {
-        schemeAll.checked = false
-      }
-    }
-  }
-
-  if (schemeFETF) {
-    schemeFETF.onclick = (event) => {
-      if (!schemeFETF.checked) {
-        schemeAll.checked = false
-      }
-    }
-  }
-
-  if (schemeSFI) {
-    schemeSFI.onclick = (event) => {
-      if (!schemeSFI.checked) {
-        schemeAll.checked = false
-      }
-    }
-  }
-
-  if (schemeSIG) {
-    schemeSIG.onclick = (event) => {
-      if (!schemeSIG.checked) {
-        schemeAll.checked = false
-      }
+  // if it exists, track the onsubmit event with the trackConversationEvent function
+  if (resetForm) {
+    resetForm.onsubmit = () => {
+      // eslint-disable-next-line no-undef
+      trackConversationEvent && trackConversationEvent('new conversation')
     }
   }
 })
