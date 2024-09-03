@@ -6,6 +6,7 @@ const { trackMessage, trackSystemMessage, trackConversationPageView } = require(
 const boom = require('@hapi/boom')
 const { redact } = require('../utils/redact-utils')
 const config = require('../config')
+const util = require('util')
 
 module.exports = [
   {
@@ -77,7 +78,7 @@ module.exports = [
         answer: redactedQuery
       })
 
-      const { response, summariesMode, hallucinated } = await fetchAnswer(request, redactedQuery, chatHistory, config.azureOpenAI.cacheEnabled, config.featureSummaryEnabled)
+      const { response, hallucinated } = await fetchAnswer(request, redactedQuery, chatHistory)
 
       const endTime = new Date()
 
@@ -86,7 +87,7 @@ module.exports = [
       })
 
       try {
-        const langchainData = parseMessage(request, response)
+        const langchainData = response
 
         messages.push({
           role: 'assistant',
@@ -99,7 +100,7 @@ module.exports = [
         })
       } finally {
         const responseDuration = ((endTime.getTime() - startTime.getTime()) / 1000).toFixed(2)
-        trackSystemMessage({ message: response, conversationId, time: endTime, characterCount: response.length, responseDuration, conversationPosition: chatHistory.length + 2, hallucinated, summariesMode })
+        trackSystemMessage({ message: response, conversationId, time: endTime, characterCount: response.length, responseDuration, conversationPosition: chatHistory.length + 2, hallucinated, summariesMode: false })
       }
 
       setMessages(request, conversationId, messages)
@@ -109,6 +110,10 @@ module.exports = [
         ...formattedMessages[formattedMessages.length - 2],
         scrollToMessage: formattedMessages.length > 2
       }
+
+      console.log(util.inspect(formattedMessages, { showHidden: false, depth: null }))
+
+      // return h.response().code(200)
 
       return h.view('answer', {
         validationError,

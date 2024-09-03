@@ -3,6 +3,7 @@ const { extractLinksForValidatingResponse } = require('./langchain-utils')
 
 const validateResponseLinks = (response, query) => {
   const trackIssueAndBreak = (errorMessage) => {
+    console.log(errorMessage)
     trackHallucinatedLinkInResponse({
       errorMessage,
       failedObject: response,

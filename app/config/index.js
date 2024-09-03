@@ -68,7 +68,7 @@ const schema = Joi.object({
   featureSummaryEnabled: Joi.boolean().default(false),
 
   googleAnalytics: Joi.object({
-    key: Joi.string().default('')
+    key: Joi.string().allow(null).allow('').default('')
   }).required(),
 
   endpointTestingEnabled: Joi.boolean().default(false)
@@ -149,4 +149,4 @@ if (result.error) {
   throw new Error(`The app config is invalid. ${result.error.message}`)
 }
 
-module.exports = config
+module.exports = result.value

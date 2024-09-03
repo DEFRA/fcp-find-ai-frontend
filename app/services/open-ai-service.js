@@ -14,9 +14,10 @@ const generateEmbedding = async (content) => {
   const embeddings = new OpenAIEmbeddings({
     azureOpenAIApiInstanceName: config.azureOpenAI.openAiInstanceName,
     azureOpenAIApiKey: config.azureOpenAI.openAiKey,
-    azureOpenAIApiDeploymentName: 'text-embedding-ada-002',
+    azureOpenAIApiDeploymentName: 'ada-002',
     azureOpenAIApiVersion: '2024-02-01',
-    onFailedAttempt
+    onFailedAttempt,
+    verbose: true
   })
 
   const embedding = await embeddings.embedDocuments([content])
