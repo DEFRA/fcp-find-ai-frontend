@@ -71,6 +71,10 @@ const schema = Joi.object({
     key: Joi.string().allow(null).allow('').default('')
   }).required(),
 
+  igLogApi: Joi.object({
+    baseUrl: Joi.string().uri().required()
+  }),
+
   endpointTestingEnabled: Joi.boolean().default(false)
 })
 
@@ -136,6 +140,10 @@ const config = {
 
   googleAnalytics: {
     key: process.env.GOOGLE_TAG_MANAGER_KEY || ''
+  },
+
+  igLogApi: {
+    baseUrl: process.env.IG_LOG_API_BASE_URL
   },
 
   endpointTestingEnabled: process.env.ENDPOINT_TESTING_ENABLED === 'true'

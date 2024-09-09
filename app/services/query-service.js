@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid')
+
 const { AzureAISearchVectorStore } = require('../lib/azure-vector-store')
 const config = require('../config')
 const { trackFetchResponseFailed } = require('../lib/events')
@@ -5,6 +7,7 @@ const { openai, embeddings } = require('./clients/openai')
 const util = require('util')
 const { buildContextHistoryChain } = require('./chains/contextualise')
 const { buildGenerateChain } = require('./chains/generate')
+const IgLogCallbackHandler = require('../lib/ig-log/callback-handler')
 
 const infer = async (query, chatHistory, embeddings, model, retryCount) => {
   try {
@@ -20,6 +23,13 @@ const infer = async (query, chatHistory, embeddings, model, retryCount) => {
       }
     })
 
+    const handler1 = new IgLogCallbackHandler({
+      baseurl: 'http://host.docker.internal:3555',
+      projectId: '1965bb1c-9efc-4417-b452-a5eb8f11fd86',
+      sessionId: uuidv4(),
+      user: 'test@test.com'
+    })
+
     const retriever = vectorStore.asRetriever(itemsToCheck, { includeEmbeddings: true })
 
     const contextChain = buildContextHistoryChain(model)
@@ -28,9 +38,9 @@ const infer = async (query, chatHistory, embeddings, model, retryCount) => {
     const response = await generationChain.invoke({
       chat_history: chatHistory,
       input: query
+    }, {
+      callbacks: [handler1]
     })
-
-    console.log(util.inspect(response, { showHidden: false, depth: null }))
 
     return {
       response: JSON.parse(response.generated)
